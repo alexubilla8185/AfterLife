@@ -45,14 +45,14 @@ const App: React.FC = () => {
   }, []);
 
   const Header = () => (
-    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm sticky top-0 z-40">
+    <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-3">
-          <div className="flex items-center space-x-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center space-x-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-primary-500 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">AfterLife</h1>
+            <h1 className="text-3xl font-bold font-serif text-slate-900 dark:text-slate-100">AfterLife</h1>
           </div>
           <div className="flex items-center space-x-1 sm:space-x-2">
             <div className="relative" ref={themeMenuRef}>
@@ -99,9 +99,9 @@ const App: React.FC = () => {
       {view === 'login' ? (
         <Login onNavigate={handleNavigate} onShowOnboarding={() => handleShowOnboarding('login')} />
       ) : (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
           <Header />
-          <main className="py-6 sm:px-6 lg:px-8">
+          <main className="py-8 sm:px-6 lg:px-8">
             {view === 'creator' && <div className="max-w-7xl mx-auto"><CreatorDashboard /></div>}
             {view === 'visitor' && <VisitorView profile={profile} />}
           </main>

@@ -7,7 +7,7 @@
     <title>AfterLife</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root {
@@ -27,12 +27,35 @@
       body {
         font-family: 'Open Sans', sans-serif;
       }
+      .font-serif {
+        font-family: 'Lora', serif;
+      }
+      
+      .animated-gradient {
+        background-size: 200% 200%;
+        animation: gradient-animation 15s ease infinite;
+      }
+
+      @keyframes gradient-animation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .icon-glow {
+        filter: drop-shadow(0 0 8px hsl(var(--color-primary-400) / 0.6));
+        transition: filter 0.3s ease;
+      }
     </style>
     <script>
       tailwind.config = {
         darkMode: 'class',
         theme: {
           extend: {
+            fontFamily: {
+              sans: ['Open Sans', 'sans-serif'],
+              serif: ['Lora', 'serif'],
+            },
             colors: {
               primary: {
                 50: 'hsl(var(--color-primary-50) / <alpha-value>)',
@@ -63,7 +86,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300">
+  <body class="bg-slate-100 text-gray-800 dark:bg-slate-900 dark:text-gray-200 transition-colors duration-300">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

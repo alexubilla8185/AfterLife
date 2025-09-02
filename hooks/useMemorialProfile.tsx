@@ -1,45 +1,45 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { CreatorProfile, ConditionalResponse, Tribute, ResponseType, SocialLink } from '../types';
 
-// Expanded sample profile with more responses and social links
+// New sample profile for Julian Hayes
 const sampleProfile: CreatorProfile = {
-    name: 'Eleanor Vance',
-    lifeSpan: '1945 - 2024',
-    bio: 'A loving mother, a passionate artist, and a friend to all. Eleanor found joy in the simple moments: a sunrise, a shared laugh, a good book. Her canvas was the world, and her masterpiece was a life well-lived.',
-    profileImageUrl: 'https://picsum.photos/seed/eleanor/256/256',
+    name: 'Julian Hayes',
+    lifeSpan: '1968 - 2023',
+    bio: 'An insatiable traveler, a captivating storyteller, and a devoted teacher. Julian believed the world was a classroom and every person a story waiting to be told. He collected moments, not things.',
+    profileImageUrl: 'https://picsum.photos/seed/julian/256/256',
     responses: [
-        { id: '1', keyword: 'miss you', response: 'I know it feels that way, but love like ours doesn\'t just disappear. It\'s in the stories we shared and the warmth you feel from the sun. I\'m with you.', type: ResponseType.TEXT },
-        { id: '2', keyword: 'remember', response: 'Oh, the memories we made! Each one is a little treasure. Hold onto them, and smile when you think of them.', type: ResponseType.TEXT },
-        { id: '3', keyword: 'laugh', response: 'I can almost hear it! That sound was my favorite music. Never stop laughing.', type: ResponseType.TEXT },
-        { id: '4', keyword: 'sad', response: 'It\'s okay to feel that way. Grief is just love with nowhere to go. Be gentle with yourself and let the memories be a comfort.', type: ResponseType.TEXT },
-        { id: '5', keyword: 'art', response: 'My art was my voice. I\'m so glad it still speaks to you. Every brushstroke holds a piece of my heart.', type: ResponseType.TEXT },
-        { id: '6', keyword: 'thank you', response: 'You\'re welcome, my dear. Thank you for being here, for remembering.', type: ResponseType.TEXT },
+        { id: '1', keyword: 'miss you', response: 'The journey doesn\'t end here. Think of our time together as a beautiful chapter, not the whole story. The adventure continues, just in a different way.', type: ResponseType.TEXT },
+        { id: '2', keyword: 'travel', response: 'Ah, the open road! I hope you\'re still exploring. There\'s so much beauty to see. Don\'t ever lose your sense of wonder.', type: ResponseType.TEXT },
+        { id: '3', keyword: 'story', response: 'Every story we shared is a landmark on the map of my heart. Tell them often, and keep the pages turning.', type: ResponseType.TEXT },
+        { id: '4', keyword: 'sad', response: 'It\'s alright to feel lost sometimes. Every traveler needs a moment to rest. Remember the good trails we walked together, and let that be your guide.', type: ResponseType.TEXT },
+        { id: '5', keyword: 'learn', response: 'The best lesson I ever taught was to stay curious. Keep asking questions, keep seeking answers. The world is full of things to discover.', type: ResponseType.TEXT },
+        { id: '6', keyword: 'thank you', response: 'For walking this path with me for a while. It meant the world.', type: ResponseType.TEXT },
     ],
     socialLinks: [
-        { id: 'link-1', platform: 'Personal Blog', url: 'https://example.com' },
-        { id: 'link-2', platform: 'LinkedIn', url: 'https://linkedin.com/in/example' },
-        { id: 'link-3', platform: 'Art Gallery', url: 'https://example.com/gallery' },
+        { id: 'link-1', platform: 'Travel Blog', url: 'https://example.com' },
+        { id: 'link-2', platform: 'Photography', url: 'https://example.com/photos' },
+        { id: 'link-3', platform: 'Goodreads', url: 'https://goodreads.com/example' },
     ]
 };
 
-// Sample tributes to pre-populate the wall
+// New sample tributes for Julian Hayes
 const sampleTributes: Tribute[] = [
     {
         id: 'tribute-1',
-        author: 'Her loving son, Michael',
-        message: 'Mom, not a day goes by that I don\'t think of your smile. You taught me everything about kindness. I see you in every sunset. I love you.',
+        author: 'His former student, Anya',
+        message: 'Mr. Hayes taught me more than just history; he taught me how to see the world. His stories from his travels made every lesson an adventure. I\'ll carry his wisdom with me always.',
         timestamp: new Date(new Date().setDate(new Date().getDate() - 2)),
     },
     {
         id: 'tribute-2',
-        author: 'Sarah, a dear friend',
-        message: 'Eleanor, I miss our coffee dates and your infectious laughter. The world is a little less bright without you in it. Thank you for decades of friendship.',
+        author: 'Leo, his travel buddy',
+        message: 'Julian, my friend, the trails are quieter without you. From the mountains of Peru to the markets of Marrakech, every step was a joy. Cheers to one last sunset. You are missed.',
         timestamp: new Date(new Date().setDate(new Date().getDate() - 5)),
     },
     {
         id: 'tribute-3',
-        author: 'James (neighbor)',
-        message: 'Mrs. Vance was the kindest soul. She always had a wave and a smile for everyone. Her garden was as beautiful as she was. Rest in peace.',
+        author: 'His sister, Clara',
+        message: 'My brother lived a dozen lifetimes in one. He sent postcards from every corner of the earth, each one filled with wonder. I\'ll miss his calls from faraway places. Rest easy, dear brother.',
         timestamp: new Date(new Date().setDate(new Date().getDate() - 10)),
     }
 ];

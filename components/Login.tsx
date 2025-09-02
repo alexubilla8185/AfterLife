@@ -7,29 +7,29 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onNavigate, onShowOnboarding }) => {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-primary-200 dark:from-slate-900 dark:to-primary-900/40 p-4 transition-colors duration-300">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-200 via-primary-100 to-slate-200 dark:from-slate-900 dark:via-primary-900/30 dark:to-black animated-gradient p-4 transition-colors duration-300">
       {/* Centered Login Card */}
-      <div className="w-full max-w-lg mx-auto bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-2xl p-8 md:p-12 text-center">
+      <div className="w-full max-w-2xl mx-auto bg-white/60 dark:bg-slate-800/60 backdrop-blur-2xl rounded-2xl shadow-2xl p-8 md:p-12 text-center border border-white/30 dark:border-slate-700/50">
         
         <div className="flex justify-center mb-6">
-          <div className="p-3 bg-primary-500 rounded-full shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="p-4 bg-primary-500 rounded-full shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
           </div>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 dark:text-gray-100 tracking-tight mb-4">
+        <h1 className="text-4xl md:text-5xl font-extrabold font-serif text-slate-800 dark:text-slate-100 tracking-tight mb-4">
           Welcome to AfterLife
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 text-lg mb-10 max-w-md mx-auto">
-          An interactive memorial platform to create a personalized digital legacy. Creators can pre-program responses, allowing loved ones to connect with their memory in a unique way.
+        <p className="text-slate-600 dark:text-slate-300 text-lg mb-12 max-w-xl mx-auto">
+          A space to build a digital legacy. Connect with the memory of loved ones through interactive stories and shared tributes.
         </p>
 
-        <div className="space-y-6">
+        <div className="grid sm:grid-cols-2 gap-6">
           <button
             onClick={() => onNavigate('visitor')}
-            className="group w-full flex items-center text-left p-5 bg-white dark:bg-gray-700 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            className="group w-full h-full flex items-center text-left p-5 bg-slate-50 dark:bg-slate-700/50 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
             <div className="p-3 bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 rounded-lg mr-5">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -47,7 +47,7 @@ const Login: React.FC<LoginProps> = ({ onNavigate, onShowOnboarding }) => {
 
           <button
             onClick={() => onNavigate('creator')}
-            className="group w-full flex items-center text-left p-5 bg-white dark:bg-gray-700 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            className="group w-full h-full flex items-center text-left p-5 bg-slate-50 dark:bg-slate-700/50 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
             <div className="p-3 bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 rounded-lg mr-5">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -70,7 +70,7 @@ const Login: React.FC<LoginProps> = ({ onNavigate, onShowOnboarding }) => {
       <button
         onClick={onShowOnboarding}
         aria-label="How does this work?"
-        className="fixed bottom-4 right-4 h-12 w-12 md:h-14 md:w-14 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-full shadow-lg flex items-center justify-center text-primary-600 dark:text-primary-400 hover:bg-white/80 dark:hover:bg-gray-700/80 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 focus:ring-primary-500"
+        className="fixed bottom-4 right-4 h-12 w-12 md:h-14 md:w-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-full shadow-lg flex items-center justify-center text-primary-600 dark:text-primary-400 hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 focus:ring-primary-500"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-7 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -17,28 +17,28 @@ const TributeForm: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 space-y-4 h-full">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Leave a Tribute</h3>
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-4 h-full">
+            <h3 className="text-lg font-semibold font-serif text-slate-800 dark:text-slate-200">Leave a Tribute</h3>
             <div>
-                <label htmlFor="author" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Name</label>
+                <label htmlFor="author" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Your Name</label>
                 <input
                     type="text"
                     id="author"
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
                     placeholder="e.g., A loving friend"
-                    className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+                    className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
                 />
             </div>
             <div>
-                <label htmlFor="tribute-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Message</label>
+                <label htmlFor="tribute-message" className="block text-sm font-medium text-slate-700 dark:text-slate-300">Your Message</label>
                 <textarea
                     id="tribute-message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={4}
                     placeholder={`Share a memory of ${profile.name}`}
-                    className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+                    className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
                 />
             </div>
             <button
@@ -53,16 +53,16 @@ const TributeForm: React.FC = () => {
 };
 
 const TributeWall: React.FC<{ tributes: Tribute[] }> = ({ tributes }) => (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Tributes & Memories</h3>
+    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <h3 className="text-lg font-semibold font-serif text-slate-800 dark:text-slate-200 mb-4">Tributes & Memories</h3>
         <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
             {tributes.length > 0 ? tributes.map(tribute => (
-                <div key={tribute.id} className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                    <p className="text-gray-800 dark:text-gray-200 italic">"{tribute.message}"</p>
+                <div key={tribute.id} className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+                    <p className="text-slate-800 dark:text-slate-200 italic">"{tribute.message}"</p>
                     <p className="text-right text-sm font-medium text-primary-700 dark:text-primary-400 mt-2">- {tribute.author}</p>
-                    <p className="text-right text-xs text-gray-400 dark:text-gray-500">{tribute.timestamp.toLocaleDateString()}</p>
+                    <p className="text-right text-xs text-slate-400 dark:text-slate-500">{tribute.timestamp.toLocaleDateString()}</p>
                 </div>
-            )) : <p className="text-center text-gray-500 dark:text-gray-400 py-4">No tributes yet. Be the first to share a memory.</p>}
+            )) : <p className="text-center text-slate-500 dark:text-slate-400 py-4">No tributes yet. Be the first to share a memory.</p>}
         </div>
     </div>
 );
@@ -115,29 +115,29 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-b-lg shadow-md flex flex-col h-full">
-            <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-800/50">
+        <div className="bg-white dark:bg-slate-800 rounded-b-xl shadow-lg flex flex-col h-full border border-slate-200 dark:border-slate-700 border-t-0">
+            <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-50 dark:bg-slate-800/50">
                 {messages.map(msg => (
                     <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.sender === 'user' ? 'bg-primary-500 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
+                        <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.sender === 'user' ? 'bg-primary-500 text-white' : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'}`}>
                            <p className="text-sm">{msg.text}</p>
                         </div>
                     </div>
                 ))}
                 {isTyping && (
                     <div className="flex justify-start">
-                        <div className="bg-gray-200 dark:bg-gray-700 rounded-xl px-4 py-2">
+                        <div className="bg-slate-200 dark:bg-slate-700 rounded-xl px-4 py-2">
                           <div className="flex items-center space-x-1">
-                            <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                            <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                            <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></span>
+                            <span className="h-2 w-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                            <span className="h-2 w-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                            <span className="h-2 w-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce"></span>
                           </div>
                         </div>
                     </div>
                 )}
                 <div ref={chatEndRef} />
             </div>
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="p-4 border-t border-slate-200 dark:border-slate-700">
                 <div className="flex items-center space-x-2">
                     <input
                         type="text"
@@ -145,7 +145,7 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                         placeholder="Share a thought or memory..."
-                        className="flex-1 block w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+                        className="flex-1 block w-full px-4 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-full shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
                     />
                     <button onClick={handleSend} className="bg-primary-600 text-white rounded-full p-3 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800" disabled={!input.trim() || isTyping}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -177,13 +177,13 @@ const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
     const [activeTab, setActiveTab] = useState<'chat' | 'tributes'>('chat');
 
     const ProfileHeader = () => (
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8 border border-gray-200 dark:border-gray-700">
-        <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-6">
-          <img src={profile.profileImageUrl} alt={profile.name} className="w-32 h-32 rounded-full object-cover shadow-lg border-4 border-white dark:border-gray-600" />
+      <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-lg mb-8 border border-slate-200 dark:border-slate-700">
+        <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-8">
+          <img src={profile.profileImageUrl} alt={profile.name} className="w-36 h-36 rounded-full object-cover shadow-lg border-4 border-white dark:border-slate-600" />
           <div>
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">{profile.name}</h1>
-            <p className="text-lg text-gray-500 dark:text-gray-400">{profile.lifeSpan}</p>
-            <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed max-w-2xl">{profile.bio}</p>
+            <h1 className="text-4xl font-extrabold font-serif text-slate-900 dark:text-slate-100">{profile.name}</h1>
+            <p className="text-lg text-slate-500 dark:text-slate-400">{profile.lifeSpan}</p>
+            <p className="mt-4 text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl">{profile.bio}</p>
             {profile.socialLinks && profile.socialLinks.length > 0 && (
                 <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3">
                     {profile.socialLinks.map((link: SocialLink) => (
@@ -192,7 +192,7 @@ const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                             href={link.url} 
                             target="_blank" 
                             rel="noopener noreferrer" 
-                            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                            className="flex items-center space-x-2 text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
                         >
                             {getSocialIcon(link.platform)}
                             <span className="text-sm font-medium">{link.platform}</span>
@@ -208,8 +208,10 @@ const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
     const TabButton: React.FC<{ tabName: 'chat' | 'tributes'; label: string; icon: JSX.Element; }> = ({ tabName, label, icon }) => (
         <button
             onClick={() => setActiveTab(tabName)}
-            className={`flex-1 flex items-center justify-center space-x-3 py-3 px-4 text-sm font-semibold rounded-t-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-            ${activeTab === tabName ? 'bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400' : 'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 hover:text-gray-700 dark:hover:text-gray-300'}`}
+            className={`flex-1 flex items-center justify-center space-x-3 py-4 px-4 text-sm font-semibold border-b-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-900
+            ${activeTab === tabName 
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-700 dark:hover:text-slate-300'}`}
         >
             {icon}
             <span>{label}</span>
@@ -220,8 +222,8 @@ const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
         <div className="max-w-4xl mx-auto">
             <ProfileHeader />
             
-            <div className="bg-gray-100 dark:bg-gray-800/50 rounded-t-lg">
-                <div className="flex border-b border-gray-200 dark:border-gray-700">
+            <div className="bg-slate-100/80 dark:bg-slate-800/50 rounded-t-xl">
+                <div className="flex border-b border-slate-200 dark:border-slate-700">
                     <TabButton 
                         tabName="chat" 
                         label="Interactive Chat"
@@ -234,11 +236,11 @@ const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                     />
                 </div>
             </div>
-            <div className="rounded-b-lg overflow-hidden shadow-md">
+            <div className="rounded-b-xl overflow-hidden">
                 {activeTab === 'chat' ? (
                     <ChatInterface profile={profile} />
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-white dark:bg-gray-800">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 border-t-0">
                         <TributeForm />
                         <TributeWall tributes={tributes} />
                     </div>
