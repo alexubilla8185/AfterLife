@@ -1,1 +1,17 @@
-<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L10.5 8.5L5 10L10.5 11.5L12 17L13.5 11.5L19 10L13.5 8.5L12 3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#F8FAFC"/>
+  
+  <!-- Horizontally centers content -->
+  <g transform="translate(600, 0)">
+    <!-- Vertically centers content group -->
+    <g transform="translate(0, 125)">
+        <!-- Icon -->
+        <g transform="translate(-120, 0) scale(10)">
+            <path d="M12 3L10.5 8.5L5 10L10.5 11.5L12 17L13.5 11.5L19 10L13.5 8.5L12 3Z" stroke="#14b8a6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        
+        <!-- Title -->
+        <text x="0" y="350" text-anchor="middle" font-family="Lora, serif" font-size="100" font-weight="700" fill="#0F172A">AfterLife</text>
+    </g>
+  </g>
+</svg>
