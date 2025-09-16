@@ -37,7 +37,7 @@ const Login: React.FC<LoginProps> = ({ onNavigate, onShowOnboarding }) => {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Enter as a Visitor</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Explore as a Visitor</h3>
               <p className="text-gray-500 dark:text-gray-400 text-sm">Explore a memorial and leave a tribute.</p>
             </div>
              <div className="ml-auto text-gray-300 dark:text-gray-500 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors">
@@ -55,7 +55,7 @@ const Login: React.FC<LoginProps> = ({ onNavigate, onShowOnboarding }) => {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Login as a Creator</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Explore as a Creator</h3>
               <p className="text-gray-500 dark:text-gray-400 text-sm">Manage your profile and build your legacy.</p>
             </div>
             <div className="ml-auto text-gray-300 dark:text-gray-500 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors">

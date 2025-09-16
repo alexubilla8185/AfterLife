@@ -57,7 +57,12 @@ const App: React.FC = () => {
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-primary-500 icon-glow">
               <path d="M12 3L10.5 8.5L5 10L10.5 11.5L12 17L13.5 11.5L19 10L13.5 8.5L12 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <h1 className="text-3xl font-bold font-serif text-slate-900 dark:text-slate-100">AfterLife</h1>
+            <div className="flex items-baseline">
+              <h1 className="text-3xl font-bold font-serif text-slate-900 dark:text-slate-100">AfterLife</h1>
+              <span className="ml-3 text-xs font-semibold uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 px-2 py-1 rounded-full">
+                PoC
+              </span>
+            </div>
           </div>
           <div className="flex items-center space-x-1 sm:space-x-2">
             <div className="relative" ref={themeMenuRef}>

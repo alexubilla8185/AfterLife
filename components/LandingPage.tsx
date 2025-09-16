@@ -40,7 +40,7 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
                 onClick={onEnter} 
                 className="mt-12 px-8 py-4 text-lg font-semibold text-white bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transform hover:scale-105 transition-all"
             >
-              Get Started
+              Explore the Demo
             </button>
           </div>
         </section>
