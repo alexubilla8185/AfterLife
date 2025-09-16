@@ -21,12 +21,6 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
             </svg>
             <span className="font-bold text-xl font-serif text-slate-900 dark:text-slate-100">AfterLife</span>
           </div>
-          <button 
-            onClick={onEnter} 
-            className="px-5 py-2 text-sm font-semibold text-primary-600 dark:text-primary-300 bg-white/60 dark:bg-slate-800/60 backdrop-blur-md rounded-full shadow-md hover:bg-white dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all"
-          >
-              Enter App
-          </button>
         </div>
       </header>
       
