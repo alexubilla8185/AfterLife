@@ -2,30 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AfterLife - A Digital Legacy</title>
     
-    <!-- SEO & Social Sharing Meta Tags -->
-    <meta name="description" content="AfterLife is an interactive memorial platform allowing users to create a personalized digital legacy for loved ones to interact with." />
-    
+    <title>AfterLife | Create a Lasting Digital Legacy</title>
+    <meta name="description" content="Create a living memorial, an interactive space where memories, stories, and wisdom can be shared and cherished for generations to come." />
+    <meta name="theme-color" content="#111827">
+
+    <!-- Icons & Manifest -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://afterlife-alpha.netlify.app/" />
-    <meta property="og:title" content="AfterLife - A Digital Legacy" />
-    <meta property="og:description" content="Create an interactive memorial to share memories and stories, allowing loved ones to connect with your legacy." />
+    <meta property="og:title" content="AfterLife | Create a Lasting Digital Legacy" />
+    <meta property="og:description" content="A space to build a digital legacy. Connect with the memory of loved ones through interactive stories and shared tributes." />
     <meta property="og:image" content="https://picsum.photos/seed/afterlife-social/1200/630" />
+    <meta property="og:site_name" content="AfterLife" />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://afterlife-alpha.netlify.app/" />
-    <meta property="twitter:title" content="AfterLife - A Digital Legacy" />
-    <meta property="twitter:description" content="Create an interactive memorial to share memories and stories, allowing loved ones to connect with your legacy." />
-    <meta property="twitter:image" content="https://picsum.photos/seed/afterlife-social/1200/630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://afterlife-alpha.netlify.app/" />
+    <meta name="twitter:title" content="AfterLife | Create a Lasting Digital Legacy" />
+    <meta name="twitter:description" content="A space to build a digital legacy. Connect with the memory of loved ones through interactive stories and shared tributes." />
+    <meta name="twitter:image" content="https://picsum.photos/seed/afterlife-social/1200/630" />
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root {
@@ -63,6 +71,15 @@
       .icon-glow {
         filter: drop-shadow(0 0 8px hsl(var(--color-primary-400) / 0.6));
         transition: filter 0.3s ease;
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
       }
     </style>
     <script>
@@ -104,7 +121,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-100 text-gray-800 dark:bg-slate-900 dark:text-gray-200 transition-colors duration-300">
+  <body class="bg-white dark:bg-slate-950 transition-colors duration-300">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

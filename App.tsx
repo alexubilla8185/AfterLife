@@ -5,18 +5,23 @@ import Login from './components/Login';
 import Onboarding from './components/Onboarding';
 import ThemeMenu from './components/ThemeMenu';
 import { useMemorialProfile } from './hooks/useMemorialProfile';
+import LandingPage from './components/LandingPage';
 
-type View = 'login' | 'creator' | 'visitor';
+type View = 'landing' | 'login' | 'creator' | 'visitor';
 type OnboardingContext = 'creator' | 'visitor' | 'login';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<View>('login');
+  const [view, setView] = useState<View>('landing');
   const [onboardingContext, setOnboardingContext] = useState<OnboardingContext | null>(null);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   
   const { profile } = useMemorialProfile();
   
   const themeMenuRef = useRef<HTMLDivElement>(null);
+
+  const handleEnterApp = () => {
+    setView('login');
+  };
 
   const handleNavigate = (newView: 'creator' | 'visitor') => {
     setView(newView);
@@ -49,8 +54,8 @@ const App: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-primary-500 icon-glow" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-primary-500 icon-glow">
+              <path d="M12 3L10.5 8.5L5 10L10.5 11.5L12 17L13.5 11.5L19 10L13.5 8.5L12 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <h1 className="text-3xl font-bold font-serif text-slate-900 dark:text-slate-100">AfterLife</h1>
           </div>
@@ -92,6 +97,10 @@ const App: React.FC = () => {
     </header>
   );
   
+  if (view === 'landing') {
+    return <LandingPage onEnter={handleEnterApp} />;
+  }
+
   return (
     <>
       {onboardingContext && <Onboarding onComplete={handleCloseOnboarding} context={onboardingContext} />}
