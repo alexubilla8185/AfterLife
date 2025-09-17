@@ -10,6 +10,8 @@ import ProfilePage from './components/ProfilePage';
 import { useUser } from './hooks/useUser';
 import { supabase } from './services/supabaseClient';
 import AdminPage from './components/AdminPage';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import DataDeletion from './components/DataDeletion';
 
 type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin';
 type TourContext = 'creator' | 'visitor' | 'login';
@@ -34,6 +36,15 @@ const App: React.FC = () => {
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
     
   const themeMenuRef = useRef<HTMLDivElement>(null);
+
+  // Simple router for static pages like Privacy Policy
+  const path = window.location.pathname;
+  if (path === '/privacy') {
+    return <PrivacyPolicy />;
+  }
+  if (path === '/data-deletion') {
+    return <DataDeletion />;
+  }
 
   useEffect(() => {
     const seedInitialData = async (userId: string) => {
