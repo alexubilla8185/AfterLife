@@ -37,14 +37,14 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ### Environment Variable Setup
 
-This project's build environment (e.g., Netlify) injects environment variables into the client-side code via the `process.env` object. Your deployment environment must be configured with the following variables:
+This project's build environment (e.g., Netlify) injects environment variables into the client-side code via the `process.env` object. Your deployment environment must be configured with the following standard variables:
 
 1.  **Google Gemini API Key:**
-    -   `VITE_API_KEY`: Your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+    -   `API_KEY`: Your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
 2.  **Supabase Credentials:**
-    -   `VITE_SUPABASE_DATABASE_URL`: Your Supabase project URL.
-    -   `VITE_SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
+    -   `SUPABASE_DATABASE_URL`: Your Supabase project URL. (Provided by Netlify integration)
+    -   `SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key. (Provided by Netlify integration)
 
 ### Supabase Setup
 
