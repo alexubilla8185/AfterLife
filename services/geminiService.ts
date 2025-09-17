@@ -2,8 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 
 let ai: GoogleGenAI | null = null;
 
-// FIX: Reverted to process.env to match the user's build environment and resolve runtime errors.
-const apiKey = process.env.VITE_API_KEY;
+const apiKey = process.env.API_KEY;
 
 if (apiKey) {
     try {
@@ -12,7 +11,7 @@ if (apiKey) {
         console.error("Failed to initialize GoogleGenAI:", error);
     }
 } else {
-    console.warn("VITE_API_KEY environment variable not set. AI features will be disabled and will use fallback responses.");
+    console.warn("API_KEY environment variable not set. AI features will be disabled and will use fallback responses.");
 }
 
 

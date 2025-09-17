@@ -40,16 +40,16 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ### Environment Variable Setup
 
-To run this project, you need to set up environment variables for both Supabase and the Google Gemini API. Your deployment environment (e.g., Netlify) must be configured with the following variables:
+This project requires environment variables to connect to its backend services. They are accessed in the code via `process.env`.
+
+Your deployment environment (e.g., Netlify) must be configured with the following variables:
 
 1.  **Google Gemini API Key:**
-    -   `VITE_API_KEY`: Your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+    -   `API_KEY`: Your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
 2.  **Supabase Credentials:**
-    -   `VITE_SUPABASE_DATABASE_URL`: Your Supabase project URL. (Note: The Netlify integration may create this variable for you).
-    -   `VITE_SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
-
-These variables are accessed via `process.env` in the application code. The build environment (like Netlify/Vite) is responsible for replacing these with the actual values during the build process, making them available securely in the client-side application.
+    -   `SUPABASE_DATABASE_URL`: Your Supabase project URL.
+    -   `SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
 
 ### Supabase Setup
 

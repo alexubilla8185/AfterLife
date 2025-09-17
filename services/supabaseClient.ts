@@ -1,8 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// FIX: Reverted to process.env to match the user's build environment and resolve runtime errors.
-const supabaseUrl = process.env.VITE_SUPABASE_DATABASE_URL;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
 const createMockSupabaseClient = (): SupabaseClient => {
     console.warn("Supabase environment variables not set. Authentication features will be disabled.");
