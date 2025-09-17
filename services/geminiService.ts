@@ -2,8 +2,9 @@ import { GoogleGenAI } from "@google/genai";
 
 let ai: GoogleGenAI | null = null;
 
-// FIX: Per @google/genai guidelines, the API key must be obtained exclusively from process.env.API_KEY. This also resolves the TypeScript error on import.meta.env.
-const apiKey = process.env.API_KEY;
+// Use process.env, as it's supported by the build environment for client-side variable injection.
+// Ensure VITE_API_KEY is set in your Netlify/deployment settings.
+const apiKey = process.env.VITE_API_KEY;
 
 if (apiKey) {
     try {
@@ -12,8 +13,7 @@ if (apiKey) {
         console.error("Failed to initialize GoogleGenAI:", error);
     }
 } else {
-    // FIX: Updated warning message to reflect the change to process.env.API_KEY.
-    console.warn("API_KEY environment variable not set. AI features will be disabled and will use fallback responses.");
+    console.warn("VITE_API_KEY environment variable not set. AI features will be disabled and will use fallback responses.");
 }
 
 

@@ -23,37 +23,27 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 - **Frontend:** React, TypeScript
 - **Styling:** Tailwind CSS
+- **Database & Auth:** Supabase
 - **AI:** Google Gemini API (`@google/genai`)
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js and npm (or a compatible package manager)
 - A modern web browser
+- A Google account for authentication
 
-### Installation & Setup
+### Environment Variable Setup
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd afterlife-project
-   ```
+To run this project, you need to set up environment variables for both Supabase and the Google Gemini API. Your deployment environment (e.g., Netlify) must be configured with the following variables, prefixed with `VITE_`:
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+1.  **Google Gemini API Key:**
+    -   `VITE_API_KEY`: Your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
-3. **Set up your API Key:**
-   This project uses the Google Gemini API for its AI-powered chat features. You will need to obtain an API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+2.  **Supabase Credentials:**
+    -   `VITE_SUPABASE_DATABASE_URL`: Your Supabase project URL. (Note: The Netlify integration may name this variable `..._DATABASE_URL`, but it should contain your main project URL, e.g., `https://<id>.supabase.co`).
+    -   `VITE_SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
 
-   The application is configured to read the `process.env.API_KEY` environment variable. Ensure this is set in your deployment environment.
-
-4. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-   Open your browser and navigate to the local URL provided.
+These variables are accessed via `process.env` in the application code. The build environment (like Netlify/Vite) is responsible for replacing these with the actual values during the build process, making them available securely in the client-side application.
 
 ## How It Works
 
