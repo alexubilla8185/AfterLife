@@ -4,6 +4,10 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ## Core Features
 
+### Authentication
+- **Multiple Sign-In Options:** Secure sign-up and sign-in with Google, Facebook, or traditional email and password.
+- **Seamless Onboarding:** Social logins automatically populate the user's profile with their name and profile picture.
+
 ### For Creators
 - **Build a Profile:** Craft a personal memorial with a name, lifespan, biography, and profile image.
 - **Add Social Links:** Link to personal blogs, photo galleries, or other websites to share more of your story.
@@ -31,7 +35,7 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ### Prerequisites
 - A modern web browser
-- A Google account for authentication
+- An account with Google, Facebook, or a valid email address.
 
 ### Environment Variable Setup
 
@@ -48,9 +52,12 @@ These variables are accessed via `process.env` in the application code. The buil
 
 ### Supabase Setup
 
-In addition to authentication and database, this project uses Supabase Storage to handle audio file uploads.
+1.  **Enable Authentication Providers:**
+    - In your Supabase project dashboard, navigate to **Authentication** > **Providers**.
+    - Enable the providers you wish to use: `Email`, `Google`, and `Facebook`.
+    - For social providers (Google, Facebook), you will need to provide the **Client ID** and **Client Secret** from their respective developer consoles.
 
-1.  **Create a Storage Bucket:**
+2.  **Create a Storage Bucket:**
     -   In your Supabase project dashboard, go to the **Storage** section.
     -   Click **New bucket**.
     -   Enter the bucket name as `memorials`.
@@ -61,7 +68,7 @@ This is required for the audio message feature to work correctly.
 
 ## How It Works
 
-AfterLife provides two distinct experiences: the **Creator Dashboard** and the **Visitor View**.
+AfterLife provides two distinct experiences: the **Creator Dashboard** and the **Visitor View**. Onboarding is seamless; when users sign up with a social provider like Google or Facebook, their profile name and picture are automatically populated, allowing them to get started right away.
 
 - **Creators** act as architects of their digital memorial. They populate their profile with personal details and, most importantly, create "conditional responses." These are custom messages triggered by keywords, allowing them to leave behind personalized wisdom, stories, and comfort.
 
