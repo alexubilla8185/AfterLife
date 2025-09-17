@@ -37,6 +37,7 @@ interface MemorialProfileContextType {
   memorial: MemorialData | null;
   loading: boolean;
   refetch: () => void;
+  updateProfile: (updates: Partial<CreatorProfile>) => Promise<void>;
   addConditionalResponse: (response: Omit<ConditionalResponse, 'id' | 'memorial_id'>) => Promise<void>;
   removeConditionalResponse: (id: string) => Promise<void>;
   addTribute: (tribute: Omit<Tribute, 'id' | 'memorial_id' | 'created_at'>) => Promise<void>;
@@ -121,6 +122,19 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
     }
   }, [memorialId, fetchMemorialData]);
   
+  const updateProfile = async (updates: Partial<CreatorProfile>) => {
+    if (!memorial) return;
+    const { error } = await supabase
+      .from('memorials')
+      .update(updates)
+      .eq('id', memorial.profile.id);
+    
+    if (error) {
+      console.error("Error updating profile:", error);
+    } else {
+      fetchMemorialData(memorial.profile.id);
+    }
+  };
 
   const addConditionalResponse = async (newResponse: Omit<ConditionalResponse, 'id' | 'memorial_id'>) => {
     if (!memorial) return;
@@ -169,7 +183,7 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   };
 
   return (
-    <MemorialProfileContext.Provider value={{ memorial, loading, refetch: () => memorialId && fetchMemorialData(memorialId), addConditionalResponse, removeConditionalResponse, addTribute, findResponseForMessage, addSocialLink, removeSocialLink }}>
+    <MemorialProfileContext.Provider value={{ memorial, loading, refetch: () => memorialId && fetchMemorialData(memorialId), updateProfile, addConditionalResponse, removeConditionalResponse, addTribute, findResponseForMessage, addSocialLink, removeSocialLink }}>
       {children}
     </MemorialProfileContext.Provider>
   );

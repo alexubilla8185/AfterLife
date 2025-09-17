@@ -1,55 +1,52 @@
 import React from 'react';
 
 const FeatureCard: React.FC<{ icon: JSX.Element; title: string; children: React.ReactNode; }> = ({ icon, title, children }) => (
-    <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg p-6 rounded-xl border border-white/30 dark:border-slate-700/50 shadow-lg">
-        <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary-500 text-white mb-4 shadow-md">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-5">
             {icon}
         </div>
-        <h3 className="text-xl font-bold font-serif mb-2 text-slate-900 dark:text-slate-100">{title}</h3>
-        <p className="text-slate-600 dark:text-slate-300">{children}</p>
+        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-300">{children}</p>
     </div>
 );
 
 const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
   return (
-    <div className="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200">
+    <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <header className="absolute top-0 left-0 right-0 z-20 p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-primary-500">
-                <path d="M12 3L10.5 8.5L5 10L10.5 11.5L12 17L13.5 11.5L19 10L13.5 8.5L12 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <div className="flex items-center space-x-3">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-7 w-7 text-primary-600">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
             </svg>
-            <span className="font-bold text-xl font-serif text-slate-900 dark:text-slate-100">AfterLife</span>
+            <span className="font-bold text-xl text-gray-900 dark:text-gray-100">AfterLife</span>
           </div>
         </div>
       </header>
       
       <main>
-        <section className="relative h-screen flex items-center justify-center text-center overflow-hidden p-4">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-primary-100 to-slate-200 dark:from-slate-900 dark:via-primary-900/30 dark:to-black animated-gradient"></div>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.04%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50 dark:opacity-100"></div>
-
+        <section className="relative flex items-center justify-center text-center overflow-hidden p-4 min-h-screen bg-gray-50 dark:bg-gray-900">
           <div className="relative z-10 animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-extrabold font-serif text-slate-900 dark:text-slate-100 tracking-tight">
+            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
               Your Story Doesn't End Here.
             </h1>
-            <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-slate-600 dark:text-slate-300">
+            <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300">
               Create a living memorial—an interactive space where your memories, stories, and wisdom can be shared and cherished for generations to come.
             </p>
             <button 
                 onClick={onEnter} 
-                className="mt-12 px-8 py-4 text-lg font-semibold text-white bg-primary-600 rounded-full shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transform hover:scale-105 transition-all"
+                className="mt-12 px-8 py-3 text-lg font-semibold text-white bg-primary-600 rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transform hover:scale-105 transition-all"
             >
-              Explore the Demo
+              Explore the Alpha Demo
             </button>
           </div>
         </section>
 
-        <section id="features" className="py-20 sm:py-32 bg-slate-50 dark:bg-slate-900">
+        <section id="features" className="py-20 sm:py-32 bg-white dark:bg-gray-950">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
-                    <h2 className="text-4xl font-bold font-serif text-slate-900 dark:text-slate-100">A New Form of Remembrance</h2>
-                    <p className="mt-4 max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-400">AfterLife offers two unique ways to connect with a legacy, whether you're building your own or visiting another's.</p>
+                    <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">A New Form of Remembrance</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400">AfterLife offers two unique ways to connect with a legacy, whether you're building your own or visiting another's.</p>
                 </div>
                 <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <FeatureCard
@@ -75,8 +72,8 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
         </section>
       </main>
 
-      <footer className="bg-slate-100 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-slate-500">
+      <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-gray-500">
           <p>&copy; {new Date().getFullYear()} AfterLife. A place for stories that last forever.</p>
         </div>
       </footer>

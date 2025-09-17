@@ -33,6 +33,7 @@ export interface CreatorProfile {
   bio: string;
   life_span: string;
   profile_image_url: string;
+  audio_message_url?: string;
 }
 
 export interface MemorialData {

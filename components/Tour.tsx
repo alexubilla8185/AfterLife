@@ -102,11 +102,11 @@ const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 z-[1000] animate-fade-in">
-      <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" onClick={handleFinish} />
+      <div className="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" onClick={handleFinish} />
       
       {elementRect && (
         <div
-          className="absolute rounded-lg shadow-2xl transition-all duration-300 pointer-events-none ring-4 ring-primary-500 ring-offset-4 ring-offset-transparent bg-slate-900/50"
+          className="absolute rounded-lg shadow-2xl transition-all duration-300 pointer-events-none ring-4 ring-primary-500 ring-offset-4 ring-offset-transparent bg-gray-900/50"
           style={{
             top: elementRect.top - 8,
             left: elementRect.left - 8,
@@ -118,15 +118,15 @@ const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
 
       <div
         ref={tooltipRef}
-        className="absolute bg-white dark:bg-slate-800 rounded-lg shadow-xl p-5 w-80 max-w-[calc(100vw-2rem)] transition-all duration-300 border border-slate-200 dark:border-slate-700"
+        className="absolute bg-white dark:bg-gray-800 rounded-lg shadow-xl p-5 w-80 max-w-[calc(100vw-2rem)] transition-all duration-300 border border-gray-200 dark:border-gray-700"
         style={getTooltipPosition()}
       >
-        <h3 className="text-lg font-bold font-serif text-slate-900 dark:text-slate-100 mb-2">{step.title}</h3>
-        <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">{step.content}</p>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{step.title}</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{step.content}</p>
         <div className="flex justify-between items-center">
-            <span className="text-xs font-medium text-slate-400 dark:text-slate-500">{currentStep + 1} / {steps.length}</span>
+            <span className="text-xs font-medium text-gray-400 dark:text-gray-500">{currentStep + 1} / {steps.length}</span>
             <div className="space-x-2">
-                {currentStep > 0 && <button onClick={handlePrev} className="px-3 py-1 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md">Prev</button>}
+                {currentStep > 0 && <button onClick={handlePrev} className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">Prev</button>}
                 {currentStep < steps.length - 1 ? (
                     <button onClick={handleNext} className="px-4 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md">Next</button>
                 ) : (

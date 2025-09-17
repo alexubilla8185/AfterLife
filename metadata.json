@@ -1,6 +1,8 @@
 {
   "name": "AfterLife",
   "description": "Create a living memorial, an interactive space where memories, stories, and wisdom can be shared and cherished for generations to come.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": [
+    "microphone"
+  ],
   "prompt": ""
 }

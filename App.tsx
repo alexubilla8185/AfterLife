@@ -125,107 +125,81 @@ const App: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const Header = () => (
-    <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center space-x-4">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-9 w-9 text-primary-500 icon-glow">
-              <path d="M12 3L10.5 8.5L5 10L10.5 11.5L12 17L13.5 11.5L19 10L13.5 8.5L12 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <div className="flex items-baseline">
-              <h1 className="text-3xl font-bold font-serif text-slate-900 dark:text-slate-100">AfterLife</h1>
-              <span className="ml-3 text-xs font-semibold uppercase tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 px-2 py-1 rounded-full">
-                PoC
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center space-x-1 sm:space-x-2">
-            <div className="relative" ref={themeMenuRef}>
-              <button
-                onClick={() => setIsThemeMenuOpen(prev => !prev)}
-                className="flex items-center justify-center h-10 w-10 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-                aria-label="Open theme menu"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-              {isThemeMenuOpen && <ThemeMenu onClose={() => setIsThemeMenuOpen(false)} />}
-            </div>
-            
-            <button
-              onClick={() => setView('profile')}
-              className="flex items-center space-x-2 px-3 py-2 border border-gray-200 dark:border-gray-700 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-              aria-label="My Profile"
-            >
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-               </svg>
-              <span className="hidden sm:inline">My Profile</span>
-            </button>
-
-            {view !== 'profile' && (
-              <button
-                onClick={() => handleShowTour(view as TourContext)}
-                className="hidden md:flex items-center space-x-2 px-3 py-2 border border-gray-200 dark:border-gray-700 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-                aria-label="How it works"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="hidden sm:inline">How It Works</span>
-              </button>
-            )}
-
-            <button
-              onClick={handleSwitchRole}
-              className="flex items-center space-x-2 px-3 py-2 border border-transparent text-sm font-medium rounded-md text-primary-600 dark:text-primary-300 bg-primary-100 dark:bg-primary-900/40 hover:bg-primary-200 dark:hover:bg-primary-900/60 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-              </svg>
-              <span className="hidden sm:inline">{view === 'profile' ? 'Back to Visitor' : 'Switch Role'}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-  
-  if (view === 'landing') {
-    return <LandingPage onEnter={handleEnterApp} />;
-  }
-
-  const renderContent = () => {
-    switch(view) {
-        case 'creator':
-            return <CreatorDashboard showTour={tourContext === 'creator'} onTourFinish={handleCloseTour} />;
-        case 'visitor':
-            return <VisitorView showTour={tourContext === 'visitor'} onTourFinish={handleCloseTour} />;
-        case 'profile':
-            return <ProfilePage onNavigate={(view, id) => handleNavigate(view, id)} />;
-        default:
-             return null;
+  const renderView = () => {
+    switch (view) {
+      case 'landing':
+        return <LandingPage onEnter={handleEnterApp} />;
+      case 'login':
+        return <Login onShowTour={() => handleShowTour('login')} />;
+      case 'profile':
+        return <ProfilePage onNavigate={handleNavigate} />;
+      case 'creator':
+        return <CreatorDashboard showTour={tourContext === 'creator'} onTourFinish={handleCloseTour} />;
+      case 'visitor':
+        return <VisitorView showTour={tourContext === 'visitor'} onTourFinish={handleCloseTour} />;
+      default:
+        return <LandingPage onEnter={handleEnterApp} />;
     }
   };
 
+  const showHeader = view !== 'landing' && view !== 'login';
+  const showProfileProvider = view === 'creator' || view === 'visitor';
 
   return (
-    <MemorialProfileProvider memorialId={activeMemorialId}>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {tourContext === 'login' && <LoginTour onClose={handleCloseTour} />}
+      
+      {showHeader && (
+        <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center space-x-4">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8 text-primary-600">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                </svg>
+                <div className="flex items-baseline space-x-2">
+                  <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">AfterLife</h1>
+                  <span className="text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 px-2 py-0.5 rounded-full">Alpha</span>
+                </div>
+              </div>
 
-      {!user ? (
-        <Login onShowTour={() => handleShowTour('login')} />
-      ) : (
-        <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
-          <Header />
-          <main className="py-8 sm:px-6 lg:px-8">
-            {renderContent()}
-          </main>
-        </div>
+              <div className="flex items-center space-x-4">
+                 {view === 'creator' || view === 'visitor' ? (
+                  <button onClick={() => setView('profile')} className="hidden sm:inline-flex items-center space-x-2 px-3 py-1.5 border border-gray-300 dark:border-gray-700 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      <span>My Profile</span>
+                  </button>
+                 ) : null}
+                 {view === 'creator' || view === 'visitor' ? (
+                  <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 transition-colors">
+                    Switch to {view === 'creator' ? 'Visitor' : 'Creator'} View
+                  </button>
+                 ): null}
+                <div className="relative" ref={themeMenuRef}>
+                  <button onClick={() => setIsThemeMenuOpen(o => !o)} aria-label="Open theme menu" className="h-10 w-10 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a4 4 0 014-4h10a4 4 0 014 4v12a4 4 0 01-4 4H7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18" />
+                    </svg>
+                  </button>
+                  {isThemeMenuOpen && <ThemeMenu onClose={() => setIsThemeMenuOpen(false)} />}
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
       )}
-    </MemorialProfileProvider>
+
+      <main className={showHeader ? "p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto" : ""}>
+        {showProfileProvider ? (
+            <MemorialProfileProvider memorialId={activeMemorialId}>
+                {renderView()}
+            </MemorialProfileProvider>
+        ) : (
+            renderView()
+        )}
+      </main>
+    </div>
   );
 };
 
