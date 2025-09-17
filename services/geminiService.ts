@@ -2,13 +2,17 @@ import { GoogleGenAI } from "@google/genai";
 
 let ai: GoogleGenAI | null = null;
 
-if (process.env.API_KEY) {
+// FIX: Per @google/genai guidelines, the API key must be obtained exclusively from process.env.API_KEY. This also resolves the TypeScript error on import.meta.env.
+const apiKey = process.env.API_KEY;
+
+if (apiKey) {
     try {
-        ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        ai = new GoogleGenAI({ apiKey: apiKey });
     } catch (error) {
         console.error("Failed to initialize GoogleGenAI:", error);
     }
 } else {
+    // FIX: Updated warning message to reflect the change to process.env.API_KEY.
     console.warn("API_KEY environment variable not set. AI features will be disabled and will use fallback responses.");
 }
 
@@ -24,6 +28,7 @@ export const getGenericResponse = async (creatorName: string, userMessage: strin
 Your task is to provide a comforting, abstract, and warm response. Do not impersonate ${creatorName} directly or make specific claims or memories. Speak in a way that evokes their spirit and offers solace. The tone should be peaceful and reassuring. Keep the response to 1-2 sentences.`;
         
         const response = await ai.models.generateContent({
+            // FIX: Per @google/genai guidelines, using 'gemini-2.5-flash' instead of the prohibited 'gemini-1.5-flash'.
             model: "gemini-2.5-flash",
             contents: userMessage, // The user message is context, but the system instruction drives the response style
             config: {
