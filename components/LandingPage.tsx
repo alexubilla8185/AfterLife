@@ -1,4 +1,5 @@
 import React from 'react';
+import { SparklesCore } from './ui/sparkles';
 
 const FeatureCard: React.FC<{ icon: JSX.Element; title: string; children: React.ReactNode; }> = ({ icon, title, children }) => (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -13,10 +14,10 @@ const FeatureCard: React.FC<{ icon: JSX.Element; title: string; children: React.
 const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-      <header className="absolute top-0 left-0 right-0 z-20 p-4">
+      <header className="absolute top-0 left-0 right-0 z-30 p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-3">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-7 w-7 text-primary-600">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-7 w-7 text-primary-500">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
             </svg>
             <span className="font-bold text-xl text-gray-900 dark:text-gray-100">AfterLife</span>
@@ -25,17 +26,29 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
       </header>
       
       <main>
-        <section className="relative flex items-center justify-center text-center overflow-hidden p-4 min-h-screen bg-gray-50 dark:bg-gray-900">
-          <div className="relative z-10 animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
+        <section className="relative flex flex-col items-center justify-center text-center overflow-hidden p-4 min-h-screen bg-gray-950">
+           <div className="w-full absolute inset-0 h-screen">
+            <SparklesCore
+              id="tsparticlesfullpage"
+              background="transparent"
+              minSize={0.6}
+              maxSize={1.4}
+              particleDensity={100}
+              className="w-full h-full"
+              particleColor="#FFFFFF"
+              speed={1}
+            />
+          </div>
+          <div className="relative z-20 animate-fade-in">
+            <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight">
               Your Story Doesn't End Here.
             </h1>
-            <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-600 dark:text-gray-300">
+            <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-300">
               Create a living memorial—an interactive space where your memories, stories, and wisdom can be shared and cherished for generations to come.
             </p>
             <button 
                 onClick={onEnter} 
-                className="mt-12 px-8 py-3 text-lg font-semibold text-white bg-primary-600 rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transform hover:scale-105 transition-all"
+                className="mt-12 px-8 py-3 text-lg font-semibold text-white bg-primary-600 rounded-md shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 focus:ring-primary-500 transform hover:scale-105 transition-all"
             >
               Explore the Alpha Demo
             </button>
