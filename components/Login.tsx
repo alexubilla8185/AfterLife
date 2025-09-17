@@ -2,10 +2,10 @@ import React from 'react';
 
 interface LoginProps {
   onNavigate: (view: 'creator' | 'visitor') => void;
-  onShowOnboarding: () => void;
+  onShowTour: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onNavigate, onShowOnboarding }) => {
+const Login: React.FC<LoginProps> = ({ onNavigate, onShowTour }) => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-200 via-primary-100 to-slate-200 dark:from-slate-900 dark:via-primary-900/30 dark:to-black animated-gradient p-4 transition-colors duration-300">
       {/* Centered Login Card */}
@@ -68,7 +68,7 @@ const Login: React.FC<LoginProps> = ({ onNavigate, onShowOnboarding }) => {
 
       {/* Floating "How it works" button */}
       <button
-        onClick={onShowOnboarding}
+        onClick={onShowTour}
         aria-label="How does this work?"
         className="fixed bottom-4 right-4 h-12 w-12 md:h-14 md:w-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg rounded-full shadow-lg flex items-center justify-center text-primary-600 dark:text-primary-400 hover:bg-white dark:hover:bg-slate-700 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-100 focus:ring-primary-500"
       >

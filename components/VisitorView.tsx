@@ -2,6 +2,34 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CreatorProfile, Tribute, ChatMessage, SocialLink } from '../types';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { getGenericResponse } from '../services/geminiService';
+import Tour, { TourStep } from './Tour';
+
+const visitorTourSteps: TourStep[] = [
+    {
+        target: '[data-tour-id="profile-header"]',
+        title: "A Digital Memorial",
+        content: "Welcome to this sacred space. Here you can read the person's story, see their life's work, and feel connected to their memory.",
+        position: 'bottom',
+    },
+    {
+        target: '[data-tour-id="interaction-tabs"]',
+        title: "Two Ways to Interact",
+        content: "You can engage through the 'Interactive Chat' for a personal conversation, or share a public message on the 'Tribute Wall'.",
+        position: 'bottom',
+    },
+    {
+        target: '[data-tour-id="chat-input"]',
+        title: "Converse with Memory",
+        content: "Share a thought or ask a question. If your message contains a keyword the creator chose, you'll receive a special pre-written reply. Otherwise, a gentle, comforting reflection will be offered.",
+        position: 'top',
+    },
+    {
+        target: '[data-tour-id="tribute-wall-tab"]',
+        title: "Share a Tribute",
+        content: "Click here to switch to the Tribute Wall. You can leave a public message of remembrance for the community and read memories shared by others.",
+        position: 'bottom',
+    }
+];
 
 const TributeForm: React.FC = () => {
     const [author, setAuthor] = useState('');
@@ -137,7 +165,7 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                 )}
                 <div ref={chatEndRef} />
             </div>
-            <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+            <div data-tour-id="chat-input" className="p-4 border-t border-slate-200 dark:border-slate-700">
                 <div className="flex items-center space-x-2">
                     <input
                         type="text"
@@ -172,12 +200,32 @@ const getSocialIcon = (platform: string): JSX.Element => {
     return <svg {...commonProps} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>;
 };
 
-const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
+interface VisitorViewProps {
+    profile: CreatorProfile;
+    showTour: boolean;
+    onTourFinish: () => void;
+}
+
+const VisitorView: React.FC<VisitorViewProps> = ({ profile, showTour, onTourFinish }) => {
     const { tributes } = useMemorialProfile();
     const [activeTab, setActiveTab] = useState<'chat' | 'tributes'>('chat');
+    const [isTourOpen, setIsTourOpen] = useState(showTour);
+
+    useEffect(() => {
+        if(showTour) {
+            setIsTourOpen(true);
+        }
+    }, [showTour]);
+
+    const handleTourClose = () => {
+        setIsTourOpen(false);
+        localStorage.setItem('visitorTourSeen', 'true');
+        onTourFinish();
+    };
+
 
     const ProfileHeader = () => (
-      <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-lg mb-8 border border-slate-200 dark:border-slate-700">
+      <div data-tour-id="profile-header" className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-lg mb-8 border border-slate-200 dark:border-slate-700">
         <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-8">
           <img src={profile.profileImageUrl} alt={profile.name} className="w-36 h-36 rounded-full object-cover shadow-lg border-4 border-white dark:border-slate-600" />
           <div>
@@ -205,13 +253,14 @@ const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
       </div>
     );
     
-    const TabButton: React.FC<{ tabName: 'chat' | 'tributes'; label: string; icon: JSX.Element; }> = ({ tabName, label, icon }) => (
+    const TabButton: React.FC<{ tabName: 'chat' | 'tributes'; label: string; icon: JSX.Element; 'data-tour-id'?: string }> = ({ tabName, label, icon, ...props }) => (
         <button
             onClick={() => setActiveTab(tabName)}
             className={`flex-1 flex items-center justify-center space-x-3 py-4 px-4 text-sm font-semibold border-b-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-slate-100 dark:focus:ring-offset-slate-900
             ${activeTab === tabName 
                 ? 'border-primary-500 text-primary-600 dark:text-primary-400' 
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-700 dark:hover:text-slate-300'}`}
+            {...props}
         >
             {icon}
             <span>{label}</span>
@@ -220,16 +269,18 @@ const VisitorView: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
 
     return (
         <div className="max-w-4xl mx-auto">
+            <Tour isOpen={isTourOpen} onClose={handleTourClose} steps={visitorTourSteps} />
             <ProfileHeader />
             
             <div className="bg-slate-100/80 dark:bg-slate-800/50 rounded-t-xl">
-                <div className="flex border-b border-slate-200 dark:border-slate-700">
+                <div data-tour-id="interaction-tabs" className="flex border-b border-slate-200 dark:border-slate-700">
                     <TabButton 
                         tabName="chat" 
                         label="Interactive Chat"
                         icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.08-3.239A8.931 8.931 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z" clipRule="evenodd" /></svg>}
                     />
                      <TabButton 
+                        data-tour-id="tribute-wall-tab"
                         tabName="tributes" 
                         label="Tribute Wall"
                         icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>}

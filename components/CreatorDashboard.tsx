@@ -1,6 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { ResponseType } from '../types';
+import Tour, { TourStep } from './Tour';
+
+const creatorTourSteps: TourStep[] = [
+    {
+        target: '[data-tour-id="profile-card"]',
+        title: "Your Memorial Profile",
+        content: "This is the heart of your legacy. It displays your photo, bio, and lifespan for all visitors to see.",
+        position: 'right',
+    },
+    {
+        target: '[data-tour-id="social-links-manager"]',
+        title: "Share Your World",
+        content: "Add links to your blogs, photo galleries, or social media. This gives visitors a richer, more complete picture of your life and passions.",
+        position: 'right',
+    },
+    {
+        target: '[data-tour-id="response-form"]',
+        title: "Craft Interactive Memories",
+        content: "This is where the magic happens. Create custom replies that are triggered by keywords in a visitor's message, allowing for a feeling of continued conversation.",
+        position: 'right',
+    },
+    {
+        target: '[data-tour-id="response-list"]',
+        title: "Manage Your Responses",
+        content: "Here you can review all the conditional responses you've created. You can easily see the trigger keyword and the reply, and remove them if needed.",
+        position: 'bottom',
+    }
+];
 
 const ConditionalResponseForm: React.FC = () => {
   const [keyword, setKeyword] = useState('');
@@ -20,7 +48,7 @@ const ConditionalResponseForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 space-y-4">
+    <div data-tour-id="response-form" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 space-y-4">
       <h3 className="text-xl font-semibold font-serif text-slate-800 dark:text-slate-200">Add New Conditional Response</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -71,7 +99,7 @@ const SocialLinksManager: React.FC = () => {
     }
 
     return (
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 space-y-6">
+        <div data-tour-id="social-links-manager" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 space-y-6">
             <h3 className="text-xl font-semibold font-serif text-slate-800 dark:text-slate-200">Social & Web Links</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -117,9 +145,27 @@ const SocialLinksManager: React.FC = () => {
     );
 }
 
-const CreatorDashboard: React.FC = () => {
+interface CreatorDashboardProps {
+    showTour: boolean;
+    onTourFinish: () => void;
+}
+
+const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFinish }) => {
   const { profile, removeConditionalResponse } = useMemorialProfile();
   const [responseToDelete, setResponseToDelete] = useState<string | null>(null);
+  const [isTourOpen, setIsTourOpen] = useState(showTour);
+
+  useEffect(() => {
+    if(showTour) {
+        setIsTourOpen(true);
+    }
+  }, [showTour]);
+
+  const handleTourClose = () => {
+    setIsTourOpen(false);
+    localStorage.setItem('creatorTourSeen', 'true');
+    onTourFinish();
+  };
 
   const handleConfirmDelete = () => {
     if (responseToDelete) {
@@ -134,9 +180,10 @@ const CreatorDashboard: React.FC = () => {
 
   return (
     <>
+      <Tour isOpen={isTourOpen} onClose={handleTourClose} steps={creatorTourSteps} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-8">
-          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+          <div data-tour-id="profile-card" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
               <h2 className="text-2xl font-bold font-serif text-slate-900 dark:text-slate-100 mb-6">Creator Profile</h2>
               <img src={profile.profileImageUrl} alt={profile.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
               <div className="text-center">
@@ -148,7 +195,7 @@ const CreatorDashboard: React.FC = () => {
           <SocialLinksManager />
           <ConditionalResponseForm />
         </div>
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+        <div data-tour-id="response-list" className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
           <h2 className="text-2xl font-bold font-serif text-slate-900 dark:text-slate-100 mb-6">Managed Responses</h2>
           <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
               {profile.responses.length > 0 ? profile.responses.map(res => (

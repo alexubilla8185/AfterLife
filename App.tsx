@@ -2,17 +2,17 @@ import React, { useState, useRef, useEffect } from 'react';
 import CreatorDashboard from './components/CreatorDashboard';
 import VisitorView from './components/VisitorView';
 import Login from './components/Login';
-import Onboarding from './components/Onboarding';
+import LoginTour from './components/LoginTour';
 import ThemeMenu from './components/ThemeMenu';
 import { useMemorialProfile } from './hooks/useMemorialProfile';
 import LandingPage from './components/LandingPage';
 
 type View = 'landing' | 'login' | 'creator' | 'visitor';
-type OnboardingContext = 'creator' | 'visitor' | 'login';
+type TourContext = 'creator' | 'visitor' | 'login';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>('landing');
-  const [onboardingContext, setOnboardingContext] = useState<OnboardingContext | null>(null);
+  const [tourContext, setTourContext] = useState<TourContext | null>(null);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   
   const { profile } = useMemorialProfile();
@@ -25,18 +25,30 @@ const App: React.FC = () => {
 
   const handleNavigate = (newView: 'creator' | 'visitor') => {
     setView(newView);
+    
+    const tourSeenKey = newView === 'creator' ? 'creatorTourSeen' : 'visitorTourSeen';
+    if (!localStorage.getItem(tourSeenKey)) {
+        setTimeout(() => setTourContext(newView), 500);
+    }
   };
   
   const handleSwitchRole = () => {
-    setView(prevView => prevView === 'creator' ? 'visitor' : 'creator');
+    setView(prevView => {
+        const newView = prevView === 'creator' ? 'visitor' : 'creator';
+        const tourSeenKey = newView === 'creator' ? 'creatorTourSeen' : 'visitorTourSeen';
+        if (!localStorage.getItem(tourSeenKey)) {
+            setTimeout(() => setTourContext(newView), 500);
+        }
+        return newView;
+    });
   };
 
-  const handleShowOnboarding = (context: OnboardingContext) => {
-    setOnboardingContext(context);
+  const handleShowTour = (context: TourContext) => {
+    setTourContext(context);
   };
   
-  const handleCloseOnboarding = () => {
-    setOnboardingContext(null);
+  const handleCloseTour = () => {
+    setTourContext(null);
   };
   
   useEffect(() => {
@@ -78,7 +90,7 @@ const App: React.FC = () => {
               {isThemeMenuOpen && <ThemeMenu onClose={() => setIsThemeMenuOpen(false)} />}
             </div>
             <button
-              onClick={() => handleShowOnboarding(view as OnboardingContext)}
+              onClick={() => handleShowTour(view as TourContext)}
               className="flex items-center space-x-2 px-3 py-2 border border-gray-200 dark:border-gray-700 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
               aria-label="How it works"
             >
@@ -108,16 +120,16 @@ const App: React.FC = () => {
 
   return (
     <>
-      {onboardingContext && <Onboarding onComplete={handleCloseOnboarding} context={onboardingContext} />}
+      {tourContext === 'login' && <LoginTour onClose={handleCloseTour} />}
 
       {view === 'login' ? (
-        <Login onNavigate={handleNavigate} onShowOnboarding={() => handleShowOnboarding('login')} />
+        <Login onNavigate={handleNavigate} onShowTour={() => handleShowTour('login')} />
       ) : (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-900">
           <Header />
           <main className="py-8 sm:px-6 lg:px-8">
-            {view === 'creator' && <div className="max-w-7xl mx-auto"><CreatorDashboard /></div>}
-            {view === 'visitor' && <VisitorView profile={profile} />}
+            {view === 'creator' && <CreatorDashboard showTour={tourContext === 'creator'} onTourFinish={handleCloseTour} />}
+            {view === 'visitor' && <VisitorView profile={profile} showTour={tourContext === 'visitor'} onTourFinish={handleCloseTour} />}
           </main>
         </div>
       )}
