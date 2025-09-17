@@ -5,7 +5,7 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 ## Core Features
 
 ### Authentication
-- **Multiple Sign-In Options:** Secure sign-up and sign-in with Google, Facebook, or traditional email and password.
+- **Multiple Sign-In Options:** Secure sign-up and sign-in with Google or traditional email and password (Facebook login coming soon).
 - **Seamless Onboarding:** Social logins automatically populate the user's profile with their name and profile picture.
 
 ### For Creators
@@ -54,8 +54,8 @@ These variables are accessed via `process.env` in the application code. The buil
 
 1.  **Enable Authentication Providers:**
     - In your Supabase project dashboard, navigate to **Authentication** > **Providers**.
-    - Enable the providers you wish to use: `Email`, `Google`, and `Facebook`.
-    - For social providers (Google, Facebook), you will need to provide the **Client ID** and **Client Secret** from their respective developer consoles.
+    - Enable the providers you wish to use: `Email` and `Google`.
+    - For social providers (Google, Facebook), you will need to provide the **Client ID** and **Client Secret** from their respective developer consoles. (Note: Facebook setup can be skipped for now as the feature is temporarily disabled).
 
 2.  **Create a Storage Bucket:**
     -   In your Supabase project dashboard, go to the **Storage** section.

@@ -37,15 +37,19 @@ const Login: React.FC<LoginProps> = ({ onShowTour }) => {
     setLoading(false);
   }
 
-  const SocialButton: React.FC<{ provider: 'google' | 'facebook', onClick: () => void }> = ({ provider, onClick }) => {
+  const SocialButton: React.FC<{ provider: 'google' | 'facebook', onClick: () => void, disabled?: boolean }> = ({ provider, onClick, disabled = false }) => {
     const icons = {
-      google: <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.565-3.343-11.114-7.923l-6.571,4.819C9.656,39.663,16.318,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.902,35.61,44,30.451,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>,
+      google: <svg className="w-5 h-5" xmlns="http://www.w.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.565-3.343-11.114-7.923l-6.571,4.819C9.656,39.663,16.318,44,24,44z"/><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C39.902,35.61,44,30.451,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>,
       facebook: <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><linearGradient id="a" x1="24" x2="24" y1="4.001" y2="44.001" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#0d87ff"/><stop offset="1" stopColor="#0561e1"/></linearGradient><path fill="url(#a)" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"/><path fill="#fff" d="M30,34.5v-10h4l0.5-5h-4.5v-2.5c0-1.5,0.5-2.5,2.5-2.5H35v-5h-4c-5,0-7,3-7,7v3h-4v5h4v10H30z"/></svg>
     };
     const text = provider === 'google' ? 'Continue with Google' : 'Continue with Facebook';
 
     return (
-        <button onClick={onClick} className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors">
+        <button 
+            onClick={onClick}
+            disabled={disabled}
+            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
             <span className="mr-3">{icons[provider]}</span>{text}
         </button>
     );
@@ -66,7 +70,10 @@ const Login: React.FC<LoginProps> = ({ onShowTour }) => {
         
         <div className="mt-8 space-y-4">
             <SocialButton provider="google" onClick={signInWithGoogle} />
-            <SocialButton provider="facebook" onClick={signInWithFacebook} />
+            <div>
+              <SocialButton provider="facebook" onClick={() => {}} disabled={true} />
+              <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-1">Facebook login coming soon.</p>
+            </div>
         </div>
 
         <div className="mt-6 flex items-center">
