@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CreatorProfile, Tribute, ChatMessage, SocialLink } from '../types';
+import { CreatorProfile, Tribute, ChatMessage, SocialLink, MemorialData } from '../types';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { getGenericResponse } from '../services/geminiService';
 import Tour, { TourStep } from './Tour';
@@ -34,12 +34,12 @@ const visitorTourSteps: TourStep[] = [
 const TributeForm: React.FC = () => {
     const [author, setAuthor] = useState('');
     const [message, setMessage] = useState('');
-    const { addTribute, profile } = useMemorialProfile();
+    const { addTribute, memorial } = useMemorialProfile();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!author.trim() || !message.trim()) return;
-        addTribute({ author, message });
+        await addTribute({ author, message });
         setAuthor('');
         setMessage('');
     };
@@ -65,7 +65,7 @@ const TributeForm: React.FC = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={4}
-                    placeholder={`Share a memory of ${profile.name}`}
+                    placeholder={`Share a memory of ${memorial?.profile.name || '...'}`}
                     className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
                 />
             </div>
@@ -88,7 +88,7 @@ const TributeWall: React.FC<{ tributes: Tribute[] }> = ({ tributes }) => (
                 <div key={tribute.id} className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
                     <p className="text-slate-800 dark:text-slate-200 italic">"{tribute.message}"</p>
                     <p className="text-right text-sm font-medium text-primary-700 dark:text-primary-400 mt-2">- {tribute.author}</p>
-                    <p className="text-right text-xs text-slate-400 dark:text-slate-500">{tribute.timestamp.toLocaleDateString()}</p>
+                    <p className="text-right text-xs text-slate-400 dark:text-slate-500">{new Date(tribute.created_at).toLocaleDateString()}</p>
                 </div>
             )) : <p className="text-center text-slate-500 dark:text-slate-400 py-4">No tributes yet. Be the first to share a memory.</p>}
         </div>
@@ -97,7 +97,28 @@ const TributeWall: React.FC<{ tributes: Tribute[] }> = ({ tributes }) => (
 
 
 const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const initialMessages: ChatMessage[] = [
+        {
+            id: 'initial-message-1',
+            sender: 'memorial',
+            text: "Welcome. I'm glad you're here. Feel free to share a thought or a memory.",
+            timestamp: new Date(new Date().getTime() - 1000 * 60 * 5), // 5 minutes ago
+        },
+        {
+            id: 'initial-message-2',
+            sender: 'user',
+            text: "I was just thinking about our trip to the coast. I miss you so much.",
+            timestamp: new Date(new Date().getTime() - 1000 * 60 * 3), // 3 minutes ago
+        },
+        {
+            id: 'initial-message-3',
+            sender: 'memorial',
+            text: "The journey doesn't end here. Think of our time together as a beautiful chapter, not the whole story. The adventure continues, just in a different way.",
+            timestamp: new Date(new Date().getTime() - 1000 * 60 * 2), // 2 minutes ago
+        }
+    ];
+
+    const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const { findResponseForMessage } = useMemorialProfile();
@@ -201,13 +222,12 @@ const getSocialIcon = (platform: string): JSX.Element => {
 };
 
 interface VisitorViewProps {
-    profile: CreatorProfile;
     showTour: boolean;
     onTourFinish: () => void;
 }
 
-const VisitorView: React.FC<VisitorViewProps> = ({ profile, showTour, onTourFinish }) => {
-    const { tributes } = useMemorialProfile();
+const VisitorView: React.FC<VisitorViewProps> = ({ showTour, onTourFinish }) => {
+    const { memorial, loading } = useMemorialProfile();
     const [activeTab, setActiveTab] = useState<'chat' | 'tributes'>('chat');
     const [isTourOpen, setIsTourOpen] = useState(showTour);
 
@@ -223,18 +243,27 @@ const VisitorView: React.FC<VisitorViewProps> = ({ profile, showTour, onTourFini
         onTourFinish();
     };
 
+    if (loading) {
+        return <div className="text-center py-20 text-slate-500 dark:text-slate-400">Loading Memorial...</div>;
+    }
+
+    if (!memorial) {
+        return <div className="text-center py-20 text-slate-500 dark:text-slate-400">Memorial not found.</div>;
+    }
+
+    const { profile, socialLinks, tributes } = memorial;
 
     const ProfileHeader = () => (
       <div data-tour-id="profile-header" className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-xl shadow-lg mb-8 border border-slate-200 dark:border-slate-700">
         <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-8">
-          <img src={profile.profileImageUrl} alt={profile.name} className="w-36 h-36 rounded-full object-cover shadow-lg border-4 border-white dark:border-slate-600" />
+          <img src={profile.profile_image_url} alt={profile.name} className="w-36 h-36 rounded-full object-cover shadow-lg border-4 border-white dark:border-slate-600" />
           <div>
             <h1 className="text-4xl font-extrabold font-serif text-slate-900 dark:text-slate-100">{profile.name}</h1>
-            <p className="text-lg text-slate-500 dark:text-slate-400">{profile.lifeSpan}</p>
+            <p className="text-lg text-slate-500 dark:text-slate-400">{profile.life_span}</p>
             <p className="mt-4 text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl">{profile.bio}</p>
-            {profile.socialLinks && profile.socialLinks.length > 0 && (
+            {socialLinks && socialLinks.length > 0 && (
                 <div className="mt-6 flex flex-wrap justify-center md:justify-start gap-x-6 gap-y-3">
-                    {profile.socialLinks.map((link: SocialLink) => (
+                    {socialLinks.map((link: SocialLink) => (
                         <a 
                             key={link.id} 
                             href={link.url} 

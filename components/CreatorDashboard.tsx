@@ -35,14 +35,10 @@ const ConditionalResponseForm: React.FC = () => {
   const [response, setResponse] = useState('');
   const { addConditionalResponse } = useMemorialProfile();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!keyword.trim() || !response.trim()) return;
-    addConditionalResponse({
-      keyword,
-      response,
-      type: ResponseType.TEXT,
-    });
+    await addConditionalResponse({ keyword, response });
     setKeyword('');
     setResponse('');
   };
@@ -86,17 +82,19 @@ const ConditionalResponseForm: React.FC = () => {
 };
 
 const SocialLinksManager: React.FC = () => {
-    const { profile, addSocialLink, removeSocialLink } = useMemorialProfile();
+    const { memorial, addSocialLink, removeSocialLink } = useMemorialProfile();
     const [platform, setPlatform] = useState('');
     const [url, setUrl] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if(!platform.trim() || !url.trim()) return;
-        addSocialLink({ platform, url });
+        await addSocialLink({ platform, url });
         setPlatform('');
         setUrl('');
     }
+
+    if (!memorial) return null;
 
     return (
         <div data-tour-id="social-links-manager" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 space-y-6">
@@ -127,7 +125,7 @@ const SocialLinksManager: React.FC = () => {
                 </button>
             </form>
             <div className="space-y-3">
-                {profile.socialLinks.map(link => (
+                {memorial.socialLinks.map(link => (
                     <div key={link.id} className="flex items-center justify-between bg-slate-50 dark:bg-slate-700/50 p-3 rounded-md border border-slate-200 dark:border-slate-600">
                         <div>
                             <p className="font-semibold text-slate-800 dark:text-slate-200">{link.platform}</p>
@@ -151,7 +149,7 @@ interface CreatorDashboardProps {
 }
 
 const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFinish }) => {
-  const { profile, removeConditionalResponse } = useMemorialProfile();
+  const { memorial, loading, removeConditionalResponse } = useMemorialProfile();
   const [responseToDelete, setResponseToDelete] = useState<string | null>(null);
   const [isTourOpen, setIsTourOpen] = useState(showTour);
 
@@ -167,9 +165,9 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
     onTourFinish();
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (responseToDelete) {
-      removeConditionalResponse(responseToDelete);
+      await removeConditionalResponse(responseToDelete);
       setResponseToDelete(null);
     }
   };
@@ -177,6 +175,16 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
   const handleCancelDelete = () => {
     setResponseToDelete(null);
   };
+  
+  if (loading) {
+      return <div className="text-center py-20 text-slate-500 dark:text-slate-400">Loading Creator Dashboard...</div>
+  }
+  
+  if (!memorial) {
+      return <div className="text-center py-20 text-slate-500 dark:text-slate-400">Could not load memorial data.</div>
+  }
+
+  const { profile, responses } = memorial;
 
   return (
     <>
@@ -185,10 +193,10 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
         <div className="lg:col-span-1 space-y-8">
           <div data-tour-id="profile-card" className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
               <h2 className="text-2xl font-bold font-serif text-slate-900 dark:text-slate-100 mb-6">Creator Profile</h2>
-              <img src={profile.profileImageUrl} alt={profile.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
+              <img src={profile.profile_image_url} alt={profile.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
               <div className="text-center">
                   <h3 className="text-xl font-semibold dark:text-white">{profile.name}</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{profile.lifeSpan}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{profile.life_span}</p>
                   <p className="mt-4 text-slate-700 dark:text-slate-300">{profile.bio}</p>
               </div>
           </div>
@@ -198,7 +206,7 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
         <div data-tour-id="response-list" className="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
           <h2 className="text-2xl font-bold font-serif text-slate-900 dark:text-slate-100 mb-6">Managed Responses</h2>
           <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
-              {profile.responses.length > 0 ? profile.responses.map(res => (
+              {responses.length > 0 ? responses.map(res => (
                   <div key={res.id} className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600 transition-transform hover:scale-[1.02] hover:shadow-md">
                       <div className="flex justify-between items-start">
                           <div>

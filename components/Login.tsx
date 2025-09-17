@@ -1,15 +1,17 @@
 import React from 'react';
+import { useUser } from '../hooks/useUser';
 
 interface LoginProps {
-  onNavigate: (view: 'creator' | 'visitor') => void;
   onShowTour: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onNavigate, onShowTour }) => {
+const Login: React.FC<LoginProps> = ({ onShowTour }) => {
+  const { signInWithGoogle } = useUser();
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-200 via-primary-100 to-slate-200 dark:from-slate-900 dark:via-primary-900/30 dark:to-black animated-gradient p-4 transition-colors duration-300">
       {/* Centered Login Card */}
-      <div className="w-full max-w-2xl mx-auto bg-white/60 dark:bg-slate-800/60 backdrop-blur-2xl rounded-2xl shadow-2xl p-8 md:p-12 text-center border border-white/30 dark:border-slate-700/50">
+      <div className="w-full max-w-md mx-auto bg-white/60 dark:bg-slate-800/60 backdrop-blur-2xl rounded-2xl shadow-2xl p-8 md:p-12 text-center border border-white/30 dark:border-slate-700/50">
         
         <div className="flex justify-center mb-6">
           <div className="p-4 bg-primary-500 rounded-full shadow-lg">
@@ -23,44 +25,21 @@ const Login: React.FC<LoginProps> = ({ onNavigate, onShowTour }) => {
           Welcome to AfterLife
         </h1>
         <p className="text-slate-600 dark:text-slate-300 text-lg mb-12 max-w-xl mx-auto">
-          A space to build a digital legacy. Connect with the memory of loved ones through interactive stories and shared tributes.
+          Sign in to begin your journey of remembrance and connection.
         </p>
 
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="space-y-4">
           <button
-            onClick={() => onNavigate('visitor')}
-            className="group w-full h-full flex items-center text-left p-5 bg-slate-50 dark:bg-slate-700/50 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            onClick={signInWithGoogle}
+            className="group w-full flex items-center justify-center space-x-3 py-3 px-4 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm text-lg font-semibold text-slate-800 dark:text-slate-200 bg-white/70 dark:bg-slate-700/50 hover:bg-white dark:hover:bg-slate-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
           >
-            <div className="p-3 bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 rounded-lg mr-5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Explore as a Visitor</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Explore a memorial and leave a tribute.</p>
-            </div>
-             <div className="ml-auto text-gray-300 dark:text-gray-500 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors">
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
-             </div>
-          </button>
-
-          <button
-            onClick={() => onNavigate('creator')}
-            className="group w-full h-full flex items-center text-left p-5 bg-slate-50 dark:bg-slate-700/50 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-          >
-            <div className="p-3 bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 rounded-lg mr-5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Explore as a Creator</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Manage your profile and build your legacy.</p>
-            </div>
-            <div className="ml-auto text-gray-300 dark:text-gray-500 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors">
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
-            </div>
+            <svg className="w-6 h-6" viewBox="0 0 48 48">
+              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
+              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
+              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.223,0-9.655-3.657-11.303-8H6.306C9.656,35.663,16.318,40,24,40z"></path>
+              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.089,5.571l6.19,5.238C39.904,36.8,44,30.8,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
+            </svg>
+            <span>Sign in with Google</span>
           </button>
         </div>
 

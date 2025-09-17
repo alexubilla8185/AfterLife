@@ -1,90 +1,152 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { CreatorProfile, ConditionalResponse, Tribute, ResponseType, SocialLink } from '../types';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import { CreatorProfile, ConditionalResponse, Tribute, SocialLink, MemorialData } from '../types';
+import { supabase } from '../services/supabaseClient';
+import { useUser } from './useUser';
 
-// New sample profile for Julian Hayes
-const sampleProfile: CreatorProfile = {
-    name: 'Julian Hayes',
-    lifeSpan: '1968 - 2023',
-    bio: 'An insatiable traveler, a captivating storyteller, and a devoted teacher. Julian believed the world was a classroom and every person a story waiting to be told. He collected moments, not things.',
-    profileImageUrl: 'https://picsum.photos/seed/julian/256/256',
-    responses: [
-        { id: '1', keyword: 'miss you', response: 'The journey doesn\'t end here. Think of our time together as a beautiful chapter, not the whole story. The adventure continues, just in a different way.', type: ResponseType.TEXT },
-        { id: '2', keyword: 'travel', response: 'Ah, the open road! I hope you\'re still exploring. There\'s so much beauty to see. Don\'t ever lose your sense of wonder.', type: ResponseType.TEXT },
-        { id: '3', keyword: 'story', response: 'Every story we shared is a landmark on the map of my heart. Tell them often, and keep the pages turning.', type: ResponseType.TEXT },
-        { id: '4', keyword: 'sad', response: 'It\'s alright to feel lost sometimes. Every traveler needs a moment to rest. Remember the good trails we walked together, and let that be your guide.', type: ResponseType.TEXT },
-        { id: '5', keyword: 'learn', response: 'The best lesson I ever taught was to stay curious. Keep asking questions, keep seeking answers. The world is full of things to discover.', type: ResponseType.TEXT },
-        { id: '6', keyword: 'thank you', response: 'For walking this path with me for a while. It meant the world.', type: ResponseType.TEXT },
-    ],
-    socialLinks: [
-        { id: 'link-1', platform: 'Travel Blog', url: 'https://example.com' },
-        { id: 'link-2', platform: 'Photography', url: 'https://example.com/photos' },
-        { id: 'link-3', platform: 'Goodreads', url: 'https://goodreads.com/example' },
-    ]
+// Sample data to be seeded for the first user
+const sampleProfileData = {
+    name: 'Julia Hayes',
+    life_span: '1968 - 2023',
+    bio: 'An insatiable traveler, a captivating storyteller, and a devoted teacher. Julia believed the world was a classroom and every person a story waiting to be told. She collected moments, not things.',
+    profile_image_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286de2?w=256&h=256&fit=crop&q=80',
 };
 
-// New sample tributes for Julian Hayes
-const sampleTributes: Tribute[] = [
-    {
-        id: 'tribute-1',
-        author: 'His former student, Anya',
-        message: 'Mr. Hayes taught me more than just history; he taught me how to see the world. His stories from his travels made every lesson an adventure. I\'ll carry his wisdom with me always.',
-        timestamp: new Date(new Date().setDate(new Date().getDate() - 2)),
-    },
-    {
-        id: 'tribute-2',
-        author: 'Leo, his travel buddy',
-        message: 'Julian, my friend, the trails are quieter without you. From the mountains of Peru to the markets of Marrakech, every step was a joy. Cheers to one last sunset. You are missed.',
-        timestamp: new Date(new Date().setDate(new Date().getDate() - 5)),
-    },
-    {
-        id: 'tribute-3',
-        author: 'His sister, Clara',
-        message: 'My brother lived a dozen lifetimes in one. He sent postcards from every corner of the earth, each one filled with wonder. I\'ll miss his calls from faraway places. Rest easy, dear brother.',
-        timestamp: new Date(new Date().setDate(new Date().getDate() - 10)),
-    }
+const sampleResponsesData = [
+    { keyword: 'miss you', response: 'The journey doesn\'t end here. Think of our time together as a beautiful chapter, not the whole story. The adventure continues, just in a different way.' },
+    { keyword: 'travel', response: 'Ah, the open road! I hope you\'re still exploring. There\'s so much beauty to see. Don\'t ever lose your sense of wonder.' },
+    { keyword: 'story', response: 'Every story we shared is a landmark on the map of my heart. Tell them often, and keep the pages turning.' },
+    { keyword: 'sad', response: 'It\'s alright to feel lost sometimes. Every traveler needs a moment to rest. Remember the good trails we walked together, and let that be your guide.' },
+    { keyword: 'learn', response: 'The best lesson I ever taught was to stay curious. Keep asking questions, keep seeking answers. The world is full of things to discover.' },
+    { keyword: 'thank you', response: 'For walking this path with me for a while. It meant the world.' },
+];
+
+const sampleSocialLinksData = [
+    { platform: 'Travel Blog', url: 'https://example.com' },
+    { platform: 'Photography', url: 'https://example.com/photos' },
+    { platform: 'Goodreads', url: 'https://goodreads.com/example' },
+];
+
+const sampleTributesData = [
+    { author: 'Her former student, Anya', message: 'Ms. Hayes taught me more than just history; she taught me how to see the world. Her stories from her travels made every lesson an adventure. I\'ll carry her wisdom with me always.'},
+    { author: 'Leo, her travel buddy', message: 'Julia, my friend, the trails are quieter without you. From the mountains of Peru to the markets of Marrakech, every step was a joy. Cheers to one last sunset. You are missed.'},
+    { author: 'Her sister, Clara', message: 'My sister lived a dozen lifetimes in one. She sent postcards from every corner of the earth, each one filled with wonder. I\'ll miss her calls from faraway places. Rest easy, dear sister.'},
 ];
 
 
 interface MemorialProfileContextType {
-  profile: CreatorProfile;
-  tributes: Tribute[];
-  addConditionalResponse: (response: Omit<ConditionalResponse, 'id'>) => void;
-  removeConditionalResponse: (id: string) => void;
-  addTribute: (tribute: Omit<Tribute, 'id' | 'timestamp'>) => void;
+  memorial: MemorialData | null;
+  loading: boolean;
+  refetch: () => void;
+  addConditionalResponse: (response: Omit<ConditionalResponse, 'id' | 'memorial_id'>) => Promise<void>;
+  removeConditionalResponse: (id: string) => Promise<void>;
+  addTribute: (tribute: Omit<Tribute, 'id' | 'memorial_id' | 'created_at'>) => Promise<void>;
   findResponseForMessage: (message: string) => ConditionalResponse | null;
-  addSocialLink: (link: Omit<SocialLink, 'id'>) => void;
-  removeSocialLink: (id: string) => void;
+  addSocialLink: (link: Omit<SocialLink, 'id' | 'memorial_id'>) => Promise<void>;
+  removeSocialLink: (id: string) => Promise<void>;
 }
 
 const MemorialProfileContext = createContext<MemorialProfileContextType | undefined>(undefined);
 
-export const MemorialProfileProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [profile, setProfile] = useState<CreatorProfile>(sampleProfile);
-  // Initialize tributes with sample data
-  const [tributes, setTributes] = useState<Tribute[]>(sampleTributes);
+export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId: string | null}> = ({ children, memorialId }) => {
+  const [memorial, setMemorial] = useState<MemorialData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { user } = useUser();
 
-  const addConditionalResponse = (newResponse: Omit<ConditionalResponse, 'id'>) => {
-    setProfile(p => ({
-      ...p,
-      responses: [...p.responses, { ...newResponse, id: new Date().toISOString() }],
-    }));
-  };
+  const seedInitialData = async (userId: string) => {
+    console.log("No memorial found for user. Seeding initial data...");
+    // 1. Create the memorial profile
+    const { data: memorialData, error: memorialError } = await supabase
+      .from('memorials')
+      .insert({ ...sampleProfileData, user_id: userId })
+      .select()
+      .single();
 
-  const removeConditionalResponse = (id: string) => {
-    setProfile(p => ({
-      ...p,
-      responses: p.responses.filter(r => r.id !== id),
-    }));
+    if (memorialError || !memorialData) {
+      console.error("Error seeding memorial profile:", memorialError);
+      return;
+    }
+
+    const newMemorialId = memorialData.id;
+
+    // 2. Add associated data
+    await supabase.from('conditional_responses').insert(sampleResponsesData.map(r => ({ ...r, memorial_id: newMemorialId })));
+    await supabase.from('social_links').insert(sampleSocialLinksData.map(l => ({ ...l, memorial_id: newMemorialId })));
+    await supabase.from('tributes').insert(sampleTributesData.map(t => ({ ...t, memorial_id: newMemorialId })));
+
+    console.log("Seeding complete.");
   };
   
-  const addTribute = (newTribute: Omit<Tribute, 'id' | 'timestamp'>) => {
-    setTributes(t => [{ ...newTribute, id: new Date().toISOString(), timestamp: new Date() }, ...t]);
+  const fetchMemorialData = useCallback(async (id: string) => {
+    setLoading(true);
+    
+    const { data: profile, error: profileError } = await supabase
+      .from('memorials')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (profileError || !profile) {
+      console.error('Error fetching memorial profile:', profileError?.message);
+      setMemorial(null);
+      setLoading(false);
+      return;
+    }
+
+    const [
+        { data: responses },
+        { data: socialLinks },
+        { data: tributes }
+    ] = await Promise.all([
+        supabase.from('conditional_responses').select('*').eq('memorial_id', id),
+        supabase.from('social_links').select('*').eq('memorial_id', id),
+        supabase.from('tributes').select('*').eq('memorial_id', id).order('created_at', { ascending: false })
+    ]);
+    
+    setMemorial({
+        profile: profile as CreatorProfile,
+        responses: (responses as ConditionalResponse[]) || [],
+        socialLinks: (socialLinks as SocialLink[]) || [],
+        tributes: (tributes as Tribute[]) || [],
+    });
+
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (memorialId) {
+        fetchMemorialData(memorialId);
+    } else {
+        setMemorial(null);
+        setLoading(false);
+    }
+  }, [memorialId, fetchMemorialData]);
+  
+
+  const addConditionalResponse = async (newResponse: Omit<ConditionalResponse, 'id' | 'memorial_id'>) => {
+    if (!memorial) return;
+    const { error } = await supabase.from('conditional_responses').insert({ ...newResponse, memorial_id: memorial.profile.id });
+    if (error) console.error("Error adding response:", error);
+    else fetchMemorialData(memorial.profile.id);
+  };
+
+  const removeConditionalResponse = async (id: string) => {
+    if (!memorial) return;
+    const { error } = await supabase.from('conditional_responses').delete().eq('id', id);
+    if (error) console.error("Error removing response:", error);
+    else fetchMemorialData(memorial.profile.id);
+  };
+  
+  const addTribute = async (newTribute: Omit<Tribute, 'id' | 'memorial_id' | 'created_at'>) => {
+    if (!memorial) return;
+    const { error } = await supabase.from('tributes').insert({ ...newTribute, memorial_id: memorial.profile.id });
+    if (error) console.error("Error adding tribute:", error);
+    else fetchMemorialData(memorial.profile.id);
   };
 
   const findResponseForMessage = (message: string): ConditionalResponse | null => {
+    if (!memorial) return null;
     const lowerCaseMessage = message.toLowerCase();
-    // Find the best match - could be more sophisticated later
-    for (const res of profile.responses) {
+    for (const res of memorial.responses) {
         if (lowerCaseMessage.includes(res.keyword.toLowerCase())) {
             return res;
         }
@@ -92,22 +154,22 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode}> = ({ child
     return null;
   };
 
-  const addSocialLink = (newLink: Omit<SocialLink, 'id'>) => {
-    setProfile(p => ({
-        ...p,
-        socialLinks: [...p.socialLinks, { ...newLink, id: new Date().toISOString() }],
-    }));
+  const addSocialLink = async (newLink: Omit<SocialLink, 'id' | 'memorial_id'>) => {
+    if (!memorial) return;
+    const { error } = await supabase.from('social_links').insert({ ...newLink, memorial_id: memorial.profile.id });
+    if (error) console.error("Error adding link:", error);
+    else fetchMemorialData(memorial.profile.id);
   };
 
-  const removeSocialLink = (id: string) => {
-    setProfile(p => ({
-        ...p,
-        socialLinks: p.socialLinks.filter(l => l.id !== id),
-    }));
+  const removeSocialLink = async (id: string) => {
+    if (!memorial) return;
+    const { error } = await supabase.from('social_links').delete().eq('id', id);
+    if (error) console.error("Error removing link:", error);
+    else fetchMemorialData(memorial.profile.id);
   };
 
   return (
-    <MemorialProfileContext.Provider value={{ profile, tributes, addConditionalResponse, removeConditionalResponse, addTribute, findResponseForMessage, addSocialLink, removeSocialLink }}>
+    <MemorialProfileContext.Provider value={{ memorial, loading, refetch: () => memorialId && fetchMemorialData(memorialId), addConditionalResponse, removeConditionalResponse, addTribute, findResponseForMessage, addSocialLink, removeSocialLink }}>
       {children}
     </MemorialProfileContext.Provider>
   );
