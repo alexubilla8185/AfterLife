@@ -1,7 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Use process.env, as it's supported by the build environment for client-side variable injection.
-// The variable from the Netlify integration is VITE_SUPABASE_DATABASE_URL, which holds the project URL.
+// FIX: Reverted to process.env to match the user's build environment and resolve runtime errors.
 const supabaseUrl = process.env.VITE_SUPABASE_DATABASE_URL;
 const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 

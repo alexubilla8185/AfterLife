@@ -5,8 +5,9 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 ## Core Features
 
 ### Authentication
-- **Multiple Sign-In Options:** Secure sign-up and sign-in with Google or traditional email and password (Facebook login coming soon).
+- **Multiple Sign-In Options:** Secure sign-up and sign-in with Google or traditional email and password.
 - **Seamless Onboarding:** Social logins automatically populate the user's profile with their name and profile picture.
+- **Facebook Login (Coming Soon):** Integration is built but temporarily disabled pending developer account setup.
 
 ### For Creators
 - **Build a Profile:** Craft a personal memorial with a name, lifespan, biography, and profile image.
@@ -35,7 +36,7 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ### Prerequisites
 - A modern web browser
-- An account with Google, Facebook, or a valid email address.
+- An account with Google or a valid email address.
 
 ### Environment Variable Setup
 
@@ -55,7 +56,7 @@ These variables are accessed via `process.env` in the application code. The buil
 1.  **Enable Authentication Providers:**
     - In your Supabase project dashboard, navigate to **Authentication** > **Providers**.
     - Enable the providers you wish to use: `Email` and `Google`.
-    - For social providers (Google, Facebook), you will need to provide the **Client ID** and **Client Secret** from their respective developer consoles. (Note: Facebook setup can be skipped for now as the feature is temporarily disabled).
+    - For social providers (Google), you will need to provide the **Client ID** and **Client Secret** from the Google Cloud Console. (Note: Facebook setup can be skipped for now as the feature is temporarily disabled).
 
 2.  **Create a Storage Bucket:**
     -   In your Supabase project dashboard, go to the **Storage** section.
@@ -68,7 +69,7 @@ This is required for the audio message feature to work correctly.
 
 ## How It Works
 
-AfterLife provides two distinct experiences: the **Creator Dashboard** and the **Visitor View**. Onboarding is seamless; when users sign up with a social provider like Google or Facebook, their profile name and picture are automatically populated, allowing them to get started right away.
+AfterLife provides two distinct experiences: the **Creator Dashboard** and the **Visitor View**. Onboarding is seamless; when users sign up with a social provider like Google, their profile name and picture are automatically populated, allowing them to get started right away.
 
 - **Creators** act as architects of their digital memorial. They populate their profile with personal details and, most importantly, create "conditional responses." These are custom messages triggered by keywords, allowing them to leave behind personalized wisdom, stories, and comfort.
 

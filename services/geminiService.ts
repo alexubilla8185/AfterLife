@@ -2,8 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 
 let ai: GoogleGenAI | null = null;
 
-// Use process.env, as it's supported by the build environment for client-side variable injection.
-// Ensure VITE_API_KEY is set in your Netlify/deployment settings.
+// FIX: Reverted to process.env to match the user's build environment and resolve runtime errors.
 const apiKey = process.env.VITE_API_KEY;
 
 if (apiKey) {
