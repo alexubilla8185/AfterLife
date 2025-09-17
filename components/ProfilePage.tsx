@@ -44,9 +44,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         <div className="max-w-4xl mx-auto animate-fade-in">
             <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                 <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-8">
-                    <img src={user.profileImageUrl} alt={user.name} className="w-36 h-36 rounded-full object-cover shadow-md border-4 border-white dark:border-gray-600" />
+                    <img src={user.avatar_url || ''} alt={user.full_name || 'User'} className="w-36 h-36 rounded-full object-cover shadow-md border-4 border-white dark:border-gray-600" />
                     <div>
-                        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">{user.name}</h1>
+                        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">{user.full_name}</h1>
                         <p className="text-lg text-gray-500 dark:text-gray-400">{user.email}</p>
                         <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed max-w-2xl">
                             This is your personal hub. From here, you can manage the memorials you've created and view the tributes you've left for others.

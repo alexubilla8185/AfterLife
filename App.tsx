@@ -9,8 +9,9 @@ import LandingPage from './components/LandingPage';
 import ProfilePage from './components/ProfilePage';
 import { useUser } from './hooks/useUser';
 import { supabase } from './services/supabaseClient';
+import AdminPage from './components/AdminPage';
 
-type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile';
+type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin';
 type TourContext = 'creator' | 'visitor' | 'login';
 
 // Sample data to be seeded for the first user
@@ -95,8 +96,11 @@ const App: React.FC = () => {
   
   const handleSwitchRole = () => {
     setView(prevView => {
-      if (prevView === 'profile') {
-        return 'visitor'; // Default to visitor view from profile
+      if (prevView === 'profile' || prevView === 'admin') {
+        // From profile/admin, there's no clear creator/visitor context, so default to visitor.
+        // Requires a memorialId to be set.
+        if(activeMemorialId) return 'visitor';
+        return prevView; // Stay on page if no memorial is active
       }
       const newView = prevView === 'creator' ? 'visitor' : 'creator';
       const tourSeenKey = newView === 'creator' ? 'creatorTourSeen' : 'visitorTourSeen';
@@ -133,6 +137,8 @@ const App: React.FC = () => {
         return <Login onShowTour={() => handleShowTour('login')} />;
       case 'profile':
         return <ProfilePage onNavigate={handleNavigate} />;
+      case 'admin':
+        return <AdminPage />;
       case 'creator':
         return <CreatorDashboard showTour={tourContext === 'creator'} onTourFinish={handleCloseTour} />;
       case 'visitor':
@@ -164,12 +170,18 @@ const App: React.FC = () => {
               </div>
 
               <div className="flex items-center space-x-4">
-                 {view === 'creator' || view === 'visitor' ? (
+                 {view !== 'profile' && user && (
                   <button onClick={() => setView('profile')} className="hidden sm:inline-flex items-center space-x-2 px-3 py-1.5 border border-gray-300 dark:border-gray-700 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                       <span>My Profile</span>
                   </button>
-                 ) : null}
+                 )}
+                 {user?.role === 'admin' && view !== 'admin' && (
+                    <button onClick={() => setView('admin')} className="hidden sm:inline-flex items-center space-x-2 px-3 py-1.5 border border-yellow-400/50 dark:border-yellow-600/50 text-sm font-medium rounded-md text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/40 hover:bg-yellow-100 dark:hover:bg-yellow-900/60 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        <span>Admin</span>
+                    </button>
+                 )}
                  {view === 'creator' || view === 'visitor' ? (
                   <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 transition-colors">
                     Switch to {view === 'creator' ? 'Visitor' : 'Creator'} View

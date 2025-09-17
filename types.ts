@@ -53,7 +53,9 @@ export interface ChatMessage {
 
 export interface User {
   id: string;
-  name: string;
-  email: string;
-  profileImageUrl: string;
+  email: string | undefined;
+  // From profiles table
+  full_name: string | null;
+  avatar_url: string | null;
+  role: string | null;
 }

@@ -35,17 +35,36 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    // Fetches full user profile from the 'profiles' table when session is available
     if (session?.user) {
-        const currentUser: User = {
-            id: session.user.id,
-            // For social providers, Supabase often populates full_name.
-            name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
-            email: session.user.email || '',
-            profileImageUrl: session.user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user.user_metadata?.full_name || session.user.email || 'A')}`
-        }
-        setUser(currentUser);
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single()
+        .then(({ data: profileData, error }) => {
+          if (error) {
+            console.error('Error fetching user profile:', error.message);
+            // This might happen if the trigger has a slight delay. Fallback gracefully.
+            setUser({
+              id: session.user.id,
+              email: session.user.email,
+              full_name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+              avatar_url: session.user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(session.user.user_metadata?.full_name || session.user.email || 'A')}`,
+              role: 'user', // Default fallback role
+            });
+          } else if (profileData) {
+            setUser({
+              id: session.user.id,
+              email: session.user.email,
+              full_name: profileData.full_name,
+              avatar_url: profileData.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.full_name || session.user.email || 'A')}`,
+              role: profileData.role,
+            });
+          }
+        });
     } else {
-        setUser(null);
+      setUser(null);
     }
   }, [session]);
 
