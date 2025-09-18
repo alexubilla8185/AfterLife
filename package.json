@@ -19,7 +19,8 @@
     "@tsparticles/engine": "^3.5.0",
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.4.0",
-    "@netlify/functions": "^4.2.5"
+    "@netlify/functions": "^4.2.5",
+    "lucide-react": "^0.417.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

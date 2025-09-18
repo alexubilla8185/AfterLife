@@ -141,7 +141,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
       case 'landing':
         return <LandingPage onNavigate={setView} />;
       case 'login':
-        return <Login onShowTour={() => setShowOnboarding(true)} />;
+        return <Login />;
       case 'profile':
         return <ProfilePage onNavigate={handleNavigate} />;
       case 'admin':
