@@ -32,7 +32,7 @@ interface AppProps {
   isOffline: boolean;
 }
 
-const SunIcon: React.FC = () => (
+const SunIcon = () => (
   <motion.svg
     key="sun"
     xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@ const SunIcon: React.FC = () => (
   </motion.svg>
 );
 
-const MoonIcon: React.FC = () => (
+const MoonIcon = () => (
   <motion.svg
     key="moon"
     xmlns="http://www.w3.org/2000/svg"

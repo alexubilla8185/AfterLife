@@ -308,6 +308,7 @@ const ChatInterface: React.FC<{ profile: CreatorProfile, isTtsEnabled: boolean }
 
 const getSocialIcon = (platform: string): JSX.Element => {
     const p = platform.toLowerCase();
+    // FIX: Changed "aria-hidden": "true" to "aria-hidden": true to match the 'Booleanish' type expected by SVGProps.
     const commonProps = { className: "h-5 w-5", "aria-hidden": true };
     
     if (p.includes('linkedin')) {
