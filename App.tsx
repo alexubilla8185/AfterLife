@@ -12,6 +12,8 @@ import { getSupabase } from './services/supabaseClient';
 import AdminPage from './components/AdminPage';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import DataDeletion from './components/DataDeletion';
+import { useTheme } from './hooks/useTheme';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin';
 type TourContext = 'creator' | 'visitor' | 'login';
@@ -31,8 +33,48 @@ interface AppProps {
   isOffline: boolean;
 }
 
+const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <motion.svg
+    key="sun"
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+    initial={{ scale: 0.5, opacity: 0, rotate: -90 }}
+    animate={{ scale: 1, opacity: 1, rotate: 0 }}
+    exit={{ scale: 0.5, opacity: 0, rotate: 90 }}
+    transition={{ duration: 0.3, ease: "easeInOut" }}
+    {...props}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+  </motion.svg>
+);
+
+const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+  <motion.svg
+    key="moon"
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+    initial={{ scale: 0.5, opacity: 0, rotate: 90 }}
+    animate={{ scale: 1, opacity: 1, rotate: 0 }}
+    exit={{ scale: 0.5, opacity: 0, rotate: -90 }}
+    transition={{ duration: 0.3, ease: "easeInOut" }}
+    {...props}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+  </motion.svg>
+);
+
+
 const App: React.FC<AppProps> = ({ isOffline }) => {
   const { user } = useUser();
+  const { theme } = useTheme();
   const [view, setView] = useState<View>('landing');
   const [activeMemorialId, setActiveMemorialId] = useState<string | null>(null);
   const [tourContext, setTourContext] = useState<TourContext | null>(null);
@@ -213,12 +255,18 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                   </button>
                  ): null}
                 <div className="relative" ref={themeMenuRef}>
-                  <button onClick={() => setIsThemeMenuOpen(o => !o)} aria-label="Open theme menu" className="h-10 w-10 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a4 4 0 014-4h10a4 4 0 014 4v12a4 4 0 01-4 4H7z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v18" />
-                    </svg>
-                  </button>
+                  <motion.button
+                    onClick={() => setIsThemeMenuOpen(o => !o)}
+                    aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
+                    className="h-10 w-10 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors"
+                    whileHover={{ scale: 1.1, rotate: 15 }}
+                    whileTap={{ scale: 0.9, rotate: -15 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <AnimatePresence mode="wait" initial={false}>
+                      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                    </AnimatePresence>
+                  </motion.button>
                   {isThemeMenuOpen && <ThemeMenu onClose={() => setIsThemeMenuOpen(false)} />}
                 </div>
               </div>
