@@ -3,12 +3,13 @@ import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { ResponseType } from '../types';
 import Tour, { TourStep } from './Tour';
 import { getSupabase } from '../services/supabaseClient';
+import EditProfileModal from './EditProfileModal';
 
 const creatorTourSteps: TourStep[] = [
     {
         target: '[data-tour-id="profile-card"]',
         title: "Your Memorial Profile",
-        content: "This is the heart of your legacy. It displays your photo, bio, and lifespan for all visitors to see.",
+        content: "This is the heart of your legacy. It displays your photo, bio, and lifespan for all visitors to see. Click the edit button to update it.",
         position: 'right',
     },
     {
@@ -316,6 +317,7 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
   const { memorial, loading, removeConditionalResponse } = useMemorialProfile();
   const [responseToDelete, setResponseToDelete] = useState<string | null>(null);
   const [isTourOpen, setIsTourOpen] = useState(showTour);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     if(showTour) {
@@ -353,9 +355,11 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
   return (
     <>
       <Tour isOpen={isTourOpen} onClose={handleTourClose} steps={creatorTourSteps} />
+      {isEditModalOpen && <EditProfileModal onClose={() => setIsEditModalOpen(false)} />}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-8">
-          <div data-tour-id="profile-card" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <div data-tour-id="profile-card" className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Creator Profile</h2>
               <img src={profile.profile_image_url} alt={profile.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
               <div className="text-center">
@@ -363,6 +367,16 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
                   <p className="text-sm text-gray-500 dark:text-gray-400">{profile.life_span}</p>
                   <p className="mt-4 text-gray-700 dark:text-gray-300">{profile.bio}</p>
               </div>
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="absolute top-4 right-4 p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                aria-label="Edit Profile"
+              >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                    <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+                  </svg>
+              </button>
           </div>
           <AudioMessageManager />
           <SocialLinksManager />

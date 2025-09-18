@@ -97,32 +97,47 @@ const TributeWall: React.FC<{ tributes: Tribute[] }> = ({ tributes }) => (
 
 
 const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
-    const initialMessages: ChatMessage[] = [
-        {
-            id: 'initial-message-1',
-            sender: 'memorial',
-            text: "Welcome. I'm glad you're here. Feel free to share a thought or a memory.",
-            timestamp: new Date(new Date().getTime() - 1000 * 60 * 5), // 5 minutes ago
-        },
-        {
-            id: 'initial-message-2',
-            sender: 'user',
-            text: "I was just thinking about our trip to the coast. I miss you so much.",
-            timestamp: new Date(new Date().getTime() - 1000 * 60 * 3), // 3 minutes ago
-        },
-        {
-            id: 'initial-message-3',
-            sender: 'memorial',
-            text: "The journey doesn't end here. Think of our time together as a beautiful chapter, not the whole story. The adventure continues, just in a different way.",
-            timestamp: new Date(new Date().getTime() - 1000 * 60 * 2), // 2 minutes ago
-        }
-    ];
-
-    const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const { findResponseForMessage } = useMemorialProfile();
     const chatEndRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const fetchWelcomeMessage = async () => {
+            try {
+                const response = await fetch('/.netlify/functions/get-welcome-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: profile.name, bio: profile.bio }),
+                });
+                if (!response.ok) throw new Error('Failed to fetch welcome message');
+                const data = await response.json();
+                
+                const welcomeMessage: ChatMessage = {
+                    id: 'initial-welcome',
+                    sender: 'memorial',
+                    text: data.text || "Welcome. I'm glad you're here.",
+                    timestamp: new Date(),
+                };
+                setMessages([welcomeMessage]);
+            } catch (error) {
+                console.error("Error fetching AI welcome message:", error);
+                const fallbackMessage: ChatMessage = {
+                    id: 'initial-fallback',
+                    sender: 'memorial',
+                    text: "Welcome. I'm glad you're here. Feel free to share a thought or a memory.",
+                    timestamp: new Date(),
+                };
+                setMessages([fallbackMessage]);
+            } finally {
+                setIsInitialLoading(false);
+            }
+        };
+
+        fetchWelcomeMessage();
+    }, [profile.name, profile.bio]);
 
     useEffect(() => {
       chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -163,27 +178,33 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
         setIsTyping(false);
     };
 
+    const TypingIndicator = () => (
+        <div className="flex justify-start">
+            <div className="bg-gray-200 dark:bg-gray-700 rounded-xl px-4 py-2">
+              <div className="flex items-center space-x-1">
+                <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></span>
+              </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="bg-white dark:bg-gray-800 rounded-b-lg shadow-sm flex flex-col h-full border border-gray-200 dark:border-gray-700 border-t-0">
             <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-800/50">
-                {messages.map(msg => (
-                    <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.sender === 'user' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
-                           <p className="text-sm">{msg.text}</p>
+                {isInitialLoading ? (
+                    <TypingIndicator />
+                ) : (
+                    messages.map(msg => (
+                        <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${msg.sender === 'user' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
+                               <p className="text-sm">{msg.text}</p>
+                            </div>
                         </div>
-                    </div>
-                ))}
-                {isTyping && (
-                    <div className="flex justify-start">
-                        <div className="bg-gray-200 dark:bg-gray-700 rounded-xl px-4 py-2">
-                          <div className="flex items-center space-x-1">
-                            <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                            <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                            <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></span>
-                          </div>
-                        </div>
-                    </div>
+                    ))
                 )}
+                {isTyping && <TypingIndicator />}
                 <div ref={chatEndRef} />
             </div>
             <div data-tour-id="chat-input" className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -195,8 +216,9 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                         placeholder="Share a thought or memory..."
                         className="flex-1 block w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+                        disabled={isInitialLoading}
                     />
-                    <button onClick={handleSend} className="bg-primary-600 text-white rounded-full p-3 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800" disabled={!input.trim() || isTyping}>
+                    <button onClick={handleSend} className="bg-primary-600 text-white rounded-full p-3 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800" disabled={!input.trim() || isTyping || isInitialLoading}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                         </svg>

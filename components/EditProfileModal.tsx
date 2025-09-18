@@ -1,0 +1,131 @@
+import React, { useState, useRef } from 'react';
+import { useMemorialProfile } from '../hooks/useMemorialProfile';
+import { getSupabase } from '../services/supabaseClient';
+import { CreatorProfile } from '../types';
+
+interface EditProfileModalProps {
+    onClose: () => void;
+}
+
+const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
+    const { memorial, updateProfile, refetch } = useMemorialProfile();
+    const [formData, setFormData] = useState<Partial<CreatorProfile>>({
+        name: memorial?.profile.name || '',
+        life_span: memorial?.profile.life_span || '',
+        bio: memorial?.profile.bio || '',
+    });
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(memorial?.profile.profile_image_url || null);
+    const [isSaving, setIsSaving] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const supabase = getSupabase();
+
+    if (!memorial) return null;
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        let updatedProfileData = { ...formData };
+
+        if (imageFile) {
+            // Delete old image if it exists
+            if (memorial.profile.profile_image_url) {
+                const oldFilePath = memorial.profile.profile_image_url.split('/memorials/')[1];
+                if (oldFilePath) {
+                    await supabase.storage.from('memorials').remove([oldFilePath]);
+                }
+            }
+
+            // Upload new image
+            const fileExt = imageFile.name.split('.').pop();
+            const fileName = `${memorial.profile.user_id}/${memorial.profile.id}-profile.${fileExt}`;
+            const { error: uploadError } = await supabase.storage
+                .from('memorials')
+                .upload(fileName, imageFile, { upsert: true });
+
+            if (uploadError) {
+                console.error("Error uploading image:", uploadError);
+                alert("Failed to upload new image.");
+                setIsSaving(false);
+                return;
+            }
+            
+            const { data: { publicUrl } } = supabase.storage.from('memorials').getPublicUrl(fileName);
+            updatedProfileData.profile_image_url = publicUrl;
+        }
+
+        await updateProfile(updatedProfileData);
+        refetch();
+        setIsSaving(false);
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col">
+                <div className="flex-shrink-0">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Edit Profile</h2>
+                </div>
+                
+                <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+                    <div className="flex justify-center">
+                        <div className="relative group">
+                            <img
+                                src={imagePreview || ''}
+                                alt="Profile Preview"
+                                className="w-32 h-32 rounded-full object-cover shadow-md border-4 border-white dark:border-gray-600"
+                            />
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center rounded-full transition-opacity"
+                                aria-label="Change profile picture"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                </svg>
+                            </button>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleImageChange}
+                                accept="image/png, image/jpeg, image/webp"
+                                className="hidden"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                        <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white" />
+                    </div>
+                    <div>
+                        <label htmlFor="life_span" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Life Span</label>
+                        <input type="text" name="life_span" id="life_span" value={formData.life_span} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white" />
+                    </div>
+                    <div>
+                        <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bio</label>
+                        <textarea name="bio" id="bio" value={formData.bio} onChange={handleInputChange} rows={5} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white" />
+                    </div>
+                </div>
+
+                <div className="mt-6 flex-shrink-0 flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button onClick={onClose} disabled={isSaving} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600">Cancel</button>
+                    <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md shadow-sm disabled:bg-primary-400 dark:disabled:bg-primary-800">{isSaving ? 'Saving...' : 'Save Changes'}</button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default EditProfileModal;
