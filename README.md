@@ -93,17 +93,40 @@ If you see an "Offline Mode" banner at the top of the application, it means the 
 
 ### Supabase Setup
 
-1.  **Enable Authentication Providers:**
-    - In your Supabase project dashboard, navigate to **Authentication** > **Providers**.
-    - Enable the providers you wish to use: `Email` and `Google`.
-    - For social providers (Google), you will need to provide the **Client ID** and **Client Secret** from the Google Cloud Console.
+#### 1. Configure Google Authentication
 
-2.  **Create a Storage Bucket:**
-    -   In your Supabase project dashboard, go to the **Storage** section.
-    -   Click **New bucket**.
-    -   Enter the bucket name as `memorials`.
-    -   Toggle **Public bucket** to **ON**.
-    -   Click **Create bucket**.
+To fix login errors (like a 502 error), you must correctly configure your Google Cloud project and link it to Supabase.
+
+**Step 1: Get Your Google Cloud Credentials**
+- Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new **OAuth 2.0 Client ID**.
+- When creating it, select **Web application**.
+- You will receive a **Client ID** and a **Client Secret**. Keep these safe.
+
+**Step 2: Find Your Supabase Callback URL**
+- Go to your Supabase Project dashboard.
+- Navigate to **Authentication** > **Providers**.
+- Click on the **Google** provider. You will see a **Callback URL** field.
+- It will look like this: `https://<your-project-ref>.supabase.co/auth/v1/callback`
+- **Copy this URL.**
+
+**Step 3: Add Authorized URIs in Google Cloud (Critical Step)**
+- In your Google Cloud project, find and edit the OAuth 2.0 Client ID you are using.
+- Under **"Authorized redirect URIs"**, click **"+ ADD URI"**.
+- **Paste the callback URL** you copied from Supabase.
+- Click **Save**.
+
+**Step 4: Link Credentials to Supabase**
+- Go back to your Supabase dashboard (**Authentication** > **Providers** > **Google**).
+- Paste the **Client ID** and **Client Secret** you got from Google Cloud into the corresponding fields.
+- Make sure the "Enable Google" toggle is on.
+- Click **Save**.
+
+#### 2. Create a Storage Bucket
+-   In your Supabase project dashboard, go to the **Storage** section.
+-   Click **New bucket**.
+-   Enter the bucket name as `memorials`.
+-   Toggle **Public bucket** to **ON**.
+-   Click **Create bucket**.
 
 This is required for the audio message feature to work correctly.
 
