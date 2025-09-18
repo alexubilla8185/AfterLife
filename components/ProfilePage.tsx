@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useUser } from '../hooks/useUser';
 import { getSupabase } from '../services/supabaseClient';
 import { CreatorProfile } from '../types';
+import CreateMemorialModal from './CreateMemorialModal';
 
 interface ProfilePageProps {
     onNavigate: (view: 'creator' | 'visitor', memorialId: string) => void;
@@ -12,6 +13,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     const [memorials, setMemorials] = useState<CreatorProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [memorialToDelete, setMemorialToDelete] = useState<CreatorProfile | null>(null);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const modalRef = useRef<HTMLDivElement>(null);
     const supabase = getSupabase();
 
@@ -109,6 +111,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
 
     return (
         <>
+            {isCreateModalOpen && <CreateMemorialModal onClose={() => { setIsCreateModalOpen(false); fetchMemorials(); }} />}
             <div className="max-w-4xl mx-auto animate-fade-in">
                 <div className="bg-surface-container p-6 md:p-8 rounded-3xl border border-outline/30">
                     <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-8">
@@ -137,14 +140,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-2xl font-bold text-on-surface">My Creator Hub</h2>
                             <button
-                                disabled
-                                className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-on-primary-container bg-primary-container shadow-sm cursor-not-allowed opacity-60"
+                                onClick={() => setIsCreateModalOpen(true)}
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-on-primary-container bg-primary-container shadow-sm hover:bg-opacity-80 transition-colors"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                                 </svg>
                                 Create New
-                                <span className="absolute -top-2 -right-3 text-xs font-semibold bg-gray-500 text-white px-2 py-0.5 rounded-full">Soon</span>
                             </button>
                         </div>
                         

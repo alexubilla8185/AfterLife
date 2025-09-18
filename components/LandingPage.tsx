@@ -50,12 +50,20 @@ const LandingPage: React.FC<{ onNavigate: (view: View) => void }> = ({ onNavigat
             <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-on-surface-variant">
               Create a living memorial—an interactive space where your memories, stories, and wisdom can be shared and cherished for generations to come.
             </p>
-            <button 
-                onClick={() => onNavigate('login')} 
-                className="mt-12 px-8 py-4 text-lg font-semibold text-on-primary bg-primary rounded-full shadow-lg hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-container focus:ring-primary transform hover:scale-105 transition-all"
-            >
-              Explore the Alpha Demo
-            </button>
+            <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button 
+                    onClick={() => onNavigate('login')} 
+                    className="w-full sm:w-auto px-8 py-4 text-lg font-semibold text-on-primary bg-primary rounded-full shadow-lg hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-container focus:ring-primary transform hover:scale-105 transition-all"
+                >
+                  Get Early Access
+                </button>
+                 <button 
+                    onClick={() => onNavigate('demoVisitor')} 
+                    className="w-full sm:w-auto px-8 py-4 text-lg font-semibold text-on-surface bg-surface rounded-full shadow-lg hover:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-container focus:ring-primary transform hover:scale-105 transition-all"
+                >
+                  View Live Demo
+                </button>
+            </div>
           </div>
         </section>
 

@@ -17,18 +17,7 @@ import Tooltip from './components/ui/Tooltip';
 import { useTheme } from './hooks/useTheme';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin' | 'privacy' | 'data-deletion' | 'how-it-works';
-
-// Sample data to be seeded for the first user
-const sampleProfileData = {
-    name: 'Julia Hayes',
-    life_span: '1968 - 2023',
-    bio: 'An insatiable traveler, a captivating storyteller, and a devoted teacher. Julia believed the world was a classroom and every person a story waiting to be told. She collected moments, not things.',
-    profile_image_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286de2?w=256&h=256&fit=crop&q=80',
-};
-const sampleResponsesData = [ { keyword: 'miss you', response: 'The journey doesn\'t end here. Think of our time together as a beautiful chapter, not the whole story. The adventure continues, just in a different way.' }, { keyword: 'travel', response: 'Ah, the open road! I hope you\'re still exploring. There\'s so much beauty to see. Don\'t ever lose your sense of wonder.' }, { keyword: 'story', response: 'Every story we shared is a landmark on the map of my heart. Tell them often, and keep the pages turning.' }, { keyword: 'sad', response: 'It\'s alright to feel lost sometimes. Every traveler needs a moment to rest. Remember the good trails we walked together, and let that be your guide.' }, { keyword: 'learn', response: 'The best lesson I ever taught was to stay curious. Keep asking questions, keep seeking answers. The world is full of things to discover.' }, { keyword: 'thank you', response: 'For walking this path with me for a while. It meant the world.' },];
-const sampleSocialLinksData = [ { platform: 'Travel Blog', url: 'https://example.com' }, { platform: 'Photography', url: 'https://example.com/photos' }, { platform: 'Goodreads', url: 'https://goodreads.com/example' },];
-const sampleTributesData = [ { author: 'Her former student, Anya', message: 'Ms. Hayes taught me more than just history; she taught me how to see the world. Her stories from her travels made every lesson an adventure. I\'ll carry her wisdom with me always.'}, { author: 'Leo, her travel buddy', message: 'Julia, my friend, the trails are quieter without you. From the mountains of Peru to the markets of Marrakech, every step was a joy. Cheers to one last sunset. You are missed.'}, { author: 'Her sister, Clara', message: 'My sister lived a dozen lifetimes in one. She sent postcards from every corner of the earth, each one filled with wonder. I\'ll miss her calls from faraway places. Rest easy, dear sister.'},];
+export type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin' | 'privacy' | 'data-deletion' | 'how-it-works' | 'demoVisitor';
 
 interface AppProps {
   isOffline: boolean;
@@ -77,7 +66,6 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   const [view, setView] = useState<View>('landing');
   const [activeMemorialId, setActiveMemorialId] = useState<string | null>(null);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
-  const [isSeeding, setIsSeeding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
     
   const themeMenuRef = useRef<HTMLDivElement>(null);
@@ -96,42 +84,27 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
 
   useEffect(() => {
     const supabase = getSupabase();
-    const seedInitialData = async (userId: string) => {
-        console.log("Seeding initial data for new user...");
-        const { data: memorialData, error: memorialError } = await supabase
-          .from('memorials').insert({ ...sampleProfileData, user_id: userId }).select().single();
-        if (memorialError || !memorialData) { console.error("Error seeding memorial profile:", memorialError); return; }
-        const newMemorialId = memorialData.id;
-        await supabase.from('conditional_responses').insert(sampleResponsesData.map(r => ({ ...r, memorial_id: newMemorialId })));
-        await supabase.from('social_links').insert(sampleSocialLinksData.map(l => ({ ...l, memorial_id: newMemorialId })));
-        await supabase.from('tributes').insert(sampleTributesData.map(t => ({ ...t, memorial_id: newMemorialId })));
-        console.log("Seeding complete.");
-        return newMemorialId;
-    };
-
     const checkAndSetInitialMemorial = async () => {
         if (!user) return;
         
-        const { data, error } = await supabase.from('memorials').select('id').eq('user_id', user.id);
+        const { data, error } = await supabase.from('memorials').select('id').eq('user_id', user.id).limit(1);
 
-        if (error) { console.error("Error checking for memorials:", error); return; }
+        if (error) { 
+            console.error("Error checking for memorials:", error); 
+            return; 
+        }
 
         if (data && data.length > 0) {
             setActiveMemorialId(data[0].id);
-        } else {
-            if (isSeeding) return;
-            setIsSeeding(true);
-            const newId = await seedInitialData(user.id);
-            if (newId) setActiveMemorialId(newId);
-            setIsSeeding(false);
         }
+        // If no memorials, the profile page will show an empty state.
     };
     
     if (user && (view === 'login' || view === 'landing')) {
         setView('profile');
         checkAndSetInitialMemorial();
     }
-    if (!user && view !== 'landing' && !['how-it-works', 'privacy', 'data-deletion'].includes(view)) {
+    if (!user && view !== 'landing' && !['how-it-works', 'privacy', 'data-deletion', 'demoVisitor'].includes(view)) {
         setView('login');
         setActiveMemorialId(null);
     }
@@ -176,6 +149,12 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
         return <CreatorDashboard />;
       case 'visitor':
         return <VisitorView />;
+      case 'demoVisitor':
+        return (
+          <MemorialProfileProvider memorialId="demo">
+            <VisitorView />
+          </MemorialProfileProvider>
+        );
       case 'how-it-works':
         return <HowItWorksPage onNavigate={setView} />;
       case 'privacy':
@@ -214,35 +193,47 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
               </div>
 
               <div className="flex items-center space-x-2 sm:space-x-4">
-                 {view !== 'profile' && user && (
-                    <Tooltip content="My Profile">
-                        <button 
-                            onClick={() => setView('profile')} 
-                            className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-secondary-container text-on-secondary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
-                            aria-label="My Profile"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                            <span className="hidden sm:inline sm:ml-2">My Profile</span>
+                 {view === 'demoVisitor' ? (
+                     <button 
+                        onClick={() => setView('landing')} 
+                        className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-secondary-container text-on-secondary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
+                        aria-label="Back to Home"
+                    >
+                        Back to Home
+                    </button>
+                 ) : (
+                    <>
+                        {view !== 'profile' && user && (
+                            <Tooltip content="My Profile">
+                                <button 
+                                    onClick={() => setView('profile')} 
+                                    className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-secondary-container text-on-secondary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
+                                    aria-label="My Profile"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    <span className="hidden sm:inline sm:ml-2">My Profile</span>
+                                </button>
+                            </Tooltip>
+                        )}
+                        {user?.role === 'admin' && view !== 'admin' && (
+                            <Tooltip content="Admin Dashboard">
+                                <button 
+                                    onClick={() => setView('admin')} 
+                                    className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-tertiary-container text-on-tertiary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
+                                    aria-label="Admin Dashboard"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                    <span className="hidden sm:inline sm:ml-2">Admin</span>
+                                </button>
+                            </Tooltip>
+                        )}
+                        {view === 'creator' || view === 'visitor' ? (
+                        <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary hover:text-opacity-80 transition-colors whitespace-nowrap px-3 py-2">
+                            Switch to {view === 'creator' ? 'Visitor' : 'Creator'}
                         </button>
-                    </Tooltip>
+                        ): null}
+                    </>
                  )}
-                 {user?.role === 'admin' && view !== 'admin' && (
-                    <Tooltip content="Admin Dashboard">
-                        <button 
-                            onClick={() => setView('admin')} 
-                            className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-tertiary-container text-on-tertiary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
-                            aria-label="Admin Dashboard"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                            <span className="hidden sm:inline sm:ml-2">Admin</span>
-                        </button>
-                    </Tooltip>
-                 )}
-                 {view === 'creator' || view === 'visitor' ? (
-                  <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary hover:text-opacity-80 transition-colors whitespace-nowrap px-3 py-2">
-                    Switch to {view === 'creator' ? 'Visitor' : 'Creator'}
-                  </button>
-                 ): null}
                 <div className="relative" ref={themeMenuRef}>
                     <Tooltip content="Change Theme">
                         <motion.button

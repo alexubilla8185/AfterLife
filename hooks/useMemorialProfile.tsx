@@ -53,31 +53,8 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
   const supabase = getSupabase();
+  const isDemoMode = memorialId === 'demo';
 
-  const seedInitialData = async (userId: string) => {
-    console.log("No memorial found for user. Seeding initial data...");
-    // 1. Create the memorial profile
-    const { data: memorialData, error: memorialError } = await supabase
-      .from('memorials')
-      .insert({ ...sampleProfileData, user_id: userId })
-      .select()
-      .single();
-
-    if (memorialError || !memorialData) {
-      console.error("Error seeding memorial profile:", memorialError);
-      return;
-    }
-
-    const newMemorialId = memorialData.id;
-
-    // 2. Add associated data
-    await supabase.from('conditional_responses').insert(sampleResponsesData.map(r => ({ ...r, memorial_id: newMemorialId })));
-    await supabase.from('social_links').insert(sampleSocialLinksData.map(l => ({ ...l, memorial_id: newMemorialId })));
-    await supabase.from('tributes').insert(sampleTributesData.map(t => ({ ...t, memorial_id: newMemorialId })));
-
-    console.log("Seeding complete.");
-  };
-  
   const fetchMemorialData = useCallback(async (id: string) => {
     setLoading(true);
     
@@ -115,7 +92,20 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   }, [supabase]);
 
   useEffect(() => {
-    if (memorialId) {
+    if (memorialId === 'demo') {
+        setLoading(true);
+        const demoMemorial: MemorialData = {
+            profile: { id: 'demo-profile', user_id: 'demo-user', ...sampleProfileData },
+            responses: sampleResponsesData.map((r, i) => ({ ...r, id: `demo-res-${i}`, memorial_id: 'demo-profile' })),
+            socialLinks: sampleSocialLinksData.map((l, i) => ({ ...l, id: `demo-link-${i}`, memorial_id: 'demo-profile' })),
+            tributes: sampleTributesData.map((t, i) => ({ ...t, id: `demo-trib-${i}`, memorial_id: 'demo-profile', created_at: new Date().toISOString() })),
+        };
+        // Use a short timeout to simulate a network request for a smoother UI experience
+        setTimeout(() => {
+            setMemorial(demoMemorial);
+            setLoading(false);
+        }, 500);
+    } else if (memorialId) {
         fetchMemorialData(memorialId);
     } else {
         setMemorial(null);
@@ -124,6 +114,10 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   }, [memorialId, fetchMemorialData]);
   
   const updateProfile = async (updates: Partial<CreatorProfile>) => {
+    if (isDemoMode) {
+        alert("This feature is for demonstration only.");
+        return;
+    }
     if (!memorial) return;
     const { error } = await supabase
       .from('memorials')
@@ -138,6 +132,10 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   };
 
   const addConditionalResponse = async (newResponse: Omit<ConditionalResponse, 'id' | 'memorial_id'>) => {
+    if (isDemoMode) {
+        alert("This feature is for demonstration only.");
+        return;
+    }
     if (!memorial) return;
     const { error } = await supabase.from('conditional_responses').insert({ ...newResponse, memorial_id: memorial.profile.id });
     if (error) console.error("Error adding response:", error);
@@ -145,6 +143,10 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   };
 
   const removeConditionalResponse = async (id: string) => {
+    if (isDemoMode) {
+        alert("This feature is for demonstration only.");
+        return;
+    }
     if (!memorial) return;
     const { error } = await supabase.from('conditional_responses').delete().eq('id', id);
     if (error) console.error("Error removing response:", error);
@@ -152,6 +154,11 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   };
   
   const addTribute = async (newTribute: Omit<Tribute, 'id' | 'memorial_id' | 'created_at'>) => {
+    if (isDemoMode) {
+        alert("This feature is for demonstration only.");
+        setMemorial(prev => prev ? ({ ...prev, tributes: [{...newTribute, id: `demo-trib-${Date.now()}`, memorial_id: 'demo-profile', created_at: new Date().toISOString()}, ...prev.tributes] }) : null);
+        return;
+    }
     if (!memorial) return;
     const { error } = await supabase.from('tributes').insert({ ...newTribute, memorial_id: memorial.profile.id });
     if (error) console.error("Error adding tribute:", error);
@@ -170,6 +177,10 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   };
 
   const addSocialLink = async (newLink: Omit<SocialLink, 'id' | 'memorial_id'>) => {
+    if (isDemoMode) {
+        alert("This feature is for demonstration only.");
+        return;
+    }
     if (!memorial) return;
     const { error } = await supabase.from('social_links').insert({ ...newLink, memorial_id: memorial.profile.id });
     if (error) console.error("Error adding link:", error);
@@ -177,6 +188,10 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   };
 
   const removeSocialLink = async (id: string) => {
+    if (isDemoMode) {
+        alert("This feature is for demonstration only.");
+        return;
+    }
     if (!memorial) return;
     const { error } = await supabase.from('social_links').delete().eq('id', id);
     if (error) console.error("Error removing link:", error);
