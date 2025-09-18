@@ -41,7 +41,7 @@ To run this project, you need to set up environment variables.
 
 #### For Production (on Netlify)
 
-Set these variables in your Netlify site's build settings (`Site settings > Build & deploy > Environment`):
+Set these variables in your Netlify site's build settings (`Site settings > Build & deploy > Environment`). **Note the names do not have a `VITE_` prefix.**
 
 -   `API_KEY`: Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 -   `SUPABASE_URL`: Your Supabase project URL.
@@ -49,7 +49,7 @@ Set these variables in your Netlify site's build settings (`Site settings > Buil
 
 ---
 
-### Running Locally: The Recommended Way
+### Running Locally (The Only Supported Way)
 
 For the application to work correctly with all features (including AI chat), you **must** run it using the Netlify CLI. This runs your frontend and backend functions together, perfectly simulating the live production environment.
 
@@ -59,7 +59,7 @@ Create a file named `.env` in the root of your project. This file is for local d
 
 **Step 2: Add Your Keys**
 
-Copy and paste the following into your `.env` file, replacing the placeholder text with your actual keys. Note that these variables do **not** have the `VITE_` prefix.
+Copy and paste the following into your `.env` file, replacing the placeholder text with your actual keys. Note that these variables also do **not** have the `VITE_` prefix.
 
 ```
 # .env file for use with 'netlify dev'
@@ -87,21 +87,9 @@ Your browser should open to `localhost:8888` (or a similar port), and all featur
 If you see an "Offline Mode" banner at the top of the application, it means the frontend couldn't connect to the backend Netlify functions. This typically happens for one of two reasons:
 
 1.  **You are not using `netlify dev`:** If you run the app with a command like `npm run dev` or `vite`, the backend functions will not be served. The frontend will load, but it won't be able to fetch its configuration or call the Gemini AI function.
-2.  **Your environment variables are missing:** The `netlify dev` command relies on the `.env` file being correctly set up.
+2.  **Your environment variables are missing:** The `netlify dev` command relies on the `.env` file being correctly set up with `API_KEY`, `SUPABASE_URL`, and `SUPABASE_ANON_KEY`.
 
-**Fixing Offline Mode:** The best fix is to stop your current server and run `netlify dev` as described in the section above.
-
-### Limited Functionality (Frontend-Only)
-If you cannot use `netlify dev` and must run a frontend-only server (e.g., with `vite` or `npm run dev`), you can still get a fully functional local experience by providing all necessary keys with a `VITE_` prefix in your `.env` file.
-
-```
-# .env file for frontend-only development
-# Provides Supabase connection AND enables AI chat features locally.
-VITE_SUPABASE_URL=your_supabase_project_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_API_KEY=your_google_gemini_api_key
-```
-With this setup, the application will connect directly to Supabase and the Gemini API from your browser. Note that exposing an API key on the client side is acceptable for local development but is not a secure practice for production.
+**Fixing Offline Mode:** The only fix is to stop your current server and run `netlify dev` as described in the section above.
 
 ### Supabase Setup
 
