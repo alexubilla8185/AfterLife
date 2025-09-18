@@ -17,10 +17,10 @@ const handler: Handler = async (event) => {
     };
   }
 
-  // These are public keys, but we serve them from a function to avoid
-  // exposing them in the git repo and to have a single source of truth from env vars.
-  const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
-  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+  // Correctly read the environment variables.
+  // DO NOT HARDCODE YOUR KEYS HERE.
+  const supabaseUrl = process.env.VITE_SUPABASE_URL;
+  const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
     return {
