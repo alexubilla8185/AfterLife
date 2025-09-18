@@ -1,16 +1,21 @@
 import React from 'react';
+import { View } from '../App';
 
-const PrivacyPolicy: React.FC = () => {
+interface PrivacyPolicyProps {
+    onNavigate: (view: View) => void;
+}
+
+const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onNavigate }) => {
     return (
         <div className="min-h-screen bg-surface text-on-surface">
             <header className="bg-surface-container border-b border-outline/30">
                 <div className="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center space-x-4">
-                        <a href="/" aria-label="Back to Home" className="text-primary">
+                        <button onClick={() => onNavigate('landing')} aria-label="Back to Home" className="text-primary">
                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                             </svg>
-                        </a>
+                        </button>
                         <h1 className="text-3xl font-bold text-on-surface">Privacy Policy for AfterLife</h1>
                     </div>
                 </div>
@@ -62,7 +67,7 @@ const PrivacyPolicy: React.FC = () => {
                     
                     <section>
                         <h2 className="text-2xl font-semibold text-on-surface mb-4">6. Data Deletion</h2>
-                        <p>You have the right to delete your account and all associated data. For instructions on how to do this, please see our <a href="/data-deletion" className="text-primary hover:text-opacity-80 underline">Data Deletion Policy</a>.</p>
+                        <p>You have the right to delete your account and all associated data. For instructions on how to do this, please see our <button onClick={() => onNavigate('data-deletion')} className="text-primary hover:text-opacity-80 underline">Data Deletion Policy</button>.</p>
                     </section>
                     
                     <section>

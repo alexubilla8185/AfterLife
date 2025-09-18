@@ -17,7 +17,7 @@ import Tooltip from './components/ui/Tooltip';
 import { useTheme } from './hooks/useTheme';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin';
+export type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin' | 'privacy' | 'data-deletion' | 'how-it-works';
 
 // Sample data to be seeded for the first user
 const sampleProfileData = {
@@ -82,18 +82,6 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
     
   const themeMenuRef = useRef<HTMLDivElement>(null);
 
-  // Simple router for static pages like Privacy Policy
-  const path = window.location.pathname;
-  if (path === '/privacy') {
-    return <PrivacyPolicy />;
-  }
-  if (path === '/data-deletion') {
-    return <DataDeletion />;
-  }
-  if (path === '/how-it-works') {
-    return <HowItWorksPage />;
-  }
-
   useEffect(() => {
     const onboardingComplete = localStorage.getItem('onboardingComplete');
     if (!onboardingComplete) {
@@ -143,16 +131,11 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
         setView('profile');
         checkAndSetInitialMemorial();
     }
-    if (!user && view !== 'landing') {
+    if (!user && view !== 'landing' && !['how-it-works', 'privacy', 'data-deletion'].includes(view)) {
         setView('login');
         setActiveMemorialId(null);
     }
   }, [user, view]);
-
-
-  const handleEnterApp = () => {
-    setView('login');
-  };
 
   const handleNavigate = (newView: 'creator' | 'visitor', memorialId: string) => {
     setActiveMemorialId(memorialId);
@@ -182,7 +165,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   const renderView = () => {
     switch (view) {
       case 'landing':
-        return <LandingPage onEnter={handleEnterApp} />;
+        return <LandingPage onNavigate={setView} />;
       case 'login':
         return <Login onShowTour={() => setShowOnboarding(true)} />;
       case 'profile':
@@ -193,12 +176,18 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
         return <CreatorDashboard />;
       case 'visitor':
         return <VisitorView />;
+      case 'how-it-works':
+        return <HowItWorksPage onNavigate={setView} />;
+      case 'privacy':
+        return <PrivacyPolicy onNavigate={setView} />;
+      case 'data-deletion':
+        return <DataDeletion onNavigate={setView} />;
       default:
-        return <LandingPage onEnter={handleEnterApp} />;
+        return <LandingPage onNavigate={setView} />;
     }
   };
 
-  const showHeader = view !== 'landing' && view !== 'login';
+  const showHeader = !['landing', 'login', 'how-it-works', 'privacy', 'data-deletion'].includes(view);
   const showProfileProvider = view === 'creator' || view === 'visitor';
 
   return (

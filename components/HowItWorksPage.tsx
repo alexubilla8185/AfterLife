@@ -1,6 +1,11 @@
 import React from 'react';
+import { View } from '../App';
 
-const HowItWorksPage: React.FC = () => {
+interface HowItWorksPageProps {
+    onNavigate: (view: View) => void;
+}
+
+const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) => {
     const Card: React.FC<{ icon: JSX.Element, title: string, children: React.ReactNode }> = ({ icon, title, children }) => (
         <div className="bg-surface-container p-8 rounded-3xl border border-outline/30">
             <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-primary-container text-on-primary-container mb-6">
@@ -16,11 +21,11 @@ const HowItWorksPage: React.FC = () => {
              <header className="bg-surface-container border-b border-outline/30 sticky top-0 z-10">
                 <div className="max-w-5xl mx-auto py-5 px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center space-x-4">
-                        <a href="/" aria-label="Back to Home" className="text-primary">
+                        <button onClick={() => onNavigate('landing')} aria-label="Back to Home" className="text-primary">
                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18-3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                             </svg>
-                        </a>
+                        </button>
                         <h1 className="text-3xl font-bold text-on-surface">How AfterLife Works</h1>
                     </div>
                 </div>

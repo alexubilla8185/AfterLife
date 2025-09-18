@@ -1,5 +1,6 @@
 import React from 'react';
 import { SparklesCore } from './ui/sparkles';
+import { View } from '../App';
 
 const FeatureCard: React.FC<{ icon: JSX.Element; title: string; children: React.ReactNode; }> = ({ icon, title, children }) => (
     <div className="bg-surface-container p-6 rounded-3xl border border-outline/30">
@@ -11,7 +12,7 @@ const FeatureCard: React.FC<{ icon: JSX.Element; title: string; children: React.
     </div>
 );
 
-const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
+const LandingPage: React.FC<{ onNavigate: (view: View) => void }> = ({ onNavigate }) => {
   return (
     <div className="bg-surface text-on-surface">
       <header className="absolute top-0 left-0 right-0 z-30 p-4">
@@ -23,7 +24,7 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
             <span className="font-bold text-xl text-on-surface">AfterLife</span>
           </div>
            <div>
-            <a href="/how-it-works" className="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">How it Works</a>
+            <button onClick={() => onNavigate('how-it-works')} className="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">How it Works</button>
           </div>
         </div>
       </header>
@@ -50,7 +51,7 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
               Create a living memorial—an interactive space where your memories, stories, and wisdom can be shared and cherished for generations to come.
             </p>
             <button 
-                onClick={onEnter} 
+                onClick={() => onNavigate('login')} 
                 className="mt-12 px-8 py-4 text-lg font-semibold text-on-primary bg-primary rounded-full shadow-lg hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-container focus:ring-primary transform hover:scale-105 transition-all"
             >
               Explore the Alpha Demo
@@ -91,9 +92,9 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
       <footer className="bg-surface-container border-t border-outline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-on-surface-variant">
           <div className="flex justify-center space-x-6 text-sm">
-            <a href="/how-it-works" className="hover:text-primary transition-colors">How it Works</a>
-            <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="/data-deletion" className="hover:text-primary transition-colors">Data Deletion</a>
+            <button onClick={() => onNavigate('how-it-works')} className="hover:text-primary transition-colors">How it Works</button>
+            <button onClick={() => onNavigate('privacy')} className="hover:text-primary transition-colors">Privacy Policy</button>
+            <button onClick={() => onNavigate('data-deletion')} className="hover:text-primary transition-colors">Data Deletion</button>
           </div>
           <p className="mt-4 text-xs">&copy; {new Date().getFullYear()} AfterLife. A place for stories that last forever.</p>
         </div>
