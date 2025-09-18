@@ -22,7 +22,7 @@ const tourSteps = [
             </svg>
         ),
         title: 'For Creators',
-        content: 'As a Creator, you build your own digital memorial. Share your bio, link to your work, and write special messages that visitors can receive.',
+        content: 'As a Creator, you build your own digital memorial from your private Creator Dashboard. Share a bio, link to your work, and set up special messages.',
     },
     {
         icon: (props: any) => (
@@ -31,7 +31,7 @@ const tourSteps = [
             </svg>
         ),
         title: 'Teach It Your Voice',
-        content: 'Guide conversations by setting up "conditional responses". When a visitor mentions a keyword like "travel", you can share a special memory you\'ve pre-written for that topic.',
+        content: 'Guide conversations by setting up "conditional responses". When a visitor mentions a keyword like "travel", you can share a special memory you\'ve pre-written.',
     },
     {
         icon: (props: any) => (
@@ -40,7 +40,7 @@ const tourSteps = [
             </svg>
         ),
         title: 'How to Add a Response',
-        content: "From your Creator Dashboard, it's simple. Just fill out the form to add a keyword, write your personal message, and save. Your first response is ready!",
+        content: "From your Creator Dashboard, simply fill out the form to add a keyword, write your personal message, and save. Your first interactive response is ready!",
     },
     {
         icon: (props: any) => (
@@ -49,7 +49,16 @@ const tourSteps = [
             </svg>
         ),
         title: 'For Visitors',
-        content: 'As a Visitor, you can explore a memorial, leave a tribute for others to see, and have a conversation with the memory of a loved one.',
+        content: 'As a Visitor, you explore the public memorial, leave a tribute for others to see, and have a conversation with the memory of a loved one.',
+    },
+    {
+        icon: (props: any) => (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" {...props}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.127 20.923A.75.75 0 016.45 20.254L2.853 16.657A.75.75 0 013.92 15.586l3.528 3.528a.75.75 0 001.06-1.06L4.98 14.528a.75.75 0 011.06-1.06l3.528 3.528a.75.75 0 001.06-1.06L7.1 12.404a.75.75 0 011.06-1.06l3.528 3.528a.75.75 0 001.06-1.06L9.22 10.344a.75.75 0 011.06-1.06l3.528 3.528a.75.75 0 001.06-1.06L11.34 8.284a.75.75 0 111.06-1.06l3.528 3.528a.75.75 0 001.061-1.06L13.46 6.164a.75.75 0 011.06-1.06l3.627 3.627a.75.75 0 11-1.06 1.06L14.528 7.23l-3.528 3.528a.75.75 0 00-1.06 1.06L13.46 15.34l-3.528-3.528a.75.75 0 00-1.06 1.06l3.528 3.528a.75.75 0 01-1.06 1.06L7.863 13.932a.75.75 0 00-1.06 1.06l3.528 3.528a.75.75 0 01-1.06 1.06l-3.528-3.528a.75.75 0 00-1.06 1.06l3.528 3.528a.75.75 0 01-.673.746z" />
+            </svg>
+        ),
+        title: 'Switching Perspectives',
+        content: 'As a creator in the full version, you can instantly switch between your private dashboard and the public visitor view using the button in the header.',
     }
 ];
 

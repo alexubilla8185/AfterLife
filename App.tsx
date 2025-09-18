@@ -194,6 +194,11 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                 </svg>
                 <div className="flex items-baseline space-x-2">
                   <h1 className="text-xl font-bold text-on-surface transition-colors group-hover:text-primary">AfterLife</h1>
+                  {user?.role === 'admin' && (
+                    <span className="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-tertiary-container text-on-tertiary-container">
+                        Admin
+                    </span>
+                  )}
                 </div>
               </button>
 
