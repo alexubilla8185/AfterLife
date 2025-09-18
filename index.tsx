@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { ThemeProvider } from './hooks/useTheme';
 import { UserProvider } from './hooks/useUser';
+import { DialogProvider } from './hooks/useDialog';
 import { initializeSupabase, isSupabaseOffline } from './services/supabaseClient';
 
 const AppInitializer: React.FC = () => {
@@ -29,7 +30,9 @@ const AppInitializer: React.FC = () => {
     return (
         <ThemeProvider>
             <UserProvider>
-                <App isOffline={isOffline} />
+                <DialogProvider>
+                    <App isOffline={isOffline} />
+                </DialogProvider>
             </UserProvider>
         </ThemeProvider>
     );

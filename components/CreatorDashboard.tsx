@@ -3,9 +3,11 @@ import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { getSupabase } from '../services/supabaseClient';
 import EditProfileModal from './EditProfileModal';
 import Tooltip from './ui/Tooltip';
+import { useDialog } from '../hooks/useDialog';
 
 const AudioMessageManager: React.FC = () => {
     const { memorial, updateProfile } = useMemorialProfile();
+    const { showError } = useDialog();
     const [isRecording, setIsRecording] = useState(false);
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
     const [audioUrl, setAudioUrl] = useState<string | null>(memorial?.profile.audio_message_url || null);
@@ -39,7 +41,7 @@ const AudioMessageManager: React.FC = () => {
             setIsRecording(true);
         } catch (err) {
             console.error("Error accessing microphone:", err);
-            alert("Could not access microphone. Please check your browser permissions.");
+            showError({ title: 'Microphone Access Denied', message: 'Could not access microphone. Please check your browser permissions.' });
         }
     };
 
@@ -76,7 +78,7 @@ const AudioMessageManager: React.FC = () => {
 
         if (error) {
             console.error("Error uploading audio:", error);
-            alert("Failed to upload audio.");
+            showError({ title: 'Upload Failed', message: 'Failed to upload audio file. Please try again.' });
             setIsUploading(false);
             return;
         }
@@ -284,52 +286,8 @@ const SocialLinksManager: React.FC = () => {
 
 const CreatorDashboard: React.FC = () => {
   const { memorial, loading, removeConditionalResponse } = useMemorialProfile();
-  const [responseToDelete, setResponseToDelete] = useState<string | null>(null);
+  const { showConfirmation } = useDialog();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const modalRef = useRef<HTMLDivElement>(null);
-  
-  // Accessibility: Focus trap for delete confirmation modal
-  useEffect(() => {
-    if (responseToDelete && modalRef.current) {
-        const focusableElements = modalRef.current.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        ) as NodeListOf<HTMLElement>;
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        firstElement?.focus();
-
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key !== 'Tab') return;
-            if (e.shiftKey) { // Shift+Tab
-                if (document.activeElement === firstElement) {
-                    lastElement.focus();
-                    e.preventDefault();
-                }
-            } else { // Tab
-                if (document.activeElement === lastElement) {
-                    firstElement.focus();
-                    e.preventDefault();
-                }
-            }
-        };
-        
-        const currentModalRef = modalRef.current;
-        currentModalRef.addEventListener('keydown', handleKeyDown);
-        return () => currentModalRef.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [responseToDelete]);
-
-  const handleConfirmDelete = async () => {
-    if (responseToDelete) {
-      await removeConditionalResponse(responseToDelete);
-      setResponseToDelete(null);
-    }
-  };
-
-  const handleCancelDelete = () => {
-    setResponseToDelete(null);
-  };
   
   if (loading) {
       return <div className="text-center py-20 text-on-surface-variant">Loading Creator Dashboard...</div>
@@ -340,6 +298,17 @@ const CreatorDashboard: React.FC = () => {
   }
 
   const { profile, responses } = memorial;
+
+  const handleResponseDelete = async (responseId: string) => {
+    const confirmed = await showConfirmation({
+        title: 'Confirm Deletion',
+        message: 'Are you sure you want to delete this response?',
+        confirmText: 'Confirm'
+    });
+    if (confirmed) {
+        await removeConditionalResponse(responseId);
+    }
+  };
 
   return (
     <>
@@ -387,7 +356,7 @@ const CreatorDashboard: React.FC = () => {
                               <p className="text-on-surface italic">"{res.response}"</p>
                           </div>
                             <Tooltip content="Delete Response">
-                                <button onClick={() => setResponseToDelete(res.id)} aria-label={`Delete response for keyword "${res.keyword}"`} className="text-on-surface-variant hover:text-red-500 rounded-full p-2 transition-colors hover:bg-red-500/10">
+                                <button onClick={() => handleResponseDelete(res.id)} aria-label={`Delete response for keyword "${res.keyword}"`} className="text-on-surface-variant hover:text-red-500 rounded-full p-2 transition-colors hover:bg-red-500/10">
                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                    </svg>
@@ -404,30 +373,6 @@ const CreatorDashboard: React.FC = () => {
           </div>
         </div>
       </div>
-      {responseToDelete && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
-          <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" className="bg-surface-container-high rounded-3xl p-6 w-full max-w-sm mx-auto border border-outline">
-            <h3 id="delete-modal-title" className="text-lg font-semibold text-on-surface">Confirm Deletion</h3>
-            <p className="mt-2 text-sm text-on-surface-variant">
-                Are you sure you want to delete this response?
-            </p>
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={handleCancelDelete}
-                className="px-5 py-2.5 text-sm font-medium rounded-full hover:bg-outline/20"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-full hover:bg-red-700"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

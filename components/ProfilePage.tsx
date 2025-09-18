@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useUser } from '../hooks/useUser';
 import { getSupabase } from '../services/supabaseClient';
 import { CreatorProfile } from '../types';
 import CreateMemorialModal from './CreateMemorialModal';
+import { useDialog } from '../hooks/useDialog';
 
 interface ProfilePageProps {
     onNavigate: (view: 'creator' | 'visitor', memorialId: string) => void;
@@ -10,11 +11,10 @@ interface ProfilePageProps {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     const { user, signOut } = useUser();
+    const { showConfirmation } = useDialog();
     const [memorials, setMemorials] = useState<CreatorProfile[]>([]);
     const [loading, setLoading] = useState(true);
-    const [memorialToDelete, setMemorialToDelete] = useState<CreatorProfile | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const modalRef = useRef<HTMLDivElement>(null);
     const supabase = getSupabase();
 
     const fetchMemorials = useCallback(async () => {
@@ -37,42 +37,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         fetchMemorials();
     }, [fetchMemorials]);
 
-    // Accessibility: Focus trap for delete confirmation modal
-    useEffect(() => {
-        if (memorialToDelete && modalRef.current) {
-            const focusableElements = modalRef.current.querySelectorAll(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            ) as NodeListOf<HTMLElement>;
-            const firstElement = focusableElements[0];
-            const lastElement = focusableElements[focusableElements.length - 1];
-
-            firstElement?.focus();
-
-            const handleKeyDown = (e: KeyboardEvent) => {
-                if (e.key !== 'Tab') return;
-                if (e.shiftKey) { // Shift+Tab
-                    if (document.activeElement === firstElement) {
-                        lastElement.focus();
-                        e.preventDefault();
-                    }
-                } else { // Tab
-                    if (document.activeElement === lastElement) {
-                        firstElement.focus();
-                        e.preventDefault();
-                    }
-                }
-            };
-            
-            const currentModalRef = modalRef.current;
-            currentModalRef.addEventListener('keydown', handleKeyDown);
-            return () => currentModalRef.removeEventListener('keydown', handleKeyDown);
-        }
-    }, [memorialToDelete]);
-
-    const handleDeleteMemorial = async () => {
-        if (!memorialToDelete) return;
-
+    const handleDeleteMemorial = async (memorialToDelete: CreatorProfile) => {
         const { id: memorialId, audio_message_url } = memorialToDelete;
+
+        const confirmed = await showConfirmation({
+            title: 'Confirm Deletion',
+            message: (
+                 <p>
+                    Are you sure you want to delete the memorial for <strong>{memorialToDelete.name}</strong>? This action is irreversible.
+                </p>
+            ),
+            confirmText: 'Confirm'
+        });
+
+        if (!confirmed) return;
 
         // 1. Delete associated data
         const tablesToDeleteFrom = ['conditional_responses', 'social_links', 'tributes'];
@@ -96,7 +74,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
             console.error("Error deleting memorial:", memorialError);
         }
 
-        setMemorialToDelete(null);
         fetchMemorials(); // Refresh the list
     };
 
@@ -169,7 +146,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                                                     Manage
                                                 </button>
                                                 <button
-                                                    onClick={() => setMemorialToDelete(memorial)}
+                                                    onClick={() => handleDeleteMemorial(memorial)}
                                                     className="p-2 text-on-surface-variant hover:text-red-500 rounded-full hover:bg-red-500/10 transition-colors"
                                                     aria-label="Delete memorial"
                                                 >
@@ -192,31 +169,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                     </div>
                 </div>
             </div>
-
-            {memorialToDelete && (
-                <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
-                <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" className="bg-surface-container-high rounded-3xl p-6 w-full max-w-sm mx-auto border border-outline">
-                    <h3 id="delete-modal-title" className="text-lg font-semibold text-on-surface">Confirm Deletion</h3>
-                    <p className="mt-2 text-sm text-on-surface-variant">
-                        Are you sure you want to delete the memorial for <strong>{memorialToDelete.name}</strong>? This action is irreversible.
-                    </p>
-                    <div className="mt-6 flex justify-end space-x-3">
-                    <button
-                        onClick={() => setMemorialToDelete(null)}
-                        className="px-5 py-2.5 text-sm font-medium rounded-full hover:bg-outline/20"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleDeleteMemorial}
-                        className="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-full hover:bg-red-700"
-                    >
-                        Confirm
-                    </button>
-                    </div>
-                </div>
-                </div>
-            )}
         </>
     );
 };

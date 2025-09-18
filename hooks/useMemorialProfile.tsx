@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useCa
 import { CreatorProfile, ConditionalResponse, Tribute, SocialLink, MemorialData } from '../types';
 import { getSupabase } from '../services/supabaseClient';
 import { useUser } from './useUser';
+import { useDialog } from './useDialog';
 
 // Sample data for the public demo memorial
 const sampleProfileData = {
@@ -52,8 +53,16 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   const [memorial, setMemorial] = useState<MemorialData | null>(null);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
+  const { showDialog, showError } = useDialog();
   const supabase = getSupabase();
   const isDemoMode = memorialId === 'demo';
+  
+  const demoActionHandler = useCallback(() => {
+    showDialog({
+        title: 'Demo Mode',
+        message: 'This feature is for demonstration only and does not save data.'
+    });
+  }, [showDialog]);
 
   const fetchMemorialData = useCallback(async (id: string) => {
     setLoading(true);
@@ -115,7 +124,7 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   
   const updateProfile = async (updates: Partial<CreatorProfile>) => {
     if (isDemoMode) {
-        alert("This feature is for demonstration only.");
+        demoActionHandler();
         return;
     }
     if (!memorial) return;
@@ -126,6 +135,7 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
     
     if (error) {
       console.error("Error updating profile:", error);
+      showError({ title: 'Update Failed', message: 'Could not update the profile. Please try again.' });
     } else {
       fetchMemorialData(memorial.profile.id);
     }
@@ -133,35 +143,44 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
 
   const addConditionalResponse = async (newResponse: Omit<ConditionalResponse, 'id' | 'memorial_id'>) => {
     if (isDemoMode) {
-        alert("This feature is for demonstration only.");
+        demoActionHandler();
         return;
     }
     if (!memorial) return;
     const { error } = await supabase.from('conditional_responses').insert({ ...newResponse, memorial_id: memorial.profile.id });
-    if (error) console.error("Error adding response:", error);
+    if (error) {
+        console.error("Error adding response:", error);
+        showError({ title: 'Save Failed', message: 'Could not save the new response.' });
+    }
     else fetchMemorialData(memorial.profile.id);
   };
 
   const removeConditionalResponse = async (id: string) => {
     if (isDemoMode) {
-        alert("This feature is for demonstration only.");
+        demoActionHandler();
         return;
     }
     if (!memorial) return;
     const { error } = await supabase.from('conditional_responses').delete().eq('id', id);
-    if (error) console.error("Error removing response:", error);
+    if (error) {
+        console.error("Error removing response:", error);
+        showError({ title: 'Delete Failed', message: 'Could not delete the response.' });
+    }
     else fetchMemorialData(memorial.profile.id);
   };
   
   const addTribute = async (newTribute: Omit<Tribute, 'id' | 'memorial_id' | 'created_at'>) => {
     if (isDemoMode) {
-        alert("This feature is for demonstration only.");
+        demoActionHandler();
         setMemorial(prev => prev ? ({ ...prev, tributes: [{...newTribute, id: `demo-trib-${Date.now()}`, memorial_id: 'demo-profile', created_at: new Date().toISOString()}, ...prev.tributes] }) : null);
         return;
     }
     if (!memorial) return;
     const { error } = await supabase.from('tributes').insert({ ...newTribute, memorial_id: memorial.profile.id });
-    if (error) console.error("Error adding tribute:", error);
+    if (error) {
+        console.error("Error adding tribute:", error);
+        showError({ title: 'Post Failed', message: 'Could not post your tribute. Please try again.' });
+    }
     else fetchMemorialData(memorial.profile.id);
   };
 
@@ -178,23 +197,29 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
 
   const addSocialLink = async (newLink: Omit<SocialLink, 'id' | 'memorial_id'>) => {
     if (isDemoMode) {
-        alert("This feature is for demonstration only.");
+        demoActionHandler();
         return;
     }
     if (!memorial) return;
     const { error } = await supabase.from('social_links').insert({ ...newLink, memorial_id: memorial.profile.id });
-    if (error) console.error("Error adding link:", error);
+    if (error) {
+        console.error("Error adding link:", error);
+        showError({ title: 'Save Failed', message: 'Could not add the new link.' });
+    }
     else fetchMemorialData(memorial.profile.id);
   };
 
   const removeSocialLink = async (id: string) => {
     if (isDemoMode) {
-        alert("This feature is for demonstration only.");
+        demoActionHandler();
         return;
     }
     if (!memorial) return;
     const { error } = await supabase.from('social_links').delete().eq('id', id);
-    if (error) console.error("Error removing link:", error);
+    if (error) {
+        console.error("Error removing link:", error);
+        showError({ title: 'Delete Failed', message: 'Could not delete the link.' });
+    }
     else fetchMemorialData(memorial.profile.id);
   };
 
