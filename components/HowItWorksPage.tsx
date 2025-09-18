@@ -6,13 +6,25 @@ interface HowItWorksPageProps {
 }
 
 const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) => {
-    const Card: React.FC<{ icon: JSX.Element, title: string, children: React.ReactNode }> = ({ icon, title, children }) => (
-        <div className="bg-surface-container p-8 rounded-3xl border border-outline/30">
-            <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-primary-container text-on-primary-container mb-6">
-                {icon}
+    
+    const StepCard: React.FC<{
+        step: number;
+        icon: JSX.Element;
+        title: string;
+        children: React.ReactNode;
+    }> = ({ step, icon, title, children }) => (
+        <div className="flex flex-col sm:flex-row items-start gap-6">
+            <div className="flex items-center gap-4">
+                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-primary-container text-on-primary-container rounded-full font-bold text-xl">{step}</div>
+                <div className="sm:hidden flex-shrink-0 w-16 h-16 flex items-center justify-center bg-surface-container text-primary rounded-2xl">{icon}</div>
             </div>
-            <h3 className="text-2xl font-bold mb-3 text-on-surface">{title}</h3>
-            <div className="text-on-surface-variant space-y-4">{children}</div>
+            <div className="flex-1">
+                <div className="flex items-center mb-3">
+                     <div className="hidden sm:flex flex-shrink-0 w-16 h-16 mr-5 items-center justify-center bg-surface-container text-primary rounded-2xl">{icon}</div>
+                     <h3 className="text-2xl font-bold text-on-surface">{title}</h3>
+                </div>
+                <p className="text-on-surface-variant leading-relaxed">{children}</p>
+            </div>
         </div>
     );
     
@@ -30,37 +42,64 @@ const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) => {
                     </div>
                 </div>
             </header>
-            <main className="max-w-5xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl font-extrabold text-on-surface tracking-tight">Two Roles, One Purpose</h2>
-                    <p className="mt-4 max-w-3xl mx-auto text-lg text-on-surface-variant">
-                        AfterLife is designed for both creating a legacy and connecting with one. Understand the journey from both perspectives.
+            <main className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-20">
+                    <h2 className="text-4xl font-extrabold text-on-surface tracking-tight sm:text-5xl">Craft a Legacy, Create a Connection</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-lg text-on-surface-variant">
+                        AfterLife provides a new way to remember. It's a simple, four-step process from creation to connection.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Card 
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>}
-                        title="The Creator's Journey"
+                <div className="space-y-16">
+                    <StepCard 
+                        step={1}
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" /></svg>}
+                        title="Create a Memorial"
                     >
-                        <p>As a Creator, you are the architect of a digital memorial. This is your space to leave a lasting impression for family, friends, and future generations.</p>
-                        <ul className="list-disc list-inside space-y-2">
-                            <li><strong>Build the Profile:</strong> Share your life story, important dates, and a favorite photo.</li>
-                            <li><strong>Record Your Voice:</strong> Upload or record an audio message for a personal touch.</li>
-                            <li><strong>Set Custom Replies:</strong> Program special responses to keywords. If a visitor mentions "travel," you can leave a story about your favorite trip.</li>
-                        </ul>
-                    </Card>
-                     <Card 
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.08-3.239A8.931 8.931 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z" clipRule="evenodd" /></svg>}
-                        title="The Visitor's Experience"
+                        Begin by creating a new memorial. This is the digital canvas for a life story. You'll add a name, significant dates, a cherished photo, and a biography that captures the essence of the person.
+                    </StepCard>
+                    <StepCard 
+                        step={2}
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>}
+                        title="Teach It Your Voice"
                     >
-                        <p>As a Visitor, you can connect with a memorial in a profound and interactive way, celebrating the life of someone important.</p>
-                        <ul className="list-disc list-inside space-y-2">
-                            <li><strong>Interactive Chat:</strong> Have a conversation. Receive custom messages left by the Creator or gentle, AI-powered reflections.</li>
-                            <li><strong>Leave a Tribute:</strong> Share a memory on the Tribute Wall for everyone to see, creating a communal space of remembrance.</li>
-                             <li><strong>Explore their Legacy:</strong> Listen to their audio message and explore the links they shared to their blogs, photo galleries, and more.</li>
-                        </ul>
-                    </Card>
+                        Bring the memorial to life by teaching it to respond. You can record a personal audio message and create custom replies. For example, if a visitor mentions "love," you can share a thought on what love meant to you.
+                    </StepCard>
+                     <StepCard 
+                        step={3}
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>}
+                        title="The Magic of Connection"
+                    >
+                        When a visitor interacts, the system listens. If their message contains one of your keywords, it shares your pre-written response. If not, our AI provides a gentle, comforting reflection that honors your spirit without speaking for you.
+                    </StepCard>
+                    <StepCard 
+                        step={4}
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9a9 9 0 100-13.5h9a9 9 0 000 13.5z" /><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 12.75h4.5m-4.5-3h4.5" /></svg>}
+                        title="An Enduring Legacy"
+                    >
+                        The memorial becomes a living space for remembrance. Visitors can leave tributes on the wall, creating a shared tapestry of memories. Your story continues, accessible for generations to come.
+                    </StepCard>
+                </div>
+                
+                <div className="mt-24 text-center">
+                    <h2 className="text-3xl font-extrabold text-on-surface tracking-tight">Ready to Begin?</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-lg text-on-surface-variant">
+                       Explore a live demo or create your own account to start building a legacy today.
+                    </p>
+                    <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <button 
+                            onClick={() => onNavigate('login')} 
+                            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-full text-on-primary bg-primary shadow-lg hover:bg-opacity-90 transition-transform hover:scale-105"
+                        >
+                            Get Started for Free
+                        </button>
+                        <button 
+                            onClick={() => onNavigate('demoVisitor')} 
+                            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-full text-on-surface-variant bg-surface-container-high border border-outline hover:bg-outline/20 transition-colors"
+                        >
+                           View a Demo
+                        </button>
+                    </div>
                 </div>
             </main>
         </div>

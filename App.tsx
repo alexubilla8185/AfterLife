@@ -184,14 +184,18 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
         <header className="sticky top-0 z-40 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-lg border-b border-outline">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-4">
-                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8 text-primary">
+              <button
+                onClick={() => setView('landing')}
+                aria-label="Back to home"
+                className="flex items-center space-x-4 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface rounded-lg"
+              >
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8 text-primary transition-transform group-hover:scale-110">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                 </svg>
                 <div className="flex items-baseline space-x-2">
-                  <h1 className="text-xl font-bold text-on-surface">AfterLife</h1>
+                  <h1 className="text-xl font-bold text-on-surface transition-colors group-hover:text-primary">AfterLife</h1>
                 </div>
-              </div>
+              </button>
 
               <div className="flex items-center space-x-2 sm:space-x-4">
                  {view === 'demoVisitor' ? (
