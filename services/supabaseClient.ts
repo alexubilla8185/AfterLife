@@ -10,7 +10,7 @@ const createOfflineClient = (): SupabaseClient => {
         data,
         error: { message: 'Application is in offline mode.', name: 'OfflineError' }
     });
-    
+
     const fromHandler = {
         get(target: any, prop: string | symbol) {
             return () => {
@@ -36,7 +36,7 @@ const createOfflineClient = (): SupabaseClient => {
                 return () => new Proxy({}, fromHandler);
             }
             if (prop === 'storage') {
-                 return { from: () => new Proxy({}, storageFromHandler) };
+                return { from: () => new Proxy({}, storageFromHandler) };
             }
             if (prop === 'auth') {
                 return {
@@ -61,7 +61,6 @@ const createOfflineClient = (): SupabaseClient => {
             };
         },
     };
-
     return new Proxy({}, offlineHandler) as SupabaseClient;
 };
 
@@ -75,7 +74,7 @@ export const initializeSupabase = async (): Promise<void> => {
     if (isInitialized) return;
 
     try {
-        const supabaseUrl = import.meta.env?.VITE_SUPABASE_DATABASE_URL;
+        const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
         const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
 
         if (supabaseUrl && supabaseAnonKey) {
@@ -84,24 +83,24 @@ export const initializeSupabase = async (): Promise<void> => {
             isInitialized = true;
             return;
         }
-    
+
         // Standard initialization via Netlify Function.
         console.log("Attempting to initialize Supabase from config function...");
         const functionsUrl = '/.netlify/functions/config';
-    const response = await fetch(functionsUrl);
+        const response = await fetch(functionsUrl);
 
-    if (!response.ok) {
+        if (!response.ok) {
             // For local development (not using `netlify dev`), this fetch will fail.
             // We can detect this and provide a helpful warning instead of a disruptive error.
             if (import.meta.env?.DEV) {
-                 console.warn("--- Supabase Initialization Info ---");
-                 console.warn("Could not fetch config. This is expected if not running with 'netlify dev'.");
-                 console.warn("Falling back to OFFLINE MODE. To connect locally, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY.");
-                 console.warn("------------------------------------");
-                 supabase = createOfflineClient();
-                 isOffline = true;
-                 isInitialized = true;
-                 return;
+                console.warn("--- Supabase Initialization Info ---");
+                console.warn("Could not fetch config. This is expected if not running with 'netlify dev'.");
+                console.warn("Falling back to OFFLINE MODE. To connect locally, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+                console.warn("------------------------------------");
+                supabase = createOfflineClient();
+                isOffline = true;
+                isInitialized = true;
+                return;
             }
             // For production builds, a failed fetch is a real error.
             let errorMessage = `Failed to fetch Supabase configuration. Status: ${response.status}`;
@@ -115,7 +114,7 @@ export const initializeSupabase = async (): Promise<void> => {
                 console.warn("--- Supabase Initialization Info ---");
                 console.warn(`Config endpoint returned non-JSON content-type: ${contentType}`);
                 console.warn("This commonly happens when the dev server returns index.html for unknown routes.");
-                console.warn("Falling back to OFFLINE MODE. To connect locally, run 'netlify dev' or set VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY.");
+                console.warn("Falling back to OFFLINE MODE. To connect locally, run 'netlify dev' or set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
                 console.warn("------------------------------------");
                 supabase = createOfflineClient();
                 isOffline = true;
