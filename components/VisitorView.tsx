@@ -48,7 +48,7 @@ const TributeForm: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-surface-container p-6 rounded-3xl border border-outline/30 space-y-4 h-full">
+        <form onSubmit={handleSubmit} className="bg-surface-container p-4 sm:p-6 rounded-3xl border border-outline/30 space-y-4 h-full">
             <h3 className="text-lg font-semibold text-on-surface">Leave a Tribute</h3>
             <div>
                 <label htmlFor="author" className="block text-sm font-medium text-on-surface-variant mb-1">Your Name</label>
@@ -92,7 +92,7 @@ const TributeForm: React.FC = () => {
 };
 
 const TributeWall: React.FC<{ tributes: Tribute[] }> = ({ tributes }) => (
-    <div className="bg-surface-container p-6 rounded-3xl border border-outline/30">
+    <div className="bg-surface-container p-4 sm:p-6 rounded-3xl border border-outline/30">
         <h3 className="text-lg font-semibold text-on-surface mb-4">Tributes & Memories</h3>
         <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
             {tributes.length > 0 ? tributes.map(tribute => (
@@ -354,13 +354,13 @@ const VisitorView: React.FC = () => {
     const { profile, socialLinks, tributes } = memorial;
 
     const ProfileHeader = () => (
-      <div className="bg-surface-container p-6 md:p-8 rounded-3xl mb-8 border border-outline/30">
+      <div className="bg-surface-container p-4 sm:p-6 md:p-8 rounded-3xl mb-8 border border-outline/30">
         <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-8">
-          <img src={profile.profile_image_url} alt={profile.name} className="w-36 h-36 rounded-full object-cover shadow-md border-4 border-surface" />
+          <img src={profile.profile_image_url} alt={profile.name} className="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover shadow-md border-4 border-surface" />
           <div>
-            <h1 className="text-4xl font-extrabold text-on-surface">{profile.name}</h1>
-            <p className="text-lg text-on-surface-variant">{profile.life_span}</p>
-            <p className="mt-4 text-on-surface-variant leading-relaxed max-w-2xl">{profile.bio}</p>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-on-surface">{profile.name}</h1>
+            <p className="text-base sm:text-lg text-on-surface-variant">{profile.life_span}</p>
+            <p className="mt-4 text-on-surface-variant leading-relaxed max-w-2xl text-sm sm:text-base">{profile.bio}</p>
             
             {profile.audio_message_url && (
                 <div className="mt-6">
@@ -415,7 +415,7 @@ const VisitorView: React.FC = () => {
     );
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
             <ProfileHeader />
             
             <div className="bg-surface-container rounded-t-3xl border-x border-t border-outline/30 relative">
@@ -467,7 +467,7 @@ const VisitorView: React.FC = () => {
                     role="tabpanel"
                     aria-labelledby="tab-tributes"
                     hidden={activeTab !== 'tributes'}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-surface border border-outline/30 border-t-0"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 p-4 sm:p-6 bg-surface border border-outline/30 border-t-0"
                 >
                     <TributeForm />
                     <TributeWall tributes={tributes} />

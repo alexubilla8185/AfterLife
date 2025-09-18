@@ -55,22 +55,22 @@ const LandingPage: React.FC<{ onNavigate: (view: View) => void }> = ({ onNavigat
             />
           </div>
           <div className="relative z-20 animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-extrabold text-on-surface tracking-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-on-surface tracking-tight">
               Your Story Doesn't End Here.
             </h1>
-            <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-on-surface-variant">
+            <p className="mt-6 max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-on-surface-variant">
               Create a living memorial—an interactive space where your memories, stories, and wisdom can be shared and cherished for generations to come.
             </p>
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button 
                     onClick={() => onNavigate('login')} 
-                    className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-full text-on-primary bg-primary shadow-lg hover:bg-opacity-90 transition-transform hover:scale-105"
+                    className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-base font-bold rounded-full text-on-primary bg-primary shadow-lg hover:bg-opacity-90 transition-transform hover:scale-105"
                 >
                     Get Early Access
                 </button>
                 <button 
                     onClick={() => onNavigate('demoVisitor')} 
-                    className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 text-base font-bold rounded-full text-on-surface-variant bg-surface-container-high border border-outline hover:bg-outline/20 transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 text-base font-bold rounded-full text-on-surface-variant bg-surface-container-high border border-outline hover:bg-outline/20 transition-colors"
                 >
                    View Live Demo
                 </button>
@@ -81,8 +81,8 @@ const LandingPage: React.FC<{ onNavigate: (view: View) => void }> = ({ onNavigat
         <section id="how-it-works" className="py-20 md:py-32 bg-surface">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
-                    <h2 className="text-4xl font-extrabold text-on-surface tracking-tight">A Space for Remembrance & Connection</h2>
-                    <p className="mt-4 max-w-3xl mx-auto text-lg text-on-surface-variant">AfterLife offers two unique experiences: one for creating a legacy, and one for connecting with it.</p>
+                    <h2 className="text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tight">A Space for Remembrance & Connection</h2>
+                    <p className="mt-4 max-w-3xl mx-auto text-base sm:text-lg text-on-surface-variant">AfterLife offers two unique experiences: one for creating a legacy, and one for connecting with it.</p>
                 </div>
                 <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
                     <FeatureCard

@@ -182,7 +182,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
       
       {showHeader && (
         <header className="sticky top-0 z-40 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-lg border-b border-outline">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <button
                 onClick={() => setView('landing')}
@@ -261,7 +261,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
         </header>
       )}
 
-      <main className={showHeader ? "p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto" : ""}>
+      <main className={showHeader ? "p-4 sm:p-6 lg:p-8 max-w-screen-2xl mx-auto" : ""}>
         {showProfileProvider ? (
             <MemorialProfileProvider memorialId={activeMemorialId}>
                 {renderView()}

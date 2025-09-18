@@ -89,13 +89,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     return (
         <>
             {isCreateModalOpen && <CreateMemorialModal onClose={() => { setIsCreateModalOpen(false); fetchMemorials(); }} />}
-            <div className="max-w-4xl mx-auto animate-fade-in">
+            <div className="max-w-6xl mx-auto animate-fade-in">
                 <div className="bg-surface-container p-6 md:p-8 rounded-3xl border border-outline/30">
                     <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left space-y-4 md:space-y-0 md:space-x-8">
-                        <img src={user.avatar_url || ''} alt={user.full_name || 'User'} className="w-36 h-36 rounded-full object-cover shadow-md border-4 border-surface" />
+                        <img src={user.avatar_url || ''} alt={user.full_name || 'User'} className="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover shadow-md border-4 border-surface" />
                         <div>
-                            <h1 className="text-4xl font-extrabold text-on-surface">{user.full_name}</h1>
-                            <p className="text-lg text-on-surface-variant">{user.email}</p>
+                            <h1 className="text-3xl sm:text-4xl font-extrabold text-on-surface">{user.full_name}</h1>
+                            <p className="text-base sm:text-lg text-on-surface-variant">{user.email}</p>
                             <p className="mt-4 text-on-surface-variant leading-relaxed max-w-2xl">
                                 This is your personal hub. From here, you can manage the memorials you've created.
                             </p>

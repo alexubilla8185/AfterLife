@@ -109,7 +109,7 @@ const AudioMessageManager: React.FC = () => {
     };
 
     return (
-        <div className="bg-surface-container p-6 rounded-3xl border border-outline/30 space-y-4">
+        <div className="bg-surface-container p-4 sm:p-6 rounded-3xl border border-outline/30 space-y-4">
             <h3 className="text-xl font-semibold text-on-surface">Audio Message</h3>
             
             {audioUrl && (
@@ -183,7 +183,7 @@ const ConditionalResponseForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-surface-container p-6 rounded-3xl border border-outline/30 space-y-4">
+    <div className="bg-surface-container p-4 sm:p-6 rounded-3xl border border-outline/30 space-y-4">
       <h3 className="text-xl font-semibold text-on-surface">Add New Conditional Response</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -236,7 +236,7 @@ const SocialLinksManager: React.FC = () => {
     if (!memorial) return null;
 
     return (
-        <div className="bg-surface-container p-6 rounded-3xl border border-outline/30 space-y-6">
+        <div className="bg-surface-container p-4 sm:p-6 rounded-3xl border border-outline/30 space-y-6">
             <h3 className="text-xl font-semibold text-on-surface">Social & Web Links</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
@@ -314,11 +314,11 @@ const CreatorDashboard: React.FC = () => {
     <>
       {isEditModalOpen && <EditProfileModal onClose={() => setIsEditModalOpen(false)} />}
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 space-y-8">
-          <div className="relative bg-surface-container p-6 rounded-3xl border border-outline/30">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="relative bg-surface-container p-4 sm:p-6 rounded-3xl border border-outline/30">
               <h2 className="text-2xl font-bold text-on-surface mb-6">Creator Profile</h2>
-              <img src={profile.profile_image_url} alt={profile.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
+              <img src={profile.profile_image_url} alt={profile.name} className="w-24 h-24 sm:w-32 sm:h-32 rounded-full mx-auto mb-4 object-cover" />
               <div className="text-center">
                   <h3 className="text-xl font-semibold text-on-surface">{profile.name}</h3>
                   <p className="text-sm text-on-surface-variant">{profile.life_span}</p>
@@ -343,7 +343,7 @@ const CreatorDashboard: React.FC = () => {
           <SocialLinksManager />
           <ConditionalResponseForm />
         </div>
-        <div className="lg:col-span-2 bg-surface-container p-6 rounded-3xl border border-outline/30">
+        <div className="lg:col-span-3 bg-surface-container p-4 sm:p-6 rounded-3xl border border-outline/30">
           <h2 className="text-2xl font-bold text-on-surface mb-6">Managed Responses</h2>
           <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
               {responses.length > 0 ? responses.map(res => (
