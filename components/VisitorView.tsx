@@ -181,7 +181,7 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
     const TypingIndicator = () => (
         <div className="flex justify-start">
             <div className="bg-gray-200 dark:bg-gray-700 rounded-xl px-4 py-2">
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-1" aria-hidden={true}>
                 <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
                 <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                 <span className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce"></span>
@@ -192,7 +192,7 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-b-lg shadow-sm flex flex-col h-full border border-gray-200 dark:border-gray-700 border-t-0">
-            <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-800/50">
+            <div aria-live="polite" className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-800/50">
                 {isInitialLoading ? (
                     <TypingIndicator />
                 ) : (
@@ -209,7 +209,9 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
             </div>
             <div data-tour-id="chat-input" className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <div className="flex items-center space-x-2">
+                    <label htmlFor="chat-message-input" className="sr-only">Share a thought or memory</label>
                     <input
+                        id="chat-message-input"
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -218,8 +220,8 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                         className="flex-1 block w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
                         disabled={isInitialLoading}
                     />
-                    <button onClick={handleSend} className="bg-primary-600 text-white rounded-full p-3 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800" disabled={!input.trim() || isTyping || isInitialLoading}>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <button onClick={handleSend} aria-label="Send message" className="bg-primary-600 text-white rounded-full p-3 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800" disabled={!input.trim() || isTyping || isInitialLoading}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                         </svg>
                     </button>
@@ -232,7 +234,8 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
 
 const getSocialIcon = (platform: string): JSX.Element => {
     const p = platform.toLowerCase();
-    const commonProps = { className: "h-5 w-5" };
+    // FIX: Changed "aria-hidden" value from string "true" to boolean true to match React's Booleanish type.
+    const commonProps = { className: "h-5 w-5", "aria-hidden": true };
     
     if (p.includes('linkedin')) {
         return <svg {...commonProps} viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>;
@@ -314,8 +317,18 @@ const VisitorView: React.FC<VisitorViewProps> = ({ showTour, onTourFinish }) => 
       </div>
     );
     
-    const TabButton: React.FC<{ tabName: 'chat' | 'tributes'; label: string; icon: JSX.Element; 'data-tour-id'?: string }> = ({ tabName, label, icon, ...props }) => (
+    interface TabButtonProps {
+        tabName: 'chat' | 'tributes';
+        label: string;
+        icon: JSX.Element;
+        'data-tour-id'?: string;
+    }
+    const TabButton: React.FC<TabButtonProps> = ({ tabName, label, icon, ...props }) => (
         <button
+            role="tab"
+            id={`tab-${tabName}`}
+            aria-selected={activeTab === tabName}
+            aria-controls={`tabpanel-${tabName}`}
             onClick={() => setActiveTab(tabName)}
             className={`flex-1 flex items-center justify-center space-x-3 py-4 px-4 text-sm font-semibold border-b-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-800 rounded-t-lg
             ${activeTab === tabName 
@@ -334,29 +347,39 @@ const VisitorView: React.FC<VisitorViewProps> = ({ showTour, onTourFinish }) => 
             <ProfileHeader />
             
             <div className="bg-white dark:bg-gray-800 rounded-t-lg border-x border-t border-gray-200 dark:border-gray-700">
-                <div data-tour-id="interaction-tabs" className="flex border-b border-gray-200 dark:border-gray-700">
+                <div role="tablist" aria-label="Interaction options" data-tour-id="interaction-tabs" className="flex border-b border-gray-200 dark:border-gray-700">
                     <TabButton 
                         tabName="chat" 
                         label="Interactive Chat"
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.08-3.239A8.931 8.931 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z" clipRule="evenodd" /></svg>}
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.08-3.239A8.931 8.931 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7z" clipRule="evenodd" /></svg>}
                     />
                      <TabButton 
                         data-tour-id="tribute-wall-tab"
                         tabName="tributes" 
                         label="Tribute Wall"
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>}
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>}
                     />
                 </div>
             </div>
             <div className="rounded-b-lg overflow-hidden">
-                {activeTab === 'chat' ? (
+                 <div
+                    id="tabpanel-chat"
+                    role="tabpanel"
+                    aria-labelledby="tab-chat"
+                    hidden={activeTab !== 'chat'}
+                >
                     <ChatInterface profile={profile} />
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 border-t-0">
-                        <TributeForm />
-                        <TributeWall tributes={tributes} />
-                    </div>
-                )}
+                </div>
+                <div
+                    id="tabpanel-tributes"
+                    role="tabpanel"
+                    aria-labelledby="tab-tributes"
+                    hidden={activeTab !== 'tributes'}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 border-t-0"
+                >
+                    <TributeForm />
+                    <TributeWall tributes={tributes} />
+                </div>
             </div>
         </div>
     );

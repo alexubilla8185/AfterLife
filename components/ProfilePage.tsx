@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useUser } from '../hooks/useUser';
 import { getSupabase } from '../services/supabaseClient';
 import { CreatorProfile } from '../types';
@@ -12,6 +12,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     const [memorials, setMemorials] = useState<CreatorProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [memorialToDelete, setMemorialToDelete] = useState<CreatorProfile | null>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
     const supabase = getSupabase();
 
     const fetchMemorials = useCallback(async () => {
@@ -33,6 +34,38 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
     useEffect(() => {
         fetchMemorials();
     }, [fetchMemorials]);
+
+    // Accessibility: Focus trap for delete confirmation modal
+    useEffect(() => {
+        if (memorialToDelete && modalRef.current) {
+            const focusableElements = modalRef.current.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            ) as NodeListOf<HTMLElement>;
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            firstElement?.focus();
+
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey) { // Shift+Tab
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
+                    }
+                } else { // Tab
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            };
+            
+            const currentModalRef = modalRef.current;
+            currentModalRef.addEventListener('keydown', handleKeyDown);
+            return () => currentModalRef.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [memorialToDelete]);
 
     const handleDeleteMemorial = async () => {
         if (!memorialToDelete) return;
@@ -178,8 +211,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
 
             {memorialToDelete && (
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto border border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirm Deletion</h3>
+                <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto border border-gray-200 dark:border-gray-700">
+                    <h3 id="delete-modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirm Deletion</h3>
                     <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                         Are you sure you want to delete the memorial for <strong>{memorialToDelete.name}</strong>? This action is irreversible.
                     </p>

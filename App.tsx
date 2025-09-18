@@ -33,7 +33,8 @@ interface AppProps {
   isOffline: boolean;
 }
 
-const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+// FIX: Removed unused props from SunIcon component to resolve framer-motion type conflict.
+const SunIcon: React.FC = () => (
   <motion.svg
     key="sun"
     xmlns="http://www.w3.org/2000/svg"
@@ -46,13 +47,13 @@ const SunIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     animate={{ scale: 1, opacity: 1, rotate: 0 }}
     exit={{ scale: 0.5, opacity: 0, rotate: 90 }}
     transition={{ duration: 0.3, ease: "easeInOut" }}
-    {...props}
   >
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
   </motion.svg>
 );
 
-const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+// FIX: Removed unused props from MoonIcon component to resolve framer-motion type conflict.
+const MoonIcon: React.FC = () => (
   <motion.svg
     key="moon"
     xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +66,6 @@ const MoonIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     animate={{ scale: 1, opacity: 1, rotate: 0 }}
     exit={{ scale: 0.5, opacity: 0, rotate: -90 }}
     transition={{ duration: 0.3, ease: "easeInOut" }}
-    {...props}
   >
     <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
   </motion.svg>
@@ -236,22 +236,30 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-4">
                  {view !== 'profile' && user && (
-                  <button onClick={() => setView('profile')} className="hidden sm:inline-flex items-center space-x-2 px-3 py-1.5 border border-gray-300 dark:border-gray-700 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                      <span>My Profile</span>
-                  </button>
+                    <button 
+                        onClick={() => setView('profile')} 
+                        className="inline-flex items-center justify-center p-2 sm:px-3 sm:py-1.5 border border-gray-300 dark:border-gray-700 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        aria-label="My Profile"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span className="hidden sm:inline sm:ml-2">My Profile</span>
+                    </button>
                  )}
                  {user?.role === 'admin' && view !== 'admin' && (
-                    <button onClick={() => setView('admin')} className="hidden sm:inline-flex items-center space-x-2 px-3 py-1.5 border border-yellow-400/50 dark:border-yellow-600/50 text-sm font-medium rounded-md text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/40 hover:bg-yellow-100 dark:hover:bg-yellow-900/60 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                        <span>Admin</span>
+                    <button 
+                        onClick={() => setView('admin')} 
+                        className="inline-flex items-center justify-center p-2 sm:px-3 sm:py-1.5 border border-yellow-400/50 dark:border-yellow-600/50 text-sm font-medium rounded-md text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/40 hover:bg-yellow-100 dark:hover:bg-yellow-900/60 transition-colors"
+                        aria-label="Admin Dashboard"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        <span className="hidden sm:inline sm:ml-2">Admin</span>
                     </button>
                  )}
                  {view === 'creator' || view === 'visitor' ? (
-                  <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 transition-colors">
-                    Switch to {view === 'creator' ? 'Visitor' : 'Creator'} View
+                  <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 transition-colors whitespace-nowrap">
+                    Switch to {view === 'creator' ? 'Visitor' : 'Creator'}
                   </button>
                  ): null}
                 <div className="relative" ref={themeMenuRef}>

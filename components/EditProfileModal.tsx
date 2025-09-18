@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { getSupabase } from '../services/supabaseClient';
 import { CreatorProfile } from '../types';
@@ -18,7 +18,41 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
     const [imagePreview, setImagePreview] = useState<string | null>(memorial?.profile.profile_image_url || null);
     const [isSaving, setIsSaving] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const modalRef = useRef<HTMLDivElement>(null);
     const supabase = getSupabase();
+
+    // Accessibility: Focus trap for modal
+    useEffect(() => {
+        if (modalRef.current) {
+            const focusableElements = modalRef.current.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            ) as NodeListOf<HTMLElement>;
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            firstElement?.focus();
+
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key !== 'Tab') return;
+                if (e.shiftKey) { // Shift+Tab
+                    if (document.activeElement === firstElement) {
+                        lastElement.focus();
+                        e.preventDefault();
+                    }
+                } else { // Tab
+                    if (document.activeElement === lastElement) {
+                        firstElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            };
+            
+            const currentModalRef = modalRef.current;
+            currentModalRef.addEventListener('keydown', handleKeyDown);
+            return () => currentModalRef.removeEventListener('keydown', handleKeyDown);
+        }
+    }, []);
+
 
     if (!memorial) return null;
 
@@ -74,9 +108,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col">
+            <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="edit-profile-title" className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col">
                 <div className="flex-shrink-0">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Edit Profile</h2>
+                    <h2 id="edit-profile-title" className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Edit Profile</h2>
                 </div>
                 
                 <div className="flex-1 overflow-y-auto space-y-6 pr-2">
@@ -92,7 +126,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
                                 className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center rounded-full transition-opacity"
                                 aria-label="Change profile picture"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
                                 </svg>
                             </button>
