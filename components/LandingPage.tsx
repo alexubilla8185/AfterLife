@@ -87,7 +87,11 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
 
       <footer className="bg-surface-container border-t border-outline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-on-surface-variant">
-          <p>&copy; {new Date().getFullYear()} AfterLife. A place for stories that last forever.</p>
+          <div className="flex justify-center space-x-6 text-sm">
+            <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
+            <a href="/data-deletion" className="hover:text-primary transition-colors">Data Deletion</a>
+          </div>
+          <p className="mt-4 text-xs">&copy; {new Date().getFullYear()} AfterLife. A place for stories that last forever.</p>
         </div>
       </footer>
     </div>

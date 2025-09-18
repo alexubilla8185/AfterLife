@@ -70,10 +70,7 @@ const Login: React.FC<LoginProps> = ({ onShowTour }) => {
         
         <div className="mt-8 space-y-4">
             <SocialButton provider="google" onClick={signInWithGoogle} />
-            <div>
-              <SocialButton provider="facebook" onClick={() => {}} disabled={true} />
-              <p className="text-xs text-center text-on-surface-variant/70 mt-1">Facebook login coming soon.</p>
-            </div>
+            <SocialButton provider="facebook" onClick={signInWithFacebook} />
         </div>
 
         <div className="mt-6 flex items-center">

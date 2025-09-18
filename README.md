@@ -5,9 +5,8 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 ## Core Features
 
 ### Authentication
-- **Multiple Sign-In Options:** Secure sign-up and sign-in with Google or traditional email and password.
+- **Multiple Sign-In Options:** Secure sign-up and sign-in with Google, Facebook, or traditional email and password.
 - **Seamless Onboarding:** Social logins automatically populate the user's profile with their name and profile picture.
-- **Facebook Login (Coming Soon):** Integration is built but temporarily disabled pending developer account setup.
 
 ### For Creators
 - **Build a Profile:** Craft a personal memorial with a name, lifespan, biography, and profile image.
@@ -93,9 +92,20 @@ If you see an "Offline Mode" banner at the top of the application, it means the 
 
 ### Supabase Setup
 
-#### 1. Configure Google Authentication
+#### 1. Create a Storage Bucket
+-   In your Supabase project dashboard, go to the **Storage** section.
+-   Click **New bucket**.
+-   Enter the bucket name as `memorials`.
+-   Toggle **Public bucket** to **ON**.
+-   Click **Create bucket**.
 
-To fix login errors (like a 502 error), you must correctly configure your Google Cloud project and link it to Supabase.
+This is required for the audio message feature to work correctly.
+
+#### 2. Configure Authentication Providers
+
+To fix login errors (like a 502 error), you must correctly configure your OAuth providers.
+
+**A. Google Authentication**
 
 **Step 1: Get Your Google Cloud Credentials**
 - Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new **OAuth 2.0 Client ID**.
@@ -121,14 +131,33 @@ To fix login errors (like a 502 error), you must correctly configure your Google
 - Make sure the "Enable Google" toggle is on.
 - Click **Save**.
 
-#### 2. Create a Storage Bucket
--   In your Supabase project dashboard, go to the **Storage** section.
--   Click **New bucket**.
--   Enter the bucket name as `memorials`.
--   Toggle **Public bucket** to **ON**.
--   Click **Create bucket**.
+**B. Facebook Authentication**
 
-This is required for the audio message feature to work correctly.
+To enable Facebook login, you need to create a Facebook App and connect it to Supabase.
+
+**Step 1: Create a Facebook App**
+- Go to [Meta for Developers](https://developers.facebook.com/) and create a new app.
+- Select "Consumer" or "Business" as the app type.
+- Once created, navigate to the "App Settings" > "Basic" page. You will find your **App ID** and **App Secret**.
+
+**Step 2: Add Facebook Login Product**
+- In your app's dashboard, click "Add product" and set up "Facebook Login".
+- Under "Facebook Login" > "Settings", you need to add your app's domain and the Supabase callback URL.
+- **Valid OAuth Redirect URIs**: Paste the callback URL from Supabase (`https://<your-project-ref>.supabase.co/auth/v1/callback`).
+
+**Step 3: Provide Required URLs**
+- On the "App Settings" > "Basic" page, you must provide:
+  - **Privacy Policy URL**: `https://<your-app-url>/privacy`
+  - **User Data Deletion URL**: `https://<your-app-url>/data-deletion`
+  - **App Icon**: Upload a 1024x1024 icon.
+  - **Category**: Select an appropriate category for your app.
+  - **App Domain**: Enter the domain where your app is hosted.
+
+**Step 4: Link Credentials to Supabase**
+- Go back to your Supabase dashboard (**Authentication** > **Providers** > **Facebook**).
+- Paste the **App ID** and **App Secret** you got from the Facebook App dashboard.
+- Make sure the "Enable Facebook" toggle is on and click **Save**.
+
 
 ## How It Works
 
