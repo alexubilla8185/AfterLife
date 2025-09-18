@@ -1,5 +1,5 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#F9FAFB"/>
+  <rect width="1200" height="630" fill="#000000"/>
   
   <g transform="translate(300 200)">
     <g transform="scale(3)">
@@ -7,7 +7,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
       </svg>
     </g>
-    <text x="120" y="48" text-anchor="start" font-family="Inter, sans-serif" font-size="60" font-weight="800" fill="#111827">AfterLife</text>
-    <text x="120" y="110" text-anchor="start" font-family="Inter, sans-serif" font-size="32" fill="#6B7280">Your story doesn't end here.</text>
+    <text x="120" y="48" text-anchor="start" font-family="Inter, sans-serif" font-size="60" font-weight="800" fill="#FFFFFF">AfterLife</text>
+    <text x="120" y="110" text-anchor="start" font-family="Inter, sans-serif" font-size="32" fill="#E5E7EB">Your story doesn't end here.</text>
   </g>
 </svg>
