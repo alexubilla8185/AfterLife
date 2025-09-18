@@ -53,22 +53,22 @@ The frontend application will securely fetch the Supabase URL and Anon Key from 
 
 ### Running Locally
 
-To run this project in a local development environment that correctly serves both the frontend application and the backend Netlify Functions, you need to use the Netlify CLI. This is the **recommended** approach.
+To run this project correctly, you must use a development server that can run both the frontend application (Vite) and the backend serverless functions at the same time. The **only** supported method for this is the Netlify CLI.
 
-1.  **Install the Netlify CLI:** If you don't have it, install it globally.
+1.  **Install the Netlify CLI:** If you don't have it, install it globally from your terminal.
     ```bash
     npm install netlify-cli -g
     ```
 
-2.  **Run the project:** Navigate to the project's root directory and run:
+2.  **Run the Project with `netlify dev`:** Navigate to the project's root directory and run the following command:
     ```bash
     netlify dev
     ```
-    This command will start the React development server and the Netlify Functions server, and it will proxy requests from your app to your functions, preventing errors. It will also automatically load the environment variables from your Netlify site settings (if linked) or from a local `.env` file.
+    This command reads the `netlify.toml` file to start both the frontend and backend servers. It will correctly proxy requests from the app (e.g., `http://localhost:8888`) to your functions, which prevents the "404 Not Found" errors. This is the **required** way to run the app locally with full functionality.
 
-#### Alternative: Running without Netlify CLI
+#### Alternative: Frontend-Only Mode (Limited Functionality)
 
-If you encounter issues with `netlify dev` or prefer to run the frontend server directly (e.g., using `npm start` or `vite`), you can bypass the configuration function for local development by providing the Supabase keys directly to the frontend application.
+If you must run the frontend server directly (e.g., using `npm run dev`), you can bypass the backend configuration function for local development. This will allow the UI to load, but **backend features will not work**.
 
 1.  Create a file named `.env` in the root of your project.
 2.  Add your public Supabase keys to this file, prefixed with `VITE_`:
@@ -76,9 +76,9 @@ If you encounter issues with `netlify dev` or prefer to run the frontend server 
     VITE_SUPABASE_URL=your_supabase_project_url
     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
     ```
-3.  Start your development server as you normally would.
+3.  Start your development server (e.g., `npm run dev`). The app will start in "Offline Mode."
 
-**Important:** This method **only** resolves the initial Supabase connection. Features that rely on other backend functions, such as the AI-powered interactive chat, will **not** work with this setup. For full functionality, using `netlify dev` is still required.
+**Important:** This method **only** resolves the initial Supabase connection. Features that rely on backend functions, such as the AI-powered interactive chat, will **not** work. For full functionality, using `netlify dev` is required.
 
 ### Supabase Setup
 

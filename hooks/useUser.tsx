@@ -40,7 +40,7 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     if (session?.user) {
       supabase
         .from('profiles')
-        .select('*')
+        .select('full_name, avatar_url, role')
         .eq('id', session.user.id)
         .single()
         .then(({ data: profileData, error }) => {

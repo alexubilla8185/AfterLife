@@ -27,8 +27,8 @@ const AdminPage: React.FC = () => {
             setLoading(true);
             
             const [usersRes, memorialsRes] = await Promise.all([
-                supabase.from('profiles').select('*'),
-                supabase.from('memorials').select('*')
+                supabase.from('profiles').select('id, full_name, email, role'),
+                supabase.from('memorials').select('id, name, life_span, user_id')
             ]);
             
             if (usersRes.error) {

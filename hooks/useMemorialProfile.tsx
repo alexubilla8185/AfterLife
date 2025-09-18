@@ -83,7 +83,7 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
     
     const { data: profile, error: profileError } = await supabase
       .from('memorials')
-      .select('*')
+      .select('id, user_id, name, bio, life_span, profile_image_url, audio_message_url')
       .eq('id', id)
       .single();
 
@@ -99,9 +99,9 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
         { data: socialLinks },
         { data: tributes }
     ] = await Promise.all([
-        supabase.from('conditional_responses').select('*').eq('memorial_id', id),
-        supabase.from('social_links').select('*').eq('memorial_id', id),
-        supabase.from('tributes').select('*').eq('memorial_id', id).order('created_at', { ascending: false })
+        supabase.from('conditional_responses').select('id, keyword, response').eq('memorial_id', id),
+        supabase.from('social_links').select('id, platform, url').eq('memorial_id', id),
+        supabase.from('tributes').select('id, author, message, created_at').eq('memorial_id', id).order('created_at', { ascending: false })
     ]);
     
     setMemorial({

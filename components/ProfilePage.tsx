@@ -19,7 +19,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
             const supabase = getSupabase();
             const { data, error } = await supabase
                 .from('memorials')
-                .select('*')
+                .select('id, name, life_span')
                 .eq('user_id', user.id);
             
             if (error) {
