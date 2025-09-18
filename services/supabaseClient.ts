@@ -1,5 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+// The build environment (e.g., Netlify) will replace these `process.env` variables
+// with the actual values. This is the definitive method for this project.
 const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 

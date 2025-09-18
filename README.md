@@ -31,22 +31,22 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 - **Styling:** Tailwind CSS
 - **Database, Auth & Storage:** Supabase
 - **AI:** Google Gemini API (`@google/genai`) via secure Netlify Functions
-- **Build Environment:** Netlify with Vite (for frontend) and Netlify Functions (for backend).
+- **Build Environment:** Netlify
 
 ## Getting Started
 
 ### Environment Variable Setup
 
-This project uses a secure architecture where secret keys are handled by backend Netlify Functions, while public keys are used by the frontend application.
+This project uses a secure architecture where secret keys are handled by backend Netlify Functions, while public keys are used by the frontend application. All variables are accessed in the code via `process.env`. Your build environment (e.g., Netlify) is responsible for making these available.
 
-#### Frontend Public Keys (Vite)
-These variables are exposed to the browser and **must be prefixed with `VITE_`**. The application code accesses these using `import.meta.env`.
+#### Frontend Public Keys
+These variables are required for the client-side application to connect to Supabase.
 
--   `VITE_SUPABASE_DATABASE_URL`: Your Supabase project URL.
--   `VITE_SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
+-   `SUPABASE_DATABASE_URL`: Your Supabase project URL. The Netlify/Supabase integration creates this for you automatically.
+-   `SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key. The Netlify/Supabase integration creates this for you automatically.
 
-#### Backend Secret Key (Netlify Functions)
-This variable is only accessible by the secure backend function and **must not have a `VITE_` prefix**.
+#### Backend Secret Key
+This variable is only accessible by the secure backend function and is kept secret.
 
 -   `API_KEY`: Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey). This is a secret and should never be exposed to the frontend.
 
