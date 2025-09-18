@@ -6,7 +6,6 @@ import { CreatorProfile } from '../types';
 interface AdminProfile {
     id: string;
     full_name: string | null;
-    email: string | null;
     role: string;
 }
 
@@ -27,7 +26,7 @@ const AdminPage: React.FC = () => {
             setLoading(true);
             
             const [usersRes, memorialsRes] = await Promise.all([
-                supabase.from('profiles').select('id, full_name, email, role'),
+                supabase.from('profiles').select('id, full_name, role'),
                 supabase.from('memorials').select('id, name, life_span, user_id')
             ]);
             
@@ -79,7 +78,6 @@ const AdminPage: React.FC = () => {
                         <thead className="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Role</th>
                             </tr>
                         </thead>
@@ -87,7 +85,6 @@ const AdminPage: React.FC = () => {
                             {users.map(u => (
                                 <tr key={u.id}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{u.full_name || 'N/A'}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{u.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${u.role === 'admin' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200'}`}>
                                             {u.role}

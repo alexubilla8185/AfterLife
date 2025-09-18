@@ -2,7 +2,8 @@
 // environment variables used for local development. This resolves multiple
 // "Cannot find name" and "Property 'env' does not exist" errors in services/supabaseClient.ts.
 interface ImportMetaEnv {
-    readonly VITE_SUPABASE_URL?: string;
+    // Fix: Corrected environment variable name to match usage in supabaseClient.ts
+    readonly VITE_SUPABASE_DATABASE_URL?: string;
     readonly VITE_SUPABASE_ANON_KEY?: string;
     readonly DEV?: boolean;
 }
