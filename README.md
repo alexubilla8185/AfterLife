@@ -37,7 +37,7 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ### Environment Variable Setup
 
-To run this project, you need to set up environment variables. The method depends on whether you're deploying to Netlify or running the app locally.
+To run this project, you need to set up environment variables.
 
 #### For Production (on Netlify)
 
@@ -49,55 +49,63 @@ Set these variables in your Netlify site's build settings (`Site settings > Buil
 
 ---
 
-### Running Locally
+### Running Locally: The Recommended Way
 
-There are two ways to run the project locally. Using `netlify dev` is the **required** method for full functionality.
+For the application to work correctly with all features (including AI chat), you **must** run it using the Netlify CLI. This runs your frontend and backend functions together, perfectly simulating the live production environment.
 
-#### 1. The Right Way: Full-Stack with `netlify dev` (Recommended)
+**Step 1: Create an `.env` file**
 
-This command runs your frontend and backend functions together, simulating the Netlify production environment.
+Create a file named `.env` in the root of your project. This file is for local development only and should not be committed to Git.
 
-1.  **Create an `.env` file** in the root of your project.
-2.  **Add your keys to the `.env` file.** The `netlify dev` command will automatically load them. Use the **non-prefixed** names:
-    ```
-    # .env file for 'netlify dev'
-    API_KEY=your_google_gemini_api_key
-    SUPABASE_URL=your_supabase_project_url
-    SUPABASE_ANON_KEY=your_supabase_anon_key
-    ```
+**Step 2: Add Your Keys**
 
-3.  **Install the Netlify CLI:**
+Copy and paste the following into your `.env` file, replacing the placeholder text with your actual keys. Note that these variables do **not** have the `VITE_` prefix.
+
+```
+# .env file for use with 'netlify dev'
+API_KEY=your_google_gemini_api_key
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+**Step 3: Install and Run with Netlify CLI**
+
+1.  **Install the Netlify CLI** globally on your machine:
     ```bash
     npm install netlify-cli -g
     ```
 
-4.  **Run the project:**
+2.  **Run the project:**
     ```bash
     netlify dev
     ```
-    This will start a server (usually on `localhost:8888`) with all features, including the AI chat, fully functional.
 
-#### 2. Alternative: Frontend-Only Mode (Limited Functionality)
+Your browser should open to `localhost:8888` (or a similar port), and all features, including the AI chat, will be fully functional.
 
-If you must run the frontend server directly (e.g., using `npm run dev`), the app will start, but it will be in **Offline Mode**. Backend features like AI chat will **not** work.
+### Troubleshooting: Understanding "Offline Mode"
 
-1.  **Create an `.env` file** in the root of your project.
-2.  **Add your keys with the `VITE_` prefix.** This is a Vite convention to expose variables to the frontend.
-    ```
-    # .env file for 'npm run dev' (frontend-only)
-    VITE_SUPABASE_URL=your_supabase_project_url
-    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-    ```
-3.  Run your development server (e.g., `npm run dev`). The app will load but show an "Offline Mode" banner.
+If you see an "Offline Mode" banner at the top of the application, it means the frontend couldn't connect to the backend Netlify functions. This typically happens for one of two reasons:
 
-**Important:** For the best local development experience that matches production, always use `netlify dev`.
+1.  **You are not using `netlify dev`:** If you run the app with a command like `npm run dev` or `vite`, the backend functions will not be served. The frontend will load, but it won't be able to fetch its configuration or call the Gemini AI function.
+2.  **Your environment variables are missing:** The `netlify dev` command relies on the `.env` file being correctly set up.
+
+**Fixing Offline Mode:** The best fix is to stop your current server and run `netlify dev` as described in the section above.
+
+**Limited Functionality (Frontend-Only):**
+If you *must* run a frontend-only server, you can still connect to your Supabase database by adding `VITE_` prefixed variables to your `.env` file. However, **AI features will not work**.
+
+```
+# Add these to your .env file for frontend-only mode
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
 ### Supabase Setup
 
 1.  **Enable Authentication Providers:**
     - In your Supabase project dashboard, navigate to **Authentication** > **Providers**.
     - Enable the providers you wish to use: `Email` and `Google`.
-    - For social providers (Google), you will need to provide the **Client ID** and **Client Secret** from the Google Cloud Console. (Note: Facebook setup can be skipped for now as the feature is temporarily disabled).
+    - For social providers (Google), you will need to provide the **Client ID** and **Client Secret** from the Google Cloud Console.
 
 2.  **Create a Storage Bucket:**
     -   In your Supabase project dashboard, go to the **Storage** section.
@@ -110,7 +118,7 @@ This is required for the audio message feature to work correctly.
 
 ## How It Works
 
-AfterLife provides two distinct experiences: the **Creator Dashboard** and the **Visitor View**. Onboarding is seamless; when users sign up with a social provider like Google, their profile name and picture are automatically populated, allowing them to get started right away.
+AfterLife provides two distinct experiences: the **Creator Dashboard** and the **Visitor View**. Onboarding is seamless; when users sign up with a social provider like Google, their profile name and picture are automatically populated.
 
 - **Creators** act as architects of their digital memorial. They populate their profile with personal details and, most importantly, create "conditional responses." These are custom messages triggered by keywords, allowing them to leave behind personalized wisdom, stories, and comfort.
 

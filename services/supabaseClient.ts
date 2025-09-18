@@ -1,5 +1,10 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+// A more robust check for local development environments. This prevents uncaught
+// errors if the app is run locally without the Netlify CLI (which serves the functions).
+const isLocalDevelopment = typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
 // A non-functional "offline" client that prevents the app from crashing and logs warnings.
 const createOfflineClient = (): SupabaseClient => {
     const offlineWarning = (method: string | symbol) => {
@@ -92,10 +97,10 @@ export const initializeSupabase = async (): Promise<void> => {
         if (!response.ok) {
             // For local development (not using `netlify dev`), this fetch will fail.
             // We can detect this and provide a helpful warning instead of a disruptive error.
-            if (import.meta.env?.DEV) {
+            if (isLocalDevelopment) {
                 console.warn("--- Supabase Initialization Info ---");
                 console.warn("Could not fetch config. This is expected if not running with 'netlify dev'.");
-                console.warn("Falling back to OFFLINE MODE. To connect locally, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+                console.warn("Falling back to OFFLINE MODE. To connect locally with full functionality, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY for limited functionality.");
                 console.warn("------------------------------------");
                 supabase = createOfflineClient();
                 isOffline = true;
@@ -110,11 +115,11 @@ export const initializeSupabase = async (): Promise<void> => {
         // Protect against HTML (e.g. index.html) or other non-JSON responses.
         const contentType = response.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) {
-            if (import.meta.env?.DEV) {
+            if (isLocalDevelopment) {
                 console.warn("--- Supabase Initialization Info ---");
                 console.warn(`Config endpoint returned non-JSON content-type: ${contentType}`);
                 console.warn("This commonly happens when the dev server returns index.html for unknown routes.");
-                console.warn("Falling back to OFFLINE MODE. To connect locally, run 'netlify dev' or set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+                console.warn("Falling back to OFFLINE MODE. To connect locally with full functionality, run 'netlify dev'.");
                 console.warn("------------------------------------");
                 supabase = createOfflineClient();
                 isOffline = true;
@@ -128,7 +133,7 @@ export const initializeSupabase = async (): Promise<void> => {
         try {
             configJson = await response.json();
         } catch (parseError) {
-            if (import.meta.env?.DEV) {
+            if (isLocalDevelopment) {
                 console.warn("Unable to parse JSON from config function. Falling back to OFFLINE MODE.");
                 supabase = createOfflineClient();
                 isOffline = true;
