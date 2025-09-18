@@ -1,0 +1,21 @@
+{
+	"name": "Afterlife — Memorials",
+	"short_name": "Afterlife",
+	"description": "An interactive space where memories and stories can be shared and cherished.",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#0b1220",
+	"theme_color": "#1eae3a",
+	"icons": [
+		{
+			"src": "/logo-1024x1024.svg",
+			"sizes": "1024x1024",
+			"type": "image/svg+xml"
+		},
+		{
+			"src": "/logo.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		}
+	]
+}
