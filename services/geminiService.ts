@@ -1,45 +1,38 @@
-import { GoogleGenAI } from "@google/genai";
+// This service now acts as a client for our own secure Netlify Function.
+// It no longer handles the Gemini API key directly.
 
-let ai: GoogleGenAI | null = null;
-
-const apiKey = import.meta.env.VITE_API_KEY;
-
-if (apiKey) {
-    try {
-        ai = new GoogleGenAI({ apiKey: apiKey });
-    } catch (error) {
-        console.error("Failed to initialize GoogleGenAI:", error);
-    }
-} else {
-    console.warn("VITE_API_KEY environment variable not set. AI features will be disabled and will use fallback responses.");
-}
-
+const fallbackResponse = "Thank you for your message. It's deeply felt and appreciated.";
 
 export const getGenericResponse = async (creatorName: string, userMessage: string): Promise<string> => {
-    if (!ai) {
-        return "I hear you. Your words are a comfort. Thank you for sharing this moment with me.";
-    }
+    // The path to our secure Netlify function.
+    // This path is relative to the root of the site and will be handled by Netlify's routing.
+    const functionUrl = '/.netlify/functions/get-gemini-response';
 
     try {
-        const systemInstruction = `You are embodying the gentle, loving memory of a person named ${creatorName} who has passed away. A visitor is interacting with their memorial and has just said: "${userMessage}".
-
-Your task is to provide a comforting, abstract, and warm response. Do not impersonate ${creatorName} directly or make specific claims or memories. Speak in a way that evokes their spirit and offers solace. The tone should be peaceful and reassuring. Keep the response to 1-2 sentences.`;
-        
-        const response = await ai.models.generateContent({
-            // FIX: Per @google/genai guidelines, using 'gemini-2.5-flash' instead of the prohibited 'gemini-1.5-flash'.
-            model: "gemini-2.5-flash",
-            contents: userMessage, // The user message is context, but the system instruction drives the response style
-            config: {
-                systemInstruction: systemInstruction,
-                temperature: 0.7,
-                topP: 1,
-                topK: 32,
-            }
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ creatorName, userMessage }),
         });
 
-        return response.text;
+        if (!response.ok) {
+            console.error(`Netlify function returned an error: ${response.statusText}`);
+            try {
+                const errorData = await response.json();
+                console.error("Error details:", errorData);
+            } catch (e) {
+                // Ignore if the response body is not valid JSON.
+            }
+            return fallbackResponse;
+        }
+
+        const data = await response.json();
+        return data.text || fallbackResponse;
+
     } catch (error) {
-        console.error("Error generating generic response:", error);
-        return "Thank you for your message. It's deeply felt and appreciated.";
+        console.error("Error calling the gemini Netlify function:", error);
+        return fallbackResponse;
     }
 };

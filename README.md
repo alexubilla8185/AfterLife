@@ -30,21 +30,25 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 - **Frontend:** React, TypeScript
 - **Styling:** Tailwind CSS
 - **Database, Auth & Storage:** Supabase
-- **AI:** Google Gemini API (`@google/genai`)
-- **Build Environment:** Vite-style environment variables (`import.meta.env`).
+- **AI:** Google Gemini API (`@google/genai`) via secure Netlify Functions
+- **Build Environment:** Netlify with Vite (for frontend) and Netlify Functions (for backend).
 
 ## Getting Started
 
 ### Environment Variable Setup
 
-Your deployment environment (e.g., Netlify) must be configured with the following environment variables, prefixed with `VITE_`. The application code accesses these using `import.meta.env.VARIABLE_NAME`.
+This project uses a secure architecture where secret keys are handled by backend Netlify Functions, while public keys are used by the frontend application.
 
-1.  **Google Gemini API Key:**
-    -   `VITE_API_KEY`: Your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+#### Frontend Public Keys (Vite)
+These variables are exposed to the browser and **must be prefixed with `VITE_`**. The application code accesses these using `import.meta.env`.
 
-2.  **Supabase Credentials:**
-    -   `VITE_SUPABASE_DATABASE_URL`: Your Supabase project URL.
-    -   `VITE_SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
+-   `VITE_SUPABASE_DATABASE_URL`: Your Supabase project URL.
+-   `VITE_SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
+
+#### Backend Secret Key (Netlify Functions)
+This variable is only accessible by the secure backend function and **must not have a `VITE_` prefix**.
+
+-   `API_KEY`: Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey). This is a secret and should never be exposed to the frontend.
 
 ### Supabase Setup
 
@@ -68,4 +72,4 @@ AfterLife provides two distinct experiences: the **Creator Dashboard** and the *
 
 - **Creators** act as architects of their digital memorial. They populate their profile with personal details and, most importantly, create "conditional responses." These are custom messages triggered by keywords, allowing them to leave behind personalized wisdom, stories, and comfort.
 
-- **Visitors** can then interact with this memorial. When they send a message in the chat, the system checks for keywords. If a match is found, it delivers the creator's pre-written response. If not, it uses the Google Gemini API to generate a gentle, non-impersonating, and comforting message that reflects the spirit of the memorial, ensuring a thoughtful interaction every time.
+- **Visitors** can then interact with this memorial. When they send a message in the chat, the system checks for keywords. If a match is found, it delivers the creator's pre-written response. If not, it uses the Google Gemini API (via a secure backend function) to generate a gentle, non-impersonating, and comforting message that reflects the spirit of the memorial, ensuring a thoughtful interaction every time.
