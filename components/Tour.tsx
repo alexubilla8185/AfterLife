@@ -16,7 +16,8 @@ interface TourProps {
 
 const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [elementRect, setElementRect] = useState<DOMRect | null>(null);
+  const [style, setStyle] = useState<React.CSSProperties>({ visibility: 'hidden', opacity: 0 });
+  const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({ display: 'none' });
   const tooltipRef = useRef<HTMLDivElement>(null);
   const step = steps[currentStep];
 
@@ -25,71 +26,81 @@ const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
 
     const targetElement = step.target ? document.querySelector(step.target) as HTMLElement : null;
 
+    // Reset styles for the next step calculation
+    setStyle({ visibility: 'hidden', opacity: 0 });
+    setHighlightStyle({ display: 'none' });
+
     if (targetElement) {
-      targetElement.style.setProperty('position', 'relative', 'important');
-      targetElement.style.setProperty('z-index', '1002', 'important');
+      const originalPosition = targetElement.style.position;
+      const originalZIndex = targetElement.style.zIndex;
+      targetElement.style.position = 'relative';
+      targetElement.style.zIndex = '1002';
+      
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
       
       const timer = setTimeout(() => {
-        setElementRect(targetElement.getBoundingClientRect());
+        if (!tooltipRef.current) return;
+        
+        const elementRect = targetElement.getBoundingClientRect();
+        setHighlightStyle({
+            top: elementRect.top - 8,
+            left: elementRect.left - 8,
+            width: elementRect.width + 16,
+            height: elementRect.height + 16,
+            display: 'block'
+        });
+
+        const tooltipHeight = tooltipRef.current.offsetHeight;
+        const tooltipWidth = tooltipRef.current.offsetWidth;
+        const space = 12;
+        let top = 0, left = 0;
+
+        switch (step.position) {
+            case 'top':
+                top = elementRect.top - tooltipHeight - space;
+                left = elementRect.left + (elementRect.width / 2) - (tooltipWidth / 2);
+                break;
+            case 'left':
+                top = elementRect.top + (elementRect.height / 2) - (tooltipHeight / 2);
+                left = elementRect.left - tooltipWidth - space;
+                break;
+            case 'right':
+                top = elementRect.top + (elementRect.height / 2) - (tooltipHeight / 2);
+                left = elementRect.right + space;
+                break;
+            default: // bottom
+                top = elementRect.bottom + space;
+                left = elementRect.left + (elementRect.width / 2) - (tooltipWidth / 2);
+                break;
+        }
+
+        if (top < space) top = space;
+        if (left < space) left = space;
+        if (left + tooltipWidth > window.innerWidth) left = window.innerWidth - tooltipWidth - space;
+        if (top + tooltipHeight > window.innerHeight) top = window.innerHeight - tooltipHeight - space;
+        
+        setStyle({ top, left, visibility: 'visible', opacity: 1 });
       }, 300);
 
       return () => {
         clearTimeout(timer);
-        targetElement.style.position = '';
-        targetElement.style.zIndex = '';
+        targetElement.style.position = originalPosition;
+        targetElement.style.zIndex = originalZIndex;
       };
-    } else {
-      setElementRect(null); // For centered steps
+    } else { // For centered steps
+      // Use a small delay to ensure the tooltip ref is available for measurement
+      const timer = setTimeout(() => {
+        setStyle({
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            visibility: 'visible',
+            opacity: 1
+        });
+      }, 50);
+      return () => clearTimeout(timer);
     }
   }, [currentStep, isOpen, step]);
-
-  const getTooltipPosition = (): React.CSSProperties => {
-    if (!tooltipRef.current) return { visibility: 'hidden' };
-    
-    if (!elementRect) { // Center on screen
-      return {
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      };
-    }
-
-    const tooltipHeight = tooltipRef.current.offsetHeight;
-    const tooltipWidth = tooltipRef.current.offsetWidth;
-    const space = 12;
-
-    let top = 0;
-    let left = 0;
-
-    switch (step.position) {
-      case 'top':
-        top = elementRect.top - tooltipHeight - space;
-        left = elementRect.left + (elementRect.width / 2) - (tooltipWidth / 2);
-        break;
-      case 'left':
-        top = elementRect.top + (elementRect.height / 2) - (tooltipHeight / 2);
-        left = elementRect.left - tooltipWidth - space;
-        break;
-      case 'right':
-        top = elementRect.top + (elementRect.height / 2) - (tooltipHeight / 2);
-        left = elementRect.right + space;
-        break;
-      default: // bottom
-        top = elementRect.bottom + space;
-        left = elementRect.left + (elementRect.width / 2) - (tooltipWidth / 2);
-        break;
-    }
-    
-    // Boundary checks to keep tooltip on screen
-    if (top < 0) top = space;
-    if (left < 0) left = space;
-    if (left + tooltipWidth > window.innerWidth) left = window.innerWidth - tooltipWidth - space;
-    if (top + tooltipHeight > window.innerHeight) top = window.innerHeight - tooltipHeight - space;
-
-
-    return { top, left };
-  };
 
   const handleNext = () => setCurrentStep(s => Math.min(s + 1, steps.length - 1));
   const handlePrev = () => setCurrentStep(s => Math.max(s - 1, 0));
@@ -104,22 +115,15 @@ const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
     <div className="fixed inset-0 z-[1000] animate-fade-in">
       <div className="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" onClick={handleFinish} />
       
-      {elementRect && (
-        <div
+      <div
           className="absolute rounded-lg shadow-2xl transition-all duration-300 pointer-events-none ring-4 ring-primary-500 ring-offset-4 ring-offset-transparent bg-gray-900/50"
-          style={{
-            top: elementRect.top - 8,
-            left: elementRect.left - 8,
-            width: elementRect.width + 16,
-            height: elementRect.height + 16,
-          }}
+          style={highlightStyle}
         />
-      )}
 
       <div
         ref={tooltipRef}
         className="absolute bg-white dark:bg-gray-800 rounded-lg shadow-xl p-5 w-80 max-w-[calc(100vw-2rem)] transition-all duration-300 border border-gray-200 dark:border-gray-700"
-        style={getTooltipPosition()}
+        style={style}
       >
         <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{step.title}</h3>
         <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{step.content}</p>
