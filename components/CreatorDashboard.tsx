@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { getSupabase } from '../services/supabaseClient';
 import EditProfileModal from './EditProfileModal';
+import Tooltip from './ui/Tooltip';
 
 const AudioMessageManager: React.FC = () => {
     const { memorial, updateProfile } = useMemorialProfile();
@@ -267,11 +268,13 @@ const SocialLinksManager: React.FC = () => {
                             <p className="font-semibold text-on-surface">{link.platform}</p>
                             <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline truncate">{link.url}</a>
                         </div>
-                         <button onClick={() => removeSocialLink(link.id)} aria-label={`Delete ${link.platform} link`} className="text-on-surface-variant hover:text-red-500 flex-shrink-0 ml-4 p-2 rounded-full transition-colors hover:bg-red-500/10">
-                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                           </svg>
-                        </button>
+                        <Tooltip content="Delete Link">
+                            <button onClick={() => removeSocialLink(link.id)} aria-label={`Delete ${link.platform} link`} className="text-on-surface-variant hover:text-red-500 flex-shrink-0 ml-4 p-2 rounded-full transition-colors hover:bg-red-500/10">
+                               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                               </svg>
+                            </button>
+                        </Tooltip>
                     </div>
                 ))}
             </div>
@@ -352,16 +355,20 @@ const CreatorDashboard: React.FC = () => {
                   <p className="text-sm text-on-surface-variant">{profile.life_span}</p>
                   <p className="mt-4 text-on-surface-variant">{profile.bio}</p>
               </div>
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="absolute top-4 right-4 p-2 text-on-surface-variant bg-surface-container-high hover:bg-outline/20 rounded-full transition-colors"
-                aria-label="Edit Profile"
-              >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                    <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
-                  </svg>
-              </button>
+              <div className="absolute top-4 right-4">
+                <Tooltip content="Edit Profile">
+                    <button
+                        onClick={() => setIsEditModalOpen(true)}
+                        className="p-2 text-on-surface-variant bg-surface-container-high hover:bg-outline/20 rounded-full transition-colors"
+                        aria-label="Edit Profile"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                            <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+                        </svg>
+                    </button>
+                </Tooltip>
+              </div>
           </div>
           <AudioMessageManager />
           <SocialLinksManager />
@@ -379,11 +386,13 @@ const CreatorDashboard: React.FC = () => {
                               <p className="mt-2 text-sm text-on-surface-variant">Your reply:</p>
                               <p className="text-on-surface italic">"{res.response}"</p>
                           </div>
-                          <button onClick={() => setResponseToDelete(res.id)} aria-label={`Delete response for keyword "${res.keyword}"`} className="text-on-surface-variant hover:text-red-500 rounded-full p-2 transition-colors hover:bg-red-500/10">
-                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                             </svg>
-                          </button>
+                            <Tooltip content="Delete Response">
+                                <button onClick={() => setResponseToDelete(res.id)} aria-label={`Delete response for keyword "${res.keyword}"`} className="text-on-surface-variant hover:text-red-500 rounded-full p-2 transition-colors hover:bg-red-500/10">
+                                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                   </svg>
+                                </button>
+                            </Tooltip>
                       </div>
                   </div>
               )) : (

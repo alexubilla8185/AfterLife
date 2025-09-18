@@ -12,6 +12,8 @@ import { getSupabase } from './services/supabaseClient';
 import AdminPage from './components/AdminPage';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import DataDeletion from './components/DataDeletion';
+import HowItWorksPage from './components/HowItWorksPage';
+import Tooltip from './components/ui/Tooltip';
 import { useTheme } from './hooks/useTheme';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -87,6 +89,9 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   }
   if (path === '/data-deletion') {
     return <DataDeletion />;
+  }
+  if (path === '/how-it-works') {
+    return <HowItWorksPage />;
   }
 
   useEffect(() => {
@@ -221,24 +226,28 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
 
               <div className="flex items-center space-x-2 sm:space-x-4">
                  {view !== 'profile' && user && (
-                    <button 
-                        onClick={() => setView('profile')} 
-                        className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-secondary-container text-on-secondary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
-                        aria-label="My Profile"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                        <span className="hidden sm:inline sm:ml-2">My Profile</span>
-                    </button>
+                    <Tooltip content="My Profile">
+                        <button 
+                            onClick={() => setView('profile')} 
+                            className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-secondary-container text-on-secondary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
+                            aria-label="My Profile"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span className="hidden sm:inline sm:ml-2">My Profile</span>
+                        </button>
+                    </Tooltip>
                  )}
                  {user?.role === 'admin' && view !== 'admin' && (
-                    <button 
-                        onClick={() => setView('admin')} 
-                        className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-tertiary-container text-on-tertiary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
-                        aria-label="Admin Dashboard"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                        <span className="hidden sm:inline sm:ml-2">Admin</span>
-                    </button>
+                    <Tooltip content="Admin Dashboard">
+                        <button 
+                            onClick={() => setView('admin')} 
+                            className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-tertiary-container text-on-tertiary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
+                            aria-label="Admin Dashboard"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                            <span className="hidden sm:inline sm:ml-2">Admin</span>
+                        </button>
+                    </Tooltip>
                  )}
                  {view === 'creator' || view === 'visitor' ? (
                   <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary hover:text-opacity-80 transition-colors whitespace-nowrap px-3 py-2">
@@ -246,17 +255,19 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                   </button>
                  ): null}
                 <div className="relative" ref={themeMenuRef}>
-                  <motion.button
-                    onClick={() => setIsThemeMenuOpen(o => !o)}
-                    aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
-                    className="h-10 w-10 flex items-center justify-center rounded-full text-on-surface-variant bg-surface-container-high hover:bg-outline/20 transition-colors"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <AnimatePresence mode="wait" initial={false}>
-                      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-                    </AnimatePresence>
-                  </motion.button>
+                    <Tooltip content="Change Theme">
+                        <motion.button
+                            onClick={() => setIsThemeMenuOpen(o => !o)}
+                            aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
+                            className="h-10 w-10 flex items-center justify-center rounded-full text-on-surface-variant bg-surface-container-high hover:bg-outline/20 transition-colors"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                        >
+                            <AnimatePresence mode="wait" initial={false}>
+                            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+                            </AnimatePresence>
+                        </motion.button>
+                    </Tooltip>
                   {isThemeMenuOpen && <ThemeMenu onClose={() => setIsThemeMenuOpen(false)} />}
                 </div>
               </div>

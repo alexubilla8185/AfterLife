@@ -15,12 +15,15 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
   return (
     <div className="bg-surface text-on-surface">
       <header className="absolute top-0 left-0 right-0 z-30 p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="max-w-7xl mx-auto flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">
              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-7 w-7 text-primary">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
             </svg>
             <span className="font-bold text-xl text-on-surface">AfterLife</span>
+          </div>
+           <div>
+            <a href="/how-it-works" className="text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors">How it Works</a>
           </div>
         </div>
       </header>
@@ -88,6 +91,7 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
       <footer className="bg-surface-container border-t border-outline">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-on-surface-variant">
           <div className="flex justify-center space-x-6 text-sm">
+            <a href="/how-it-works" className="hover:text-primary transition-colors">How it Works</a>
             <a href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
             <a href="/data-deletion" className="hover:text-primary transition-colors">Data Deletion</a>
           </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CreatorProfile, Tribute, ChatMessage, SocialLink } from '../types';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
+import Tooltip from './ui/Tooltip';
 
 // Define the type for the Gemini API chat history format
 type HistoryPart = {
@@ -63,10 +64,12 @@ const TributeForm: React.FC = () => {
             <div>
                  <div className="flex justify-between items-center">
                     <label htmlFor="tribute-message" className="block text-sm font-medium text-on-surface-variant mb-1">Your Message</label>
-                    <button type="button" onClick={handleAssist} disabled={isAssisting} className="text-xs font-semibold text-primary hover:opacity-80 disabled:opacity-50 flex items-center space-x-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V6h-1a1 1 0 110-2h1V3a1 1 0 011-1zM7 8a1 1 0 011 1v1h1a1 1 0 110 2H8v1a1 1 0 11-2 0v-1H5a1 1 0 110-2h1V9a1 1 0 011-1zm5 4a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" clipRule="evenodd" /></svg>
-                        <span>{isAssisting ? 'Thinking...' : 'AI Assist'}</span>
-                    </button>
+                    <Tooltip content="Get help writing a beautiful tribute">
+                        <button type="button" onClick={handleAssist} disabled={isAssisting} className="text-xs font-semibold text-primary hover:opacity-80 disabled:opacity-50 flex items-center space-x-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V6h-1a1 1 0 110-2h1V3a1 1 0 011-1zM7 8a1 1 0 011 1v1h1a1 1 0 110 2H8v1a1 1 0 11-2 0v-1H5a1 1 0 110-2h1V9a1 1 0 011-1zm5 4a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" clipRule="evenodd" /></svg>
+                            <span>{isAssisting ? 'Thinking...' : 'AI Assist'}</span>
+                        </button>
+                    </Tooltip>
                  </div>
                 <textarea
                     id="tribute-message"
@@ -283,16 +286,18 @@ const ChatInterface: React.FC<{ profile: CreatorProfile, isTtsEnabled: boolean }
                         disabled={isInitialLoading || isTyping}
                     />
                     {isSpeechSupported && (
-                        <button onClick={toggleListening} aria-label={isListening ? "Stop listening" : "Use microphone"} className={`p-3 rounded-full hover:bg-outline/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors ${isListening ? 'text-red-500' : 'text-on-surface-variant'}`}>
-                             {isListening ? (
-                                <span className="relative flex h-5 w-5" aria-hidden="true">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="relative h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a2 2 0 10-4 0v.08A6 6 0 014 8H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clipRule="evenodd" /></svg>
-                                </span>
-                             ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a2 2 0 10-4 0v.08A6 6 0 014 8H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clipRule="evenodd" /></svg>
-                             )}
-                        </button>
+                        <Tooltip content={isListening ? "Stop Listening" : "Use Microphone"}>
+                            <button onClick={toggleListening} aria-label={isListening ? "Stop listening" : "Use microphone"} className={`p-3 rounded-full hover:bg-outline/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors ${isListening ? 'text-red-500' : 'text-on-surface-variant'}`}>
+                                 {isListening ? (
+                                    <span className="relative flex h-5 w-5" aria-hidden="true">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="relative h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a2 2 0 10-4 0v.08A6 6 0 014 8H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clipRule="evenodd" /></svg>
+                                    </span>
+                                 ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a2 2 0 10-4 0v.08A6 6 0 014 8H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clipRule="evenodd" /></svg>
+                                 )}
+                            </button>
+                        </Tooltip>
                     )}
                     <button onClick={handleSend} aria-label="Send message" className="bg-primary text-on-primary rounded-full p-3 hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50" disabled={!input.trim() || isTyping || isInitialLoading}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -415,21 +420,25 @@ const VisitorView: React.FC = () => {
             
             <div className="bg-surface-container rounded-t-3xl border-x border-t border-outline/30 relative">
                 {isTtsSupported && (
-                    <button
-                        onClick={toggleTts}
-                        aria-label={isTtsEnabled ? "Disable spoken responses" : "Enable spoken responses"}
-                        className={`absolute top-3 right-3 z-10 p-2 rounded-full transition-colors ${
-                            isTtsEnabled
-                                ? 'bg-primary-container text-on-primary-container'
-                                : 'bg-surface-container-high text-on-surface-variant hover:bg-outline/20'
-                        }`}
-                    >
-                        {isTtsEnabled ? (
-                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" /></svg>
-                        ) : (
-                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                        )}
-                    </button>
+                    <div className="absolute top-3 right-3 z-10">
+                        <Tooltip content={isTtsEnabled ? "Disable Spoken Responses" : "Enable Spoken Responses"}>
+                            <button
+                                onClick={toggleTts}
+                                aria-label={isTtsEnabled ? "Disable spoken responses" : "Enable spoken responses"}
+                                className={`p-2 rounded-full transition-colors ${
+                                    isTtsEnabled
+                                        ? 'bg-primary-container text-on-primary-container'
+                                        : 'bg-surface-container-high text-on-surface-variant hover:bg-outline/20'
+                                }`}
+                            >
+                                {isTtsEnabled ? (
+                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" /></svg>
+                                ) : (
+                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                                )}
+                            </button>
+                        </Tooltip>
+                    </div>
                 )}
                 <div role="tablist" aria-label="Interaction options" className="flex border-b border-outline/30">
                     <TabButton 
