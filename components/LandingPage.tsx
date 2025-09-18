@@ -2,31 +2,31 @@ import React from 'react';
 import { SparklesCore } from './ui/sparkles';
 
 const FeatureCard: React.FC<{ icon: JSX.Element; title: string; children: React.ReactNode; }> = ({ icon, title, children }) => (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 mb-5">
+    <div className="bg-surface-container p-6 rounded-3xl border border-outline/30">
+        <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary-container text-on-primary-container mb-5">
             {icon}
         </div>
-        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">{title}</h3>
-        <p className="text-gray-600 dark:text-gray-300">{children}</p>
+        <h3 className="text-xl font-bold mb-2 text-on-surface">{title}</h3>
+        <p className="text-on-surface-variant">{children}</p>
     </div>
 );
 
 const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
   return (
-    <div className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+    <div className="bg-surface text-on-surface">
       <header className="absolute top-0 left-0 right-0 z-30 p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-3">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-7 w-7 text-primary-500">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-7 w-7 text-primary">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
             </svg>
-            <span className="font-bold text-xl text-gray-900 dark:text-gray-100">AfterLife</span>
+            <span className="font-bold text-xl text-on-surface">AfterLife</span>
           </div>
         </div>
       </header>
       
       <main>
-        <section className="relative flex flex-col items-center justify-center text-center overflow-hidden p-4 min-h-screen bg-gray-950">
+        <section className="relative flex flex-col items-center justify-center text-center overflow-hidden p-4 min-h-screen bg-surface-container">
            <div className="w-full absolute inset-0 h-screen">
             <SparklesCore
               id="tsparticlesfullpage"
@@ -40,26 +40,26 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
             />
           </div>
           <div className="relative z-20 animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight">
+            <h1 className="text-5xl md:text-7xl font-extrabold text-on-surface tracking-tight">
               Your Story Doesn't End Here.
             </h1>
-            <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-gray-300">
+            <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-on-surface-variant">
               Create a living memorial—an interactive space where your memories, stories, and wisdom can be shared and cherished for generations to come.
             </p>
             <button 
                 onClick={onEnter} 
-                className="mt-12 px-8 py-3 text-lg font-semibold text-white bg-primary-600 rounded-md shadow-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-950 focus:ring-primary-500 transform hover:scale-105 transition-all"
+                className="mt-12 px-8 py-4 text-lg font-semibold text-on-primary bg-primary rounded-full shadow-lg hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-container focus:ring-primary transform hover:scale-105 transition-all"
             >
               Explore the Alpha Demo
             </button>
           </div>
         </section>
 
-        <section id="features" className="py-20 sm:py-32 bg-white dark:bg-gray-950">
+        <section id="features" className="py-20 sm:py-32 bg-surface">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center">
-                    <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">A New Form of Remembrance</h2>
-                    <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400">AfterLife offers two unique ways to connect with a legacy, whether you're building your own or visiting another's.</p>
+                    <h2 className="text-4xl font-bold text-on-surface">A New Form of Remembrance</h2>
+                    <p className="mt-4 max-w-2xl mx-auto text-lg text-on-surface-variant">AfterLife offers two unique ways to connect with a legacy, whether you're building your own or visiting another's.</p>
                 </div>
                 <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <FeatureCard
@@ -85,8 +85,8 @@ const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => {
         </section>
       </main>
 
-      <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-gray-500">
+      <footer className="bg-surface-container border-t border-outline">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-on-surface-variant">
           <p>&copy; {new Date().getFullYear()} AfterLife. A place for stories that last forever.</p>
         </div>
       </footer>

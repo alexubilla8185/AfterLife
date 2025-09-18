@@ -1,36 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
-import { ResponseType } from '../types';
-import Tour, { TourStep } from './Tour';
 import { getSupabase } from '../services/supabaseClient';
 import EditProfileModal from './EditProfileModal';
-
-const creatorTourSteps: TourStep[] = [
-    {
-        target: '[data-tour-id="profile-card"]',
-        title: "Your Memorial Profile",
-        content: "This is the heart of your legacy. It displays your photo, bio, and lifespan for all visitors to see. Click the edit button to update it.",
-        position: 'right',
-    },
-    {
-        target: '[data-tour-id="social-links-manager"]',
-        title: "Share Your World",
-        content: "Add links to your blogs, photo galleries, or social media. This gives visitors a richer, more complete picture of your life and passions.",
-        position: 'right',
-    },
-    {
-        target: '[data-tour-id="response-form"]',
-        title: "Craft Interactive Memories",
-        content: "This is where the magic happens. Create custom replies that are triggered by keywords in a visitor's message, allowing for a feeling of continued conversation.",
-        position: 'right',
-    },
-    {
-        target: '[data-tour-id="response-list"]',
-        title: "Manage Your Responses",
-        content: "Here you can review all the conditional responses you've created. You can easily see the trigger keyword and the reply, and remove them if needed.",
-        position: 'bottom',
-    }
-];
 
 const AudioMessageManager: React.FC = () => {
     const { memorial, updateProfile } = useMemorialProfile();
@@ -135,12 +106,12 @@ const AudioMessageManager: React.FC = () => {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 space-y-4">
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Audio Message</h3>
+        <div className="bg-surface-container p-6 rounded-3xl border border-outline/30 space-y-4">
+            <h3 className="text-xl font-semibold text-on-surface">Audio Message</h3>
             
             {audioUrl && (
                 <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Current Message:</p>
+                    <p className="text-sm font-medium text-on-surface-variant">Current Message:</p>
                     <audio controls src={audioUrl} className="w-full rounded-lg"></audio>
                 </div>
             )}
@@ -148,10 +119,10 @@ const AudioMessageManager: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4">
                 <button
                     onClick={isRecording ? handleStopRecording : handleStartRecording}
-                    className={`flex-1 flex justify-center items-center space-x-2 py-2.5 px-4 border rounded-md shadow-sm text-sm font-medium transition-colors ${
+                    className={`flex-1 flex justify-center items-center space-x-2 py-3 px-4 rounded-full text-sm font-medium transition-colors ${
                         isRecording 
-                        ? 'bg-red-600 text-white hover:bg-red-700 border-transparent' 
-                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
+                        ? 'bg-red-600 text-white hover:bg-red-700' 
+                        : 'bg-secondary-container text-on-secondary-container hover:bg-opacity-80'
                     }`}
                 >
                     {isRecording ? (
@@ -164,7 +135,7 @@ const AudioMessageManager: React.FC = () => {
                     )}
                 </button>
 
-                <label htmlFor="audio-upload" className="flex-1 flex justify-center items-center space-x-2 py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer transition-colors">
+                <label htmlFor="audio-upload" className="flex-1 flex justify-center items-center space-x-2 py-3 px-4 rounded-full text-sm font-medium cursor-pointer transition-colors bg-secondary-container text-on-secondary-container hover:bg-opacity-80">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" /></svg>
                     <span>Upload File</span>
                     <input id="audio-upload" type="file" accept="audio/*" className="hidden" onChange={handleFileUpload} />
@@ -175,7 +146,7 @@ const AudioMessageManager: React.FC = () => {
                  <button
                     onClick={handleSaveAudio}
                     disabled={isUploading}
-                    className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800 dark:disabled:text-gray-400 transition-colors"
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full text-sm font-medium text-on-primary bg-primary hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
                 >
                    {isUploading ? 'Saving...' : 'Save New Message'}
                 </button>
@@ -184,7 +155,7 @@ const AudioMessageManager: React.FC = () => {
             {memorial?.profile.audio_message_url && !audioBlob && (
                  <button
                     onClick={handleDeleteAudio}
-                    className="w-full flex justify-center items-center space-x-2 py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                    className="w-full flex justify-center items-center space-x-2 py-3 px-4 rounded-full text-sm font-medium text-red-600 hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     <span>Delete Current Message</span>
@@ -209,34 +180,34 @@ const ConditionalResponseForm: React.FC = () => {
   };
 
   return (
-    <div data-tour-id="response-form" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 space-y-4">
-      <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Add New Conditional Response</h3>
+    <div className="bg-surface-container p-6 rounded-3xl border border-outline/30 space-y-4">
+      <h3 className="text-xl font-semibold text-on-surface">Add New Conditional Response</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-            <label htmlFor="keyword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">If a visitor's message contains this keyword...</label>
+            <label htmlFor="keyword" className="block text-sm font-medium text-on-surface-variant mb-1">If a message contains...</label>
             <input
             type="text"
             id="keyword"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="e.g., 'miss you', 'remember'"
-            className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+            className="block w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface"
             />
         </div>
         <div>
-            <label htmlFor="response" className="block text-sm font-medium text-gray-700 dark:text-gray-300">...then respond with this message.</label>
+            <label htmlFor="response" className="block text-sm font-medium text-on-surface-variant mb-1">...respond with this message.</label>
             <textarea
             id="response"
             value={response}
             onChange={(e) => setResponse(e.target.value)}
             rows={4}
             placeholder="e.g., 'I miss you too...'"
-            className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+            className="block w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface"
             />
         </div>
         <button
             type="submit"
-            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800 dark:disabled:text-gray-400 transition-colors"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full text-sm font-medium text-on-primary bg-primary hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
             disabled={!keyword.trim() || !response.trim()}
         >
             Save Response
@@ -262,8 +233,8 @@ const SocialLinksManager: React.FC = () => {
     if (!memorial) return null;
 
     return (
-        <div data-tour-id="social-links-manager" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 space-y-6">
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Social & Web Links</h3>
+        <div className="bg-surface-container p-6 rounded-3xl border border-outline/30 space-y-6">
+            <h3 className="text-xl font-semibold text-on-surface">Social & Web Links</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                     <input
@@ -271,19 +242,19 @@ const SocialLinksManager: React.FC = () => {
                         value={platform}
                         onChange={e => setPlatform(e.target.value)}
                         placeholder="Platform (e.g., Blog)"
-                        className="flex-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+                        className="flex-1 block w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface"
                     />
                     <input
                         type="url"
                         value={url}
                         onChange={e => setUrl(e.target.value)}
                         placeholder="URL (https://...)"
-                        className="flex-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
+                        className="flex-1 block w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface"
                     />
                 </div>
                  <button
                     type="submit"
-                    className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800 dark:disabled:text-gray-400 transition-colors"
+                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full text-sm font-medium text-on-primary bg-primary hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
                     disabled={!platform.trim() || !url.trim()}
                 >
                     Add Link
@@ -291,12 +262,12 @@ const SocialLinksManager: React.FC = () => {
             </form>
             <div className="space-y-3">
                 {memorial.socialLinks.map(link => (
-                    <div key={link.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 p-3 rounded-md border border-gray-200 dark:border-gray-600">
+                    <div key={link.id} className="flex items-center justify-between bg-surface-variant/50 p-3 rounded-xl border border-outline/30">
                         <div>
-                            <p className="font-semibold text-gray-800 dark:text-gray-200">{link.platform}</p>
-                            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary-600 dark:text-primary-400 hover:underline truncate">{link.url}</a>
+                            <p className="font-semibold text-on-surface">{link.platform}</p>
+                            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline truncate">{link.url}</a>
                         </div>
-                         <button onClick={() => removeSocialLink(link.id)} aria-label={`Delete ${link.platform} link`} className="text-gray-400 hover:text-red-600 dark:hover:text-red-500 flex-shrink-0 ml-4 transition-colors">
+                         <button onClick={() => removeSocialLink(link.id)} aria-label={`Delete ${link.platform} link`} className="text-on-surface-variant hover:text-red-500 flex-shrink-0 ml-4 p-2 rounded-full transition-colors hover:bg-red-500/10">
                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                            </svg>
@@ -308,23 +279,11 @@ const SocialLinksManager: React.FC = () => {
     );
 }
 
-interface CreatorDashboardProps {
-    showTour: boolean;
-    onTourFinish: () => void;
-}
-
-const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFinish }) => {
+const CreatorDashboard: React.FC = () => {
   const { memorial, loading, removeConditionalResponse } = useMemorialProfile();
   const [responseToDelete, setResponseToDelete] = useState<string | null>(null);
-  const [isTourOpen, setIsTourOpen] = useState(showTour);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if(showTour) {
-        setIsTourOpen(true);
-    }
-  }, [showTour]);
   
   // Accessibility: Focus trap for delete confirmation modal
   useEffect(() => {
@@ -358,13 +317,6 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
     }
   }, [responseToDelete]);
 
-
-  const handleTourClose = () => {
-    setIsTourOpen(false);
-    localStorage.setItem('creatorTourSeen', 'true');
-    onTourFinish();
-  };
-
   const handleConfirmDelete = async () => {
     if (responseToDelete) {
       await removeConditionalResponse(responseToDelete);
@@ -377,33 +329,32 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
   };
   
   if (loading) {
-      return <div className="text-center py-20 text-gray-500 dark:text-gray-400">Loading Creator Dashboard...</div>
+      return <div className="text-center py-20 text-on-surface-variant">Loading Creator Dashboard...</div>
   }
   
   if (!memorial) {
-      return <div className="text-center py-20 text-gray-500 dark:text-gray-400">Could not load memorial data.</div>
+      return <div className="text-center py-20 text-on-surface-variant">Could not load memorial data.</div>
   }
 
   const { profile, responses } = memorial;
 
   return (
     <>
-      <Tour isOpen={isTourOpen} onClose={handleTourClose} steps={creatorTourSteps} />
       {isEditModalOpen && <EditProfileModal onClose={() => setIsEditModalOpen(false)} />}
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-8">
-          <div data-tour-id="profile-card" className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Creator Profile</h2>
+          <div className="relative bg-surface-container p-6 rounded-3xl border border-outline/30">
+              <h2 className="text-2xl font-bold text-on-surface mb-6">Creator Profile</h2>
               <img src={profile.profile_image_url} alt={profile.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover" />
               <div className="text-center">
-                  <h3 className="text-xl font-semibold dark:text-white">{profile.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{profile.life_span}</p>
-                  <p className="mt-4 text-gray-700 dark:text-gray-300">{profile.bio}</p>
+                  <h3 className="text-xl font-semibold text-on-surface">{profile.name}</h3>
+                  <p className="text-sm text-on-surface-variant">{profile.life_span}</p>
+                  <p className="mt-4 text-on-surface-variant">{profile.bio}</p>
               </div>
               <button
                 onClick={() => setIsEditModalOpen(true)}
-                className="absolute top-4 right-4 p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+                className="absolute top-4 right-4 p-2 text-on-surface-variant bg-surface-container-high hover:bg-outline/20 rounded-full transition-colors"
                 aria-label="Edit Profile"
               >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -416,19 +367,19 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
           <SocialLinksManager />
           <ConditionalResponseForm />
         </div>
-        <div data-tour-id="response-list" className="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Managed Responses</h2>
+        <div className="lg:col-span-2 bg-surface-container p-6 rounded-3xl border border-outline/30">
+          <h2 className="text-2xl font-bold text-on-surface mb-6">Managed Responses</h2>
           <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
               {responses.length > 0 ? responses.map(res => (
-                  <div key={res.id} className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                  <div key={res.id} className="bg-surface-variant/50 p-4 rounded-2xl border border-outline/30">
                       <div className="flex justify-between items-start">
                           <div>
-                              <p className="text-sm text-gray-500 dark:text-gray-400">When visitor says...</p>
-                              <p className="font-semibold text-primary-700 dark:text-primary-400">"{res.keyword}"</p>
-                              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Your reply:</p>
-                              <p className="text-gray-800 dark:text-gray-200 italic">"{res.response}"</p>
+                              <p className="text-sm text-on-surface-variant">When visitor says...</p>
+                              <p className="font-semibold text-primary">"{res.keyword}"</p>
+                              <p className="mt-2 text-sm text-on-surface-variant">Your reply:</p>
+                              <p className="text-on-surface italic">"{res.response}"</p>
                           </div>
-                          <button onClick={() => setResponseToDelete(res.id)} aria-label={`Delete response for keyword "${res.keyword}"`} className="text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+                          <button onClick={() => setResponseToDelete(res.id)} aria-label={`Delete response for keyword "${res.keyword}"`} className="text-on-surface-variant hover:text-red-500 rounded-full p-2 transition-colors hover:bg-red-500/10">
                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                              </svg>
@@ -436,9 +387,9 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
                       </div>
                   </div>
               )) : (
-                  <div className="text-center py-10 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
-                      <p className="text-gray-500 dark:text-gray-400">No conditional responses set up yet.</p>
-                      <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Use the form to add your first one.</p>
+                  <div className="text-center py-10 border-2 border-dashed border-outline/50 rounded-2xl">
+                      <p className="text-on-surface-variant">No conditional responses set up yet.</p>
+                      <p className="text-sm text-on-surface-variant/70 mt-1">Use the form to add your first one.</p>
                   </div>
               )}
           </div>
@@ -446,21 +397,21 @@ const CreatorDashboard: React.FC<CreatorDashboardProps> = ({ showTour, onTourFin
       </div>
       {responseToDelete && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
-          <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm mx-auto border border-gray-200 dark:border-gray-700">
-            <h3 id="delete-modal-title" className="text-lg font-semibold text-gray-900 dark:text-gray-100">Confirm Deletion</h3>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+          <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" className="bg-surface-container-high rounded-3xl p-6 w-full max-w-sm mx-auto border border-outline">
+            <h3 id="delete-modal-title" className="text-lg font-semibold text-on-surface">Confirm Deletion</h3>
+            <p className="mt-2 text-sm text-on-surface-variant">
                 Are you sure you want to delete this response?
             </p>
             <div className="mt-6 flex justify-end space-x-3">
               <button
                 onClick={handleCancelDelete}
-                className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                className="px-5 py-2.5 text-sm font-medium rounded-full hover:bg-outline/20"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                className="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-full hover:bg-red-700"
               >
                 Confirm
               </button>

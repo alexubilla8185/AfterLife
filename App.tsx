@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import CreatorDashboard from './components/CreatorDashboard';
 import VisitorView from './components/VisitorView';
 import Login from './components/Login';
-import LoginTour from './components/LoginTour';
+import Onboarding from './components/Onboarding';
 import ThemeMenu from './components/ThemeMenu';
 import { MemorialProfileProvider } from './hooks/useMemorialProfile';
 import LandingPage from './components/LandingPage';
@@ -16,7 +16,6 @@ import { useTheme } from './hooks/useTheme';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin';
-type TourContext = 'creator' | 'visitor' | 'login';
 
 // Sample data to be seeded for the first user
 const sampleProfileData = {
@@ -33,7 +32,6 @@ interface AppProps {
   isOffline: boolean;
 }
 
-// FIX: Removed unused props from SunIcon component to resolve framer-motion type conflict.
 const SunIcon: React.FC = () => (
   <motion.svg
     key="sun"
@@ -52,7 +50,6 @@ const SunIcon: React.FC = () => (
   </motion.svg>
 );
 
-// FIX: Removed unused props from MoonIcon component to resolve framer-motion type conflict.
 const MoonIcon: React.FC = () => (
   <motion.svg
     key="moon"
@@ -77,9 +74,9 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   const { theme } = useTheme();
   const [view, setView] = useState<View>('landing');
   const [activeMemorialId, setActiveMemorialId] = useState<string | null>(null);
-  const [tourContext, setTourContext] = useState<TourContext | null>(null);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
     
   const themeMenuRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +88,18 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   if (path === '/data-deletion') {
     return <DataDeletion />;
   }
+
+  useEffect(() => {
+    const onboardingComplete = localStorage.getItem('onboardingComplete');
+    if (!onboardingComplete) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleOnboardingFinish = () => {
+    localStorage.setItem('onboardingComplete', 'true');
+    setShowOnboarding(false);
+  };
 
   useEffect(() => {
     const supabase = getSupabase();
@@ -110,17 +119,14 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
     const checkAndSetInitialMemorial = async () => {
         if (!user) return;
         
-        // Check if user has any memorials
         const { data, error } = await supabase.from('memorials').select('id').eq('user_id', user.id);
 
         if (error) { console.error("Error checking for memorials:", error); return; }
 
         if (data && data.length > 0) {
-            // User has memorials, set the first one as active
             setActiveMemorialId(data[0].id);
         } else {
-            // This is likely a new user, seed the data for them
-            if (isSeeding) return; // Prevent race condition / double seeding
+            if (isSeeding) return;
             setIsSeeding(true);
             const newId = await seedInitialData(user.id);
             if (newId) setActiveMemorialId(newId);
@@ -146,38 +152,16 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   const handleNavigate = (newView: 'creator' | 'visitor', memorialId: string) => {
     setActiveMemorialId(memorialId);
     setView(newView);
-    
-    if (newView === 'creator' || newView === 'visitor') {
-      const tourSeenKey = newView === 'creator' ? 'creatorTourSeen' : 'visitorTourSeen';
-      if (!localStorage.getItem(tourSeenKey)) {
-          setTimeout(() => setTourContext(newView), 500);
-      }
-    }
   };
   
   const handleSwitchRole = () => {
     setView(prevView => {
       if (prevView === 'profile' || prevView === 'admin') {
-        // From profile/admin, there's no clear creator/visitor context, so default to visitor.
-        // Requires a memorialId to be set.
         if(activeMemorialId) return 'visitor';
-        return prevView; // Stay on page if no memorial is active
+        return prevView;
       }
-      const newView = prevView === 'creator' ? 'visitor' : 'creator';
-      const tourSeenKey = newView === 'creator' ? 'creatorTourSeen' : 'visitorTourSeen';
-      if (!localStorage.getItem(tourSeenKey)) {
-          setTimeout(() => setTourContext(newView), 500);
-      }
-      return newView;
+      return prevView === 'creator' ? 'visitor' : 'creator';
     });
-  };
-
-  const handleShowTour = (context: TourContext) => {
-    setTourContext(context);
-  };
-  
-  const handleCloseTour = () => {
-    setTourContext(null);
   };
   
   useEffect(() => {
@@ -195,15 +179,15 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
       case 'landing':
         return <LandingPage onEnter={handleEnterApp} />;
       case 'login':
-        return <Login onShowTour={() => handleShowTour('login')} />;
+        return <Login onShowTour={() => setShowOnboarding(true)} />;
       case 'profile':
         return <ProfilePage onNavigate={handleNavigate} />;
       case 'admin':
         return <AdminPage />;
       case 'creator':
-        return <CreatorDashboard showTour={tourContext === 'creator'} onTourFinish={handleCloseTour} />;
+        return <CreatorDashboard />;
       case 'visitor':
-        return <VisitorView showTour={tourContext === 'visitor'} onTourFinish={handleCloseTour} />;
+        return <VisitorView />;
       default:
         return <LandingPage onEnter={handleEnterApp} />;
     }
@@ -213,26 +197,25 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   const showProfileProvider = view === 'creator' || view === 'visitor';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-surface dark:bg-surface-container transition-colors duration-300">
+      {showOnboarding && <Onboarding onClose={handleOnboardingFinish} />}
+
       {isOffline && (
           <div className="bg-yellow-400 dark:bg-yellow-600 text-yellow-900 dark:text-yellow-100 text-center p-2 text-sm font-semibold sticky top-0 z-50">
             Offline Mode: Backend features are disabled.
           </div>
         )}
-
-      {tourContext === 'login' && <LoginTour onClose={handleCloseTour} />}
       
       {showHeader && (
-        <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
+        <header className="sticky top-0 z-40 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-lg border-b border-outline">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-4">
-                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8 text-primary-600">
+                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8 text-primary">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                 </svg>
                 <div className="flex items-baseline space-x-2">
-                  <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">AfterLife</h1>
-                  <span className="text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 px-2 py-0.5 rounded-full">Alpha</span>
+                  <h1 className="text-xl font-bold text-on-surface">AfterLife</h1>
                 </div>
               </div>
 
@@ -240,7 +223,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                  {view !== 'profile' && user && (
                     <button 
                         onClick={() => setView('profile')} 
-                        className="inline-flex items-center justify-center p-2 sm:px-3 sm:py-1.5 border border-gray-300 dark:border-gray-700 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-secondary-container text-on-secondary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
                         aria-label="My Profile"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
@@ -250,7 +233,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                  {user?.role === 'admin' && view !== 'admin' && (
                     <button 
                         onClick={() => setView('admin')} 
-                        className="inline-flex items-center justify-center p-2 sm:px-3 sm:py-1.5 border border-yellow-400/50 dark:border-yellow-600/50 text-sm font-medium rounded-md text-yellow-700 dark:text-yellow-300 bg-yellow-50 dark:bg-yellow-900/40 hover:bg-yellow-100 dark:hover:bg-yellow-900/60 transition-colors"
+                        className="inline-flex items-center justify-center p-2 sm:px-4 sm:py-2 bg-tertiary-container text-on-tertiary-container text-sm font-medium rounded-full hover:bg-opacity-80 transition-colors"
                         aria-label="Admin Dashboard"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
@@ -258,7 +241,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                     </button>
                  )}
                  {view === 'creator' || view === 'visitor' ? (
-                  <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 transition-colors whitespace-nowrap">
+                  <button onClick={handleSwitchRole} className="text-sm font-semibold text-primary hover:text-opacity-80 transition-colors whitespace-nowrap px-3 py-2">
                     Switch to {view === 'creator' ? 'Visitor' : 'Creator'}
                   </button>
                  ): null}
@@ -266,10 +249,9 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
                   <motion.button
                     onClick={() => setIsThemeMenuOpen(o => !o)}
                     aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
-                    className="h-10 w-10 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200 transition-colors"
-                    whileHover={{ scale: 1.1, rotate: 15 }}
-                    whileTap={{ scale: 0.9, rotate: -15 }}
-                    transition={{ duration: 0.2 }}
+                    className="h-10 w-10 flex items-center justify-center rounded-full text-on-surface-variant bg-surface-container-high hover:bg-outline/20 transition-colors"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                   >
                     <AnimatePresence mode="wait" initial={false}>
                       {theme === 'dark' ? <SunIcon /> : <MoonIcon />}

@@ -74,7 +74,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
         let updatedProfileData = { ...formData };
 
         if (imageFile) {
-            // Delete old image if it exists
             if (memorial.profile.profile_image_url) {
                 const oldFilePath = memorial.profile.profile_image_url.split('/memorials/')[1];
                 if (oldFilePath) {
@@ -82,7 +81,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
                 }
             }
 
-            // Upload new image
             const fileExt = imageFile.name.split('.').pop();
             const fileName = `${memorial.profile.user_id}/${memorial.profile.id}-profile.${fileExt}`;
             const { error: uploadError } = await supabase.storage
@@ -108,9 +106,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
-            <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="edit-profile-title" className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col">
+            <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="edit-profile-title" className="bg-surface-container-high rounded-3xl p-6 w-full max-w-lg mx-auto border border-outline max-h-[90vh] flex flex-col">
                 <div className="flex-shrink-0">
-                    <h2 id="edit-profile-title" className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Edit Profile</h2>
+                    <h2 id="edit-profile-title" className="text-2xl font-bold text-on-surface mb-6">Edit Profile</h2>
                 </div>
                 
                 <div className="flex-1 overflow-y-auto space-y-6 pr-2">
@@ -119,7 +117,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
                             <img
                                 src={imagePreview || ''}
                                 alt="Profile Preview"
-                                className="w-32 h-32 rounded-full object-cover shadow-md border-4 border-white dark:border-gray-600"
+                                className="w-32 h-32 rounded-full object-cover shadow-md border-4 border-surface"
                             />
                             <button
                                 onClick={() => fileInputRef.current?.click()}
@@ -140,22 +138,22 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
                         </div>
                     </div>
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                        <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white" />
+                        <label htmlFor="name" className="block text-sm font-medium text-on-surface-variant mb-1">Name</label>
+                        <input type="text" name="name" id="name" value={formData.name} onChange={handleInputChange} className="block w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface" />
                     </div>
                     <div>
-                        <label htmlFor="life_span" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Life Span</label>
-                        <input type="text" name="life_span" id="life_span" value={formData.life_span} onChange={handleInputChange} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white" />
+                        <label htmlFor="life_span" className="block text-sm font-medium text-on-surface-variant mb-1">Life Span</label>
+                        <input type="text" name="life_span" id="life_span" value={formData.life_span} onChange={handleInputChange} className="block w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface" />
                     </div>
                     <div>
-                        <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Bio</label>
-                        <textarea name="bio" id="bio" value={formData.bio} onChange={handleInputChange} rows={5} className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 dark:text-white" />
+                        <label htmlFor="bio" className="block text-sm font-medium text-on-surface-variant mb-1">Bio</label>
+                        <textarea name="bio" id="bio" value={formData.bio} onChange={handleInputChange} rows={5} className="block w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface" />
                     </div>
                 </div>
 
-                <div className="mt-6 flex-shrink-0 flex justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <button onClick={onClose} disabled={isSaving} className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600">Cancel</button>
-                    <button onClick={handleSave} disabled={isSaving} className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md shadow-sm disabled:bg-primary-400 dark:disabled:bg-primary-800">{isSaving ? 'Saving...' : 'Save Changes'}</button>
+                <div className="mt-6 flex-shrink-0 flex justify-end space-x-3 pt-4 border-t border-outline">
+                    <button onClick={onClose} disabled={isSaving} className="px-5 py-2.5 text-sm font-medium rounded-full hover:bg-outline/20 text-on-surface-variant">Cancel</button>
+                    <button onClick={handleSave} disabled={isSaving} className="px-5 py-2.5 text-sm font-medium text-on-primary bg-primary rounded-full hover:bg-opacity-80 disabled:opacity-50">{isSaving ? 'Saving...' : 'Save Changes'}</button>
                 </div>
             </div>
         </div>

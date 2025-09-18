@@ -48,7 +48,7 @@ const Login: React.FC<LoginProps> = ({ onShowTour }) => {
         <button 
             onClick={onClick}
             disabled={disabled}
-            className="w-full flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex justify-center items-center py-3 px-4 border border-outline rounded-full bg-surface-container hover:bg-surface-container-high text-sm font-medium text-on-surface transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
             <span className="mr-3">{icons[provider]}</span>{text}
         </button>
@@ -56,58 +56,58 @@ const Login: React.FC<LoginProps> = ({ onShowTour }) => {
   };
   
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 transition-colors duration-300">
-      <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8 md:p-10 text-center border border-gray-200 dark:border-gray-700">
+    <div className="min-h-screen w-full flex items-center justify-center bg-surface p-4 transition-colors duration-300">
+      <div className="w-full max-w-md mx-auto bg-surface-container rounded-3xl p-8 md:p-10 text-center border border-outline/30">
         
         <div className="flex justify-center mb-4">
-           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-10 w-10 text-primary-600 dark:text-primary-400">
+           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-10 w-10 text-primary">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
            </svg>
         </div>
         
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Welcome to AfterLife</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">Your story continues here.</p>
+        <h1 className="text-3xl font-bold text-on-surface">Welcome to AfterLife</h1>
+        <p className="mt-2 text-on-surface-variant">Your story continues here.</p>
         
         <div className="mt-8 space-y-4">
             <SocialButton provider="google" onClick={signInWithGoogle} />
             <div>
               <SocialButton provider="facebook" onClick={() => {}} disabled={true} />
-              <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-1">Facebook login coming soon.</p>
+              <p className="text-xs text-center text-on-surface-variant/70 mt-1">Facebook login coming soon.</p>
             </div>
         </div>
 
         <div className="mt-6 flex items-center">
-            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
-            <span className="flex-shrink mx-4 text-gray-500 dark:text-gray-400 text-sm">OR</span>
-            <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+            <div className="flex-grow border-t border-outline"></div>
+            <span className="flex-shrink mx-4 text-on-surface-variant text-sm">OR</span>
+            <div className="flex-grow border-t border-outline"></div>
         </div>
         
         <div className="mt-6">
-            <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-6">
-                <button onClick={() => { setActiveTab('signIn'); setError(null); setSuccessMessage(null); }} className={`flex-1 text-sm py-2 rounded-md font-semibold transition-colors ${activeTab === 'signIn' ? 'bg-white shadow text-primary-600 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-300'}`}>Sign In</button>
-                <button onClick={() => { setActiveTab('signUp'); setError(null); setSuccessMessage(null); }} className={`flex-1 text-sm py-2 rounded-md font-semibold transition-colors ${activeTab === 'signUp' ? 'bg-white shadow text-primary-600 dark:bg-gray-800' : 'text-gray-600 dark:text-gray-300'}`}>Sign Up</button>
+            <div className="flex bg-surface-variant rounded-full p-1 mb-6">
+                <button onClick={() => { setActiveTab('signIn'); setError(null); setSuccessMessage(null); }} className={`flex-1 text-sm py-2 rounded-full font-semibold transition-all ${activeTab === 'signIn' ? 'bg-secondary-container shadow text-on-secondary-container' : 'text-on-surface-variant'}`}>Sign In</button>
+                <button onClick={() => { setActiveTab('signUp'); setError(null); setSuccessMessage(null); }} className={`flex-1 text-sm py-2 rounded-full font-semibold transition-all ${activeTab === 'signUp' ? 'bg-secondary-container shadow text-on-secondary-container' : 'text-on-surface-variant'}`}>Sign Up</button>
             </div>
 
             <form onSubmit={handleEmailAuth} className="space-y-4 text-left">
                 <div>
                     <label htmlFor="email-input" className="sr-only">Email address</label>
-                    <input id="email-input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" required className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white" />
+                    <input id="email-input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" required className="w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface" />
                 </div>
                 <div>
                     <label htmlFor="password-input" className="sr-only">Password</label>
-                    <input id="password-input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white" />
+                    <input id="password-input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required className="w-full px-4 py-3 bg-surface-variant border border-outline/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-on-surface" />
                 </div>
-                <button type="submit" disabled={loading} className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800 disabled:cursor-not-allowed">
+                <button type="submit" disabled={loading} className="w-full py-3 px-4 border border-transparent rounded-full text-sm font-medium text-on-primary bg-primary hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50">
                     {loading ? 'Processing...' : (activeTab === 'signIn' ? 'Sign In' : 'Create Account')}
                 </button>
             </form>
 
-            {error && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>}
-            {successMessage && <p className="mt-4 text-sm text-green-600 dark:text-green-400">{successMessage}</p>}
+            {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+            {successMessage && <p className="mt-4 text-sm text-green-500">{successMessage}</p>}
         </div>
 
         <div className="mt-8 text-sm">
-            <button onClick={onShowTour} className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 underline transition-colors">How does it work?</button>
+            <button onClick={onShowTour} className="text-on-surface-variant hover:text-primary underline transition-colors">Take a Tour</button>
         </div>
 
       </div>
