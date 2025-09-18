@@ -91,14 +91,17 @@ If you see an "Offline Mode" banner at the top of the application, it means the 
 
 **Fixing Offline Mode:** The best fix is to stop your current server and run `netlify dev` as described in the section above.
 
-**Limited Functionality (Frontend-Only):**
-If you *must* run a frontend-only server, you can still connect to your Supabase database by adding `VITE_` prefixed variables to your `.env` file. However, **AI features will not work**.
+### Limited Functionality (Frontend-Only)
+If you cannot use `netlify dev` and must run a frontend-only server (e.g., with `vite` or `npm run dev`), you can still get a fully functional local experience by providing all necessary keys with a `VITE_` prefix in your `.env` file.
 
 ```
-# Add these to your .env file for frontend-only mode
+# .env file for frontend-only development
+# Provides Supabase connection AND enables AI chat features locally.
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_API_KEY=your_google_gemini_api_key
 ```
+With this setup, the application will connect directly to Supabase and the Gemini API from your browser. Note that exposing an API key on the client side is acceptable for local development but is not a secure practice for production.
 
 ### Supabase Setup
 

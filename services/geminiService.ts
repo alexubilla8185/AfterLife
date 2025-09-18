@@ -2,18 +2,18 @@ import { GoogleGenAI } from "@google/genai";
 
 const fallbackResponse = "Thank you for your message. It's deeply felt and appreciated.";
 
-// This provides a "test-in-place" capability by checking for a client-side API key.
-// This is intended for specific testing environments that can securely provide this variable.
-// In a standard browser/production build, this will be undefined, and the app will
-// correctly fall back to using the secure Netlify Function.
-const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : undefined;
+// This provides a "test-in-place" capability by checking for a client-side API key
+// from Vite's environment variables. This is intended for local frontend-only
+// development that does not use the Netlify CLI. In production or with `netlify dev`,
+// this will be undefined, and the app will correctly fall back to the secure Netlify Function.
+const apiKey = import.meta.env?.VITE_API_KEY;
 
 let ai: GoogleGenAI | undefined;
 if (apiKey) {
     ai = new GoogleGenAI({ apiKey });
-    console.log("Gemini service initialized in direct client-side mode for testing.");
+    console.log("Gemini service initialized in direct client-side mode using VITE_API_KEY.");
 } else {
-    console.log("Gemini service initialized in standard Netlify function mode.");
+    console.log("Gemini service initialized in standard Netlify function mode (or VITE_API_KEY is not set).");
 }
 
 export const getGenericResponse = async (creatorName: string, userMessage: string): Promise<string> => {

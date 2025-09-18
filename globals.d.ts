@@ -1,10 +1,9 @@
-// Fix: Add types for Vite's `import.meta.env` to make TypeScript aware of
-// environment variables used for local development. This resolves multiple
-// "Cannot find name" and "Property 'env' does not exist" errors in services/supabaseClient.ts.
+// Add types for Vite's `import.meta.env` to make TypeScript aware of
+// environment variables used for local development.
 interface ImportMetaEnv {
-    // Fix: Corrected environment variable name to match usage in supabaseClient.ts
     readonly VITE_SUPABASE_URL?: string;
     readonly VITE_SUPABASE_ANON_KEY?: string;
+    readonly VITE_API_KEY?: string;
     readonly DEV?: boolean;
 }
 
