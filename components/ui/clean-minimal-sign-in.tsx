@@ -2,9 +2,13 @@
 
 import * as React from "react"
 import { useState } from "react";
-import { Lock, Mail, Eye, EyeOff } from "lucide-react";
+import { Lock, Mail, Eye, EyeOff, User as UserIcon } from "lucide-react";
  
 interface SignInProps {
+    isSignUp: boolean;
+    setIsSignUp: (isSignUp: boolean) => void;
+    fullName: string;
+    setFullName: (name: string) => void;
     email: string;
     setEmail: (email: string) => void;
     password: string;
@@ -13,12 +17,16 @@ interface SignInProps {
     setRememberMe: (value: boolean) => void;
     error: string | null;
     loading: boolean;
-    onEmailSignIn: () => void;
+    onFormSubmit: () => void;
     onGoogleSignIn: () => void;
     onFacebookSignIn: () => void;
 }
 
 const SignIn: React.FC<SignInProps> = ({
+    isSignUp,
+    setIsSignUp,
+    fullName,
+    setFullName,
     email,
     setEmail,
     password,
@@ -27,7 +35,7 @@ const SignIn: React.FC<SignInProps> = ({
     setRememberMe,
     error,
     loading,
-    onEmailSignIn,
+    onFormSubmit,
     onGoogleSignIn,
     onFacebookSignIn,
 }) => {
@@ -35,7 +43,7 @@ const SignIn: React.FC<SignInProps> = ({
  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onEmailSignIn();
+    onFormSubmit();
   }
 
   return (
@@ -48,13 +56,31 @@ const SignIn: React.FC<SignInProps> = ({
           </svg>
         </div>
         <h2 className="text-3xl font-bold mb-2 text-center text-on-surface">
-          Welcome to AfterLife
+          {isSignUp ? "Create Your Account" : "Welcome to AfterLife"}
         </h2>
         <p className="text-on-surface-variant text-sm mb-6 text-center">
-          Your story continues here. Sign in to get started.
+          {isSignUp
+            ? "Join us to create a lasting digital legacy."
+            : "Your story continues here. Sign in to get started."}
         </p>
         
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
+           {isSignUp && (
+            <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70">
+                    <UserIcon className="w-4 h-4" />
+                </span>
+                <input
+                    placeholder="Full Name"
+                    type="text"
+                    value={fullName}
+                    className="w-full pl-10 pr-3 py-3 rounded-xl border border-outline/50 focus:outline-none focus:ring-2 focus:ring-primary bg-surface-variant text-on-surface text-sm"
+                    onChange={(e) => setFullName(e.target.value)}
+                    disabled={loading}
+                    required
+                />
+            </div>
+          )}
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/70">
               <Mail className="w-4 h-4" />
@@ -66,6 +92,7 @@ const SignIn: React.FC<SignInProps> = ({
               className="w-full pl-10 pr-3 py-3 rounded-xl border border-outline/50 focus:outline-none focus:ring-2 focus:ring-primary bg-surface-variant text-on-surface text-sm"
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
+              required
             />
           </div>
           <div className="relative">
@@ -79,6 +106,7 @@ const SignIn: React.FC<SignInProps> = ({
               className="w-full pl-10 pr-10 py-3 rounded-xl border border-outline/50 focus:outline-none focus:ring-2 focus:ring-primary bg-surface-variant text-on-surface text-sm"
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
+              required
             />
             <button
                 type="button"
@@ -104,9 +132,11 @@ const SignIn: React.FC<SignInProps> = ({
                     Remember me
                 </label>
             </div>
-            <a href="#" className="font-medium text-primary hover:text-opacity-80 transition-colors">
-                Forgot password?
-            </a>
+            {!isSignUp && (
+                <a href="#" className="font-medium text-primary hover:text-opacity-80 transition-colors">
+                    Forgot password?
+                </a>
+            )}
           </div>
           <div className="w-full h-4 mt-1">
             {error && (
@@ -118,13 +148,13 @@ const SignIn: React.FC<SignInProps> = ({
             disabled={loading}
             className="w-full bg-primary text-on-primary font-medium py-3 rounded-xl shadow hover:bg-opacity-90 cursor-pointer transition disabled:opacity-50 mt-2"
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? (isSignUp ? 'Creating Account...' : 'Signing In...') : (isSignUp ? 'Create Account' : 'Sign In')}
           </button>
         </form>
 
         <div className="flex items-center w-full my-4">
           <div className="flex-grow border-t border-dashed border-outline/50"></div>
-          <span className="mx-4 text-xs text-on-surface-variant">Or sign in with</span>
+          <span className="mx-4 text-xs text-on-surface-variant">Or {isSignUp ? 'sign up' : 'sign in'} with</span>
           <div className="flex-grow border-t border-dashed border-outline/50"></div>
         </div>
 
@@ -143,6 +173,18 @@ const SignIn: React.FC<SignInProps> = ({
               className="w-6 h-6"
             />
           </button>
+        </div>
+
+         <div className="text-center text-sm text-on-surface-variant mt-8">
+            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+            <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="font-semibold text-primary hover:text-opacity-80 transition-colors"
+                disabled={loading}
+            >
+                {isSignUp ? 'Sign In' : 'Sign Up'}
+            </button>
         </div>
       </div>
     </div>

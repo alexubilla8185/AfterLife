@@ -10,7 +10,8 @@ interface UserContextType {
   signInWithGoogle: () => Promise<void>;
   signInWithFacebook: () => Promise<void>;
   signInWithEmail: (credentials: SignInWithPasswordCredentials) => Promise<any>;
-  signUpWithEmail: (credentials: SignInWithPasswordCredentials) => Promise<any>;
+  // FIX: Use a specific type for email-based sign-up credentials to resolve destructuring error on a union type.
+  signUpWithEmail: (credentials: { email: string; password: string; fullName: string; }) => Promise<any>;
   signOut: () => Promise<void>;
 }
 
@@ -97,8 +98,17 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     return await supabase.auth.signInWithPassword(credentials);
   };
 
-  const signUpWithEmail = async (credentials: SignInWithPasswordCredentials) => {
-    return await supabase.auth.signUp(credentials);
+  // FIX: Use a specific type for email-based sign-up credentials to resolve destructuring error on a union type.
+  const signUpWithEmail = async ({ email, password, fullName }: { email: string; password: string; fullName: string }) => {
+    return await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
   };
 
   const signOut = async () => {
