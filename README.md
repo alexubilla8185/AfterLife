@@ -37,48 +37,60 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ### Environment Variable Setup
 
-This project uses a secure architecture where both public and secret keys are managed as environment variables in your deployment environment (e.g., Netlify). The frontend application does not directly access these keys from its own environment; instead, it fetches the necessary public configuration from a secure backend function at runtime.
+To run this project, you need to set up environment variables. The method depends on whether you're deploying to Netlify or running the app locally.
 
-Your Netlify (or other hosting provider) environment must have the following variables set:
+#### For Production (on Netlify)
 
-#### Backend Function Variables
+Set these variables in your Netlify site's build settings (`Site settings > Build & deploy > Environment`):
 
-These variables are required by the backend Netlify Functions. They are never exposed to the client.
+-   `API_KEY`: Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+-   `SUPABASE_URL`: Your Supabase project URL.
+-   `SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key.
 
--   `API_KEY`: **(Secret)** Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey). Used by the `/get-gemini-response` function.
--   `SUPABASE_DATABASE_URL`: **(Public, but server-managed)** Your Supabase project URL. Used by the `/config` function. The Netlify/Supabase integration can create this for you automatically.
--   `SUPABASE_ANON_KEY`: **(Public, but server-managed)** Your Supabase project's `anon` (public) key. Used by the `/config` function. The Netlify/Supabase integration can create this for you automatically.
-
-The frontend application will securely fetch the Supabase URL and Anon Key from the `/config` endpoint upon loading. This ensures your keys are not hardcoded or exposed in the client-side build files.
+---
 
 ### Running Locally
 
-To run this project correctly, you must use a development server that can run both the frontend application (Vite) and the backend serverless functions at the same time. The **only** supported method for this is the Netlify CLI.
+There are two ways to run the project locally. Using `netlify dev` is the **required** method for full functionality.
 
-1.  **Install the Netlify CLI:** If you don't have it, install it globally from your terminal.
+#### 1. The Right Way: Full-Stack with `netlify dev` (Recommended)
+
+This command runs your frontend and backend functions together, simulating the Netlify production environment.
+
+1.  **Create an `.env` file** in the root of your project.
+2.  **Add your keys to the `.env` file.** The `netlify dev` command will automatically load them. Use the **non-prefixed** names:
+    ```
+    # .env file for 'netlify dev'
+    API_KEY=your_google_gemini_api_key
+    SUPABASE_URL=your_supabase_project_url
+    SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+3.  **Install the Netlify CLI:**
     ```bash
     npm install netlify-cli -g
     ```
 
-2.  **Run the Project with `netlify dev`:** Navigate to the project's root directory and run the following command:
+4.  **Run the project:**
     ```bash
     netlify dev
     ```
-    This command reads the `netlify.toml` file to start both the frontend and backend servers. It will correctly proxy requests from the app (e.g., `http://localhost:8888`) to your functions, which prevents the "404 Not Found" errors. This is the **required** way to run the app locally with full functionality.
+    This will start a server (usually on `localhost:8888`) with all features, including the AI chat, fully functional.
 
-#### Alternative: Frontend-Only Mode (Limited Functionality)
+#### 2. Alternative: Frontend-Only Mode (Limited Functionality)
 
-If you must run the frontend server directly (e.g., using `npm run dev`), you can bypass the backend configuration function for local development. This will allow the UI to load, but **backend features will not work**.
+If you must run the frontend server directly (e.g., using `npm run dev`), the app will start, but it will be in **Offline Mode**. Backend features like AI chat will **not** work.
 
-1.  Create a file named `.env` in the root of your project.
-2.  Add your public Supabase keys to this file, prefixed with `VITE_`:
+1.  **Create an `.env` file** in the root of your project.
+2.  **Add your keys with the `VITE_` prefix.** This is a Vite convention to expose variables to the frontend.
     ```
-    VITE_SUPABASE_DATABASE_URL=your_supabase_project_url
+    # .env file for 'npm run dev' (frontend-only)
+    VITE_SUPABASE_URL=your_supabase_project_url
     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
     ```
-3.  Start your development server (e.g., `npm run dev`). The app will start in "Offline Mode."
+3.  Run your development server (e.g., `npm run dev`). The app will load but show an "Offline Mode" banner.
 
-**Important:** This method **only** resolves the initial Supabase connection. Features that rely on backend functions, such as the AI-powered interactive chat, will **not** work. For full functionality, using `netlify dev` is required.
+**Important:** For the best local development experience that matches production, always use `netlify dev`.
 
 ### Supabase Setup
 

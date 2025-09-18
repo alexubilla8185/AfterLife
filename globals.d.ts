@@ -3,7 +3,7 @@
 // "Cannot find name" and "Property 'env' does not exist" errors in services/supabaseClient.ts.
 interface ImportMetaEnv {
     // Fix: Corrected environment variable name to match usage in supabaseClient.ts
-    readonly VITE_SUPABASE_DATABASE_URL?: string;
+    readonly VITE_SUPABASE_URL?: string;
     readonly VITE_SUPABASE_ANON_KEY?: string;
     readonly DEV?: boolean;
 }
