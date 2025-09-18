@@ -75,38 +75,39 @@ export const initializeSupabase = async (): Promise<void> => {
     if (isInitialized) return;
 
     try {
-        // --- Development-Only Escape Hatch ---
-        if (import.meta.env && import.meta.env.DEV) {
-            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-            const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        // Unified environment variable check for various environments.
+        // `import.meta.env` is for Vite.
+        // `process.env` might be available in some testing environments.
+        const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL ?? (typeof process !== 'undefined' ? process.env.SUPABASE_DATABASE_URL : undefined);
+        const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY ?? (typeof process !== 'undefined' ? process.env.SUPABASE_ANON_KEY : undefined);
 
-            if (supabaseUrl && supabaseAnonKey) {
-                console.log("Initializing Supabase using local .env variables.");
-                supabase = createClient(supabaseUrl, supabaseAnonKey);
-                isInitialized = true;
-                return;
-            }
+        if (supabaseUrl && supabaseAnonKey) {
+            console.log("Initializing Supabase using direct environment variables.");
+            supabase = createClient(supabaseUrl, supabaseAnonKey);
+            isInitialized = true;
+            return;
         }
     
-        // --- Standard Initialization ---
+        // Standard initialization via Netlify Function for deployed environments.
+        console.log("Attempting to initialize Supabase from config function...");
         const functionsUrl = '/.netlify/functions/config';
         const response = await fetch(functionsUrl);
 
         if (!response.ok) {
             let errorMessage = `Failed to fetch Supabase configuration. Status: ${response.status}`;
             if (response.status === 404) {
-                 errorMessage += `. If running locally, use 'netlify dev' or a .env file.`;
+                 errorMessage += `. If running locally, use 'netlify dev' or ensure environment variables are set.`;
             }
             throw new Error(errorMessage);
         }
 
-        const { supabaseUrl, supabaseAnonKey } = await response.json();
+        const { supabaseUrl: fetchedUrl, supabaseAnonKey: fetchedKey } = await response.json();
 
-        if (!supabaseUrl || !supabaseAnonKey) {
+        if (!fetchedUrl || !fetchedKey) {
             throw new Error('Supabase URL or Anon Key is missing in the server configuration.');
         }
 
-        supabase = createClient(supabaseUrl, supabaseAnonKey);
+        supabase = createClient(fetchedUrl, fetchedKey);
         console.log("Supabase initialized successfully from config function.");
 
     } catch (error: any) {
