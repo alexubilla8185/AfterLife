@@ -8,7 +8,7 @@ const sampleProfileData = {
     name: 'Julia Hayes',
     life_span: '1968 - 2023',
     bio: 'An insatiable traveler, a captivating storyteller, and a devoted teacher. Julia believed the world was a classroom and every person a story waiting to be told. She collected moments, not things.',
-    profile_image_url: 'https://images.unsplash.com/photo-1544005313-94ddf0286de2?w=256&h=256&fit=crop&q=80',
+    profile_image_url: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=256&h=256&fit=crop&q=80',
 };
 
 const sampleResponsesData = [
