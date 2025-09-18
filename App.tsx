@@ -26,7 +26,7 @@ interface AppProps {
 const SunIcon = () => (
   <motion.svg
     key="sun"
-    xmlns="http://www.w.org/2000/svg"
+    xmlns="http://www.w3.org/2000/svg"
     className="h-6 w-6"
     fill="none"
     viewBox="0 0 24 24"
@@ -72,10 +72,11 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
 
   useEffect(() => {
     const onboardingComplete = localStorage.getItem('onboardingComplete');
-    if (!onboardingComplete) {
+    // Only show onboarding if it's not complete AND the user is entering a main app view.
+    if (!onboardingComplete && (view === 'profile' || view === 'demoVisitor')) {
       setShowOnboarding(true);
     }
-  }, []);
+  }, [view]);
 
   const handleOnboardingFinish = () => {
     localStorage.setItem('onboardingComplete', 'true');
