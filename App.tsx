@@ -37,6 +37,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
   const [activeMemorialId, setActiveMemorialId] = useState<string | null>(null);
   const [tourContext, setTourContext] = useState<TourContext | null>(null);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
     
   const themeMenuRef = useRef<HTMLDivElement>(null);
 
@@ -77,8 +78,11 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
             setActiveMemorialId(data[0].id);
         } else {
             // This is likely a new user, seed the data for them
+            if (isSeeding) return; // Prevent race condition / double seeding
+            setIsSeeding(true);
             const newId = await seedInitialData(user.id);
             if (newId) setActiveMemorialId(newId);
+            setIsSeeding(false);
         }
     };
     
