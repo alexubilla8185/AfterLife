@@ -103,7 +103,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                                 onClick={signOut}
                                 className="mt-6 inline-flex items-center space-x-2 px-5 py-2.5 border border-outline text-sm font-medium rounded-full text-on-surface-variant bg-surface-container hover:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
                             >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <svg xmlns="http://www.w.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                             <span>Sign Out</span>
@@ -162,10 +162,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                                 <div className="text-left py-10 px-8 bg-surface-variant/30 border-2 border-dashed border-outline/30 rounded-2xl">
                                     <div className="flex items-center space-x-3 mb-4">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.572L16.25 21.75l-.648-1.178a2.625 2.625 0 00-1.732-1.732L12 18.25l1.178-.648a2.625 2.625 0 001.732-1.732L15.75 15l.648 1.178a2.625 2.625 0 001.732 1.732L19.5 18.25l-1.178.648a2.625 2.625 0 00-1.732 1.732z" /></svg>
-                                        <h3 className="text-xl font-bold text-on-surface">Let's build your first digital legacy.</h3>
+                                        <h3 className="text-xl font-bold text-on-surface">Create a Unique Digital Legacy</h3>
                                     </div>
                                     <p className="text-on-surface-variant mb-8">
-                                        Follow these simple steps to create a meaningful, interactive memorial. The first step is to click the 'Create New' button above.
+                                        You're ready to build a meaningful memorial. Click 'Create New' and use the name, dates, and bio of the person you wish to remember to create a truly personal space.
                                     </p>
                                     <div className="space-y-6">
                                         <div className="flex items-start space-x-4">
