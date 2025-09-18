@@ -70,12 +70,22 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   }, [session, supabase]);
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+    const { error } = await supabase.auth.signInWithOAuth({ 
+        provider: 'google',
+        options: {
+            redirectTo: window.location.origin,
+        },
+    });
     if (error) console.error('Error logging in with Google:', error.message);
   };
 
   const signInWithFacebook = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'facebook' });
+    const { error } = await supabase.auth.signInWithOAuth({ 
+        provider: 'facebook',
+        options: {
+            redirectTo: window.location.origin,
+        },
+    });
     if (error) console.error('Error logging in with Facebook:', error.message);
   };
 
