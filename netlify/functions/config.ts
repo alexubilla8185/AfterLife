@@ -19,7 +19,7 @@ const handler: Handler = async (event) => {
 
   // Correctly read the environment variables from the server-side environment.
   // DO NOT HARDCODE YOUR KEYS HERE.
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = process.env.SUPABASE_DATABASE_URL;
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
