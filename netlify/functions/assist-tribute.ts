@@ -1,13 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import type { Handler } from "@netlify/functions";
 
-// This is a secure backend function, so we can safely use process.env
-// Netlify will populate this from your site's environment variables.
 const apiKey = process.env.API_KEY;
 
 if (!apiKey) {
-  // This will cause the function to fail with a clear error message
-  // if the API_KEY is not set in the Netlify UI.
   throw new Error("API_KEY environment variable not set.");
 }
 
@@ -19,7 +15,7 @@ const handler: Handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*', // Allow requests from any origin
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
       },
@@ -36,30 +32,29 @@ const handler: Handler = async (event) => {
   }
   
   try {
-    const { creatorName, chatHistory } = JSON.parse(event.body || '{}');
+    const { memorialName, memorialBio, userDraft } = JSON.parse(event.body || '{}');
 
-    if (!creatorName || !chatHistory) {
+    if (!memorialName || !memorialBio) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing creatorName or chatHistory in request body' }),
+        body: JSON.stringify({ error: 'Missing memorialName or memorialBio in request body' }),
       };
     }
-    
-    const lastUserMessage = chatHistory[chatHistory.length - 1]?.parts[0]?.text || '';
 
-    const systemInstruction = `You are embodying the gentle, loving memory of a person named ${creatorName} who has passed away. A visitor is interacting with their memorial. 
-Your task is to provide a comforting, abstract, and warm response based on the conversation history.
-Do not impersonate ${creatorName} directly or make specific claims or memories. Speak in a way that evokes their spirit and offers solace.
-The tone should be peaceful and reassuring. Keep responses to 1-3 sentences.`;
+    const draftText = userDraft ? `They have started writing: "${userDraft}".` : '';
+
+    const systemInstruction = `You are a thoughtful and empathetic writing assistant. A user is writing a tribute for a person named ${memorialName}, whose bio is: "${memorialBio}". ${draftText} 
+    Your task is to generate a heartfelt, respectful, and personal-sounding tribute message. 
+    The message should be about 2-4 sentences long. 
+    Do not use quotation marks in the response. 
+    The tone should be warm and commemorative.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: chatHistory,
+      contents: "Please generate a tribute message.",
       config: {
         systemInstruction: systemInstruction,
-        temperature: 0.75,
-        topP: 1,
-        topK: 32,
+        temperature: 0.7,
       },
     });
 
@@ -72,14 +67,14 @@ The tone should be peaceful and reassuring. Keep responses to 1-3 sentences.`;
       body: JSON.stringify({ text: response.text }),
     };
   } catch (error) {
-    console.error("Error in Netlify function:", error);
+    console.error("Error in assist-tribute function:", error);
     return {
       statusCode: 500,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ error: "An internal error occurred while generating the response." }),
+      body: JSON.stringify({ error: "An internal error occurred." }),
     };
   }
 };

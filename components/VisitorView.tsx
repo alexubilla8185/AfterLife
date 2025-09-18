@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { CreatorProfile, Tribute, ChatMessage, SocialLink, MemorialData } from '../types';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { CreatorProfile, Tribute, ChatMessage, SocialLink } from '../types';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
-import { getGenericResponse } from '../services/geminiService';
 import Tour, { TourStep } from './Tour';
+
+// Define the type for the Gemini API chat history format
+type HistoryPart = {
+  role: 'user' | 'model';
+  parts: { text: string }[];
+};
+
 
 const visitorTourSteps: TourStep[] = [
     {
@@ -20,13 +26,13 @@ const visitorTourSteps: TourStep[] = [
     {
         target: '[data-tour-id="chat-input"]',
         title: "Converse with Memory",
-        content: "Share a thought or ask a question. If your message contains a keyword the creator chose, you'll receive a special pre-written reply. Otherwise, a gentle, comforting reflection will be offered.",
+        content: "Share a thought, ask a question, or use the microphone to speak. The memorial now remembers your conversation. Special keyword-based replies from the creator are still here, alongside more contextual AI-generated responses.",
         position: 'top',
     },
     {
         target: '[data-tour-id="tribute-wall-tab"]',
         title: "Share a Tribute",
-        content: "Click here to switch to the Tribute Wall. You can leave a public message of remembrance for the community and read memories shared by others.",
+        content: "Click here to switch to the Tribute Wall. You can leave a public message, and if you need help finding the right words, use the AI Assistant.",
         position: 'bottom',
     }
 ];
@@ -34,6 +40,7 @@ const visitorTourSteps: TourStep[] = [
 const TributeForm: React.FC = () => {
     const [author, setAuthor] = useState('');
     const [message, setMessage] = useState('');
+    const [isAssisting, setIsAssisting] = useState(false);
     const { addTribute, memorial } = useMemorialProfile();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -42,6 +49,30 @@ const TributeForm: React.FC = () => {
         await addTribute({ author, message });
         setAuthor('');
         setMessage('');
+    };
+
+    const handleAssist = async () => {
+        setIsAssisting(true);
+        try {
+            const response = await fetch('/.netlify/functions/assist-tribute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    memorialName: memorial?.profile.name,
+                    memorialBio: memorial?.profile.bio,
+                    userDraft: message,
+                }),
+            });
+            if (!response.ok) throw new Error('Failed to get assistance.');
+            const data = await response.json();
+            if (data.text) {
+                setMessage(data.text);
+            }
+        } catch (error) {
+            console.error("Error getting tribute assistance:", error);
+        } finally {
+            setIsAssisting(false);
+        }
     };
 
     return (
@@ -59,7 +90,13 @@ const TributeForm: React.FC = () => {
                 />
             </div>
             <div>
-                <label htmlFor="tribute-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Message</label>
+                 <div className="flex justify-between items-center">
+                    <label htmlFor="tribute-message" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Your Message</label>
+                    <button type="button" onClick={handleAssist} disabled={isAssisting} className="text-xs font-semibold text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 disabled:opacity-50 flex items-center space-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0V6h-1a1 1 0 110-2h1V3a1 1 0 011-1zM7 8a1 1 0 011 1v1h1a1 1 0 110 2H8v1a1 1 0 11-2 0v-1H5a1 1 0 110-2h1V9a1 1 0 011-1zm5 4a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" clipRule="evenodd" /></svg>
+                        <span>{isAssisting ? 'Thinking...' : 'AI Assist'}</span>
+                    </button>
+                 </div>
                 <textarea
                     id="tribute-message"
                     value={message}
@@ -96,13 +133,52 @@ const TributeWall: React.FC<{ tributes: Tribute[] }> = ({ tributes }) => (
 );
 
 
-const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
+const ChatInterface: React.FC<{ profile: CreatorProfile, isTtsEnabled: boolean }> = ({ profile, isTtsEnabled }) => {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [chatHistory, setChatHistory] = useState<HistoryPart[]>([]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const { findResponseForMessage } = useMemorialProfile();
+    
     const chatEndRef = useRef<HTMLDivElement>(null);
+    const recognitionRef = useRef<any>(null); // Using 'any' for SpeechRecognition to handle vendor prefixes
+
+    const isSpeechSupported = typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+
+    useEffect(() => {
+        if (!isSpeechSupported) return;
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognitionRef.current = new SpeechRecognition();
+        const recognition = recognitionRef.current;
+        recognition.continuous = false;
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        recognition.onstart = () => setIsListening(true);
+        recognition.onend = () => setIsListening(false);
+        recognition.onerror = (event: any) => {
+            console.error('Speech recognition error:', event.error);
+            setIsListening(false);
+        };
+        recognition.onresult = (event: any) => {
+            const transcript = event.results[0][0].transcript;
+            setInput(transcript);
+        };
+    }, [isSpeechSupported]);
+
+    const toggleListening = () => {
+        if (!recognitionRef.current) return;
+        if (isListening) {
+            recognitionRef.current.stop();
+        } else {
+            setInput('');
+            recognitionRef.current.start();
+        }
+    };
+
 
     useEffect(() => {
         const fetchWelcomeMessage = async () => {
@@ -115,22 +191,17 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                 if (!response.ok) throw new Error('Failed to fetch welcome message');
                 const data = await response.json();
                 
-                const welcomeMessage: ChatMessage = {
-                    id: 'initial-welcome',
-                    sender: 'memorial',
-                    text: data.text || "Welcome. I'm glad you're here.",
-                    timestamp: new Date(),
-                };
+                const welcomeText = data.text || "Welcome. I'm glad you're here.";
+                const welcomeMessage: ChatMessage = { id: 'initial-welcome', sender: 'memorial', text: welcomeText, timestamp: new Date() };
+                
                 setMessages([welcomeMessage]);
+                setChatHistory([{ role: 'model', parts: [{ text: welcomeText }] }]);
             } catch (error) {
                 console.error("Error fetching AI welcome message:", error);
-                const fallbackMessage: ChatMessage = {
-                    id: 'initial-fallback',
-                    sender: 'memorial',
-                    text: "Welcome. I'm glad you're here. Feel free to share a thought or a memory.",
-                    timestamp: new Date(),
-                };
+                const fallbackText = "Welcome. I'm glad you're here. Feel free to share a thought or a memory.";
+                const fallbackMessage: ChatMessage = { id: 'initial-fallback', sender: 'memorial', text: fallbackText, timestamp: new Date() };
                 setMessages([fallbackMessage]);
+                setChatHistory([{ role: 'model', parts: [{ text: fallbackText }] }]);
             } finally {
                 setIsInitialLoading(false);
             }
@@ -141,39 +212,64 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
 
     useEffect(() => {
       chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+
+      if (isTtsEnabled && 'speechSynthesis' in window && messages.length > 0) {
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.sender === 'memorial') {
+            // Cancel any previous speech to prevent overlap
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(lastMessage.text);
+            window.speechSynthesis.speak(utterance);
+        }
+      }
+
+    }, [messages, isTtsEnabled]);
 
     const handleSend = async () => {
         if (!input.trim()) return;
 
-        const userMessage: ChatMessage = {
-            id: new Date().toISOString(),
-            sender: 'user',
-            text: input,
-            timestamp: new Date(),
-        };
+        const userMessage: ChatMessage = { id: new Date().toISOString(), sender: 'user', text: input, timestamp: new Date() };
         setMessages(prev => [...prev, userMessage]);
+        
+        const currentInput = input;
         setInput('');
         setIsTyping(true);
         
-        await new Promise(res => setTimeout(res, 1500));
+        await new Promise(res => setTimeout(res, 1000));
 
         let memorialResponseText: string;
-        const conditionalResponse = findResponseForMessage(input);
+        const conditionalResponse = findResponseForMessage(currentInput);
 
         if (conditionalResponse) {
             memorialResponseText = conditionalResponse.response;
+            // NOTE: We don't add conditional responses to the AI's chat history
+            // to keep its context purely conversational.
         } else {
-            memorialResponseText = await getGenericResponse(profile.name, input);
+            // This is a conversational turn, so update history and call AI
+            const newUserHistoryPart: HistoryPart = { role: 'user', parts: [{ text: currentInput }] };
+            const historyForAPI = [...chatHistory, newUserHistoryPart];
+
+            const response = await fetch('/.netlify/functions/get-gemini-response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    creatorName: profile.name,
+                    chatHistory: historyForAPI
+                }),
+            });
+
+            if(response.ok) {
+                const data = await response.json();
+                memorialResponseText = data.text;
+                // Update history with both user's and model's new messages
+                const newModelHistoryPart: HistoryPart = { role: 'model', parts: [{ text: memorialResponseText }] };
+                setChatHistory([...historyForAPI, newModelHistoryPart]);
+            } else {
+                memorialResponseText = "I'm sorry, I'm having a little trouble connecting right now. Please try again in a moment.";
+            }
         }
 
-        const memorialMessage: ChatMessage = {
-            id: new Date().toISOString() + '-memorial',
-            sender: 'memorial',
-            text: memorialResponseText,
-            timestamp: new Date(),
-        };
-
+        const memorialMessage: ChatMessage = { id: new Date().toISOString() + '-memorial', sender: 'memorial', text: memorialResponseText, timestamp: new Date() };
         setMessages(prev => [...prev, memorialMessage]);
         setIsTyping(false);
     };
@@ -216,10 +312,22 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                        placeholder="Share a thought or memory..."
+                        placeholder={isListening ? "Listening..." : "Share a thought or memory..."}
                         className="flex-1 block w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white"
-                        disabled={isInitialLoading}
+                        disabled={isInitialLoading || isTyping}
                     />
+                    {isSpeechSupported && (
+                        <button onClick={toggleListening} aria-label={isListening ? "Stop listening" : "Use microphone"} className={`p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors ${isListening ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
+                             {isListening ? (
+                                <span className="relative flex h-5 w-5" aria-hidden="true">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="relative h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a2 2 0 10-4 0v.08A6 6 0 014 8H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clipRule="evenodd" /></svg>
+                                </span>
+                             ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8h-1a6 6 0 11-5.445-5.921V4a2 2 0 10-4 0v.08A6 6 0 014 8H3a7.001 7.001 0 006 6.93V17H7a1 1 0 100 2h6a1 1 0 100-2h-2v-2.07z" clipRule="evenodd" /></svg>
+                             )}
+                        </button>
+                    )}
                     <button onClick={handleSend} aria-label="Send message" className="bg-primary-600 text-white rounded-full p-3 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-400 dark:disabled:bg-primary-800" disabled={!input.trim() || isTyping || isInitialLoading}>
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
@@ -234,7 +342,6 @@ const ChatInterface: React.FC<{ profile: CreatorProfile }> = ({ profile }) => {
 
 const getSocialIcon = (platform: string): JSX.Element => {
     const p = platform.toLowerCase();
-    // FIX: Changed "aria-hidden" value from string "true" to boolean true to match React's Booleanish type.
     const commonProps = { className: "h-5 w-5", "aria-hidden": true };
     
     if (p.includes('linkedin')) {
@@ -255,6 +362,11 @@ const VisitorView: React.FC<VisitorViewProps> = ({ showTour, onTourFinish }) => 
     const { memorial, loading } = useMemorialProfile();
     const [activeTab, setActiveTab] = useState<'chat' | 'tributes'>('chat');
     const [isTourOpen, setIsTourOpen] = useState(showTour);
+    const [isTtsEnabled, setIsTtsEnabled] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return localStorage.getItem('ttsEnabled') === 'true';
+    });
+    const isTtsSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
 
     useEffect(() => {
         if(showTour) {
@@ -266,6 +378,15 @@ const VisitorView: React.FC<VisitorViewProps> = ({ showTour, onTourFinish }) => 
         setIsTourOpen(false);
         localStorage.setItem('visitorTourSeen', 'true');
         onTourFinish();
+    };
+
+    const toggleTts = () => {
+        const newValue = !isTtsEnabled;
+        setIsTtsEnabled(newValue);
+        localStorage.setItem('ttsEnabled', String(newValue));
+        if (!newValue) {
+            window.speechSynthesis.cancel();
+        }
     };
 
     if (loading) {
@@ -346,7 +467,24 @@ const VisitorView: React.FC<VisitorViewProps> = ({ showTour, onTourFinish }) => 
             <Tour isOpen={isTourOpen} onClose={handleTourClose} steps={visitorTourSteps} />
             <ProfileHeader />
             
-            <div className="bg-white dark:bg-gray-800 rounded-t-lg border-x border-t border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-t-lg border-x border-t border-gray-200 dark:border-gray-700 relative">
+                {isTtsSupported && (
+                    <button
+                        onClick={toggleTts}
+                        aria-label={isTtsEnabled ? "Disable spoken responses" : "Enable spoken responses"}
+                        className={`absolute top-2 right-2 z-10 p-2 rounded-full transition-colors ${
+                            isTtsEnabled
+                                ? 'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-300'
+                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600'
+                        }`}
+                    >
+                        {isTtsEnabled ? (
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clipRule="evenodd" /></svg>
+                        ) : (
+                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM12.293 7.293a1 1 0 011.414 0L15 8.586l1.293-1.293a1 1 0 111.414 1.414L16.414 10l1.293 1.293a1 1 0 01-1.414 1.414L15 11.414l-1.293 1.293a1 1 0 01-1.414-1.414L13.586 10l-1.293-1.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        )}
+                    </button>
+                )}
                 <div role="tablist" aria-label="Interaction options" data-tour-id="interaction-tabs" className="flex border-b border-gray-200 dark:border-gray-700">
                     <TabButton 
                         tabName="chat" 
@@ -368,7 +506,7 @@ const VisitorView: React.FC<VisitorViewProps> = ({ showTour, onTourFinish }) => 
                     aria-labelledby="tab-chat"
                     hidden={activeTab !== 'chat'}
                 >
-                    <ChatInterface profile={profile} />
+                    <ChatInterface profile={profile} isTtsEnabled={isTtsEnabled} />
                 </div>
                 <div
                     id="tabpanel-tributes"

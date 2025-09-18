@@ -9,3 +9,11 @@ interface ImportMetaEnv {
 interface ImportMeta {
     readonly env: ImportMetaEnv;
 }
+
+// FIX: Add types for the Web Speech API to the global Window object.
+// This resolves TypeScript errors for `window.SpeechRecognition` and `window.webkitSpeechRecognition`
+// which are used in `components/VisitorView.tsx`.
+interface Window {
+  SpeechRecognition: any;
+  webkitSpeechRecognition: any;
+}
