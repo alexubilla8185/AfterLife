@@ -159,10 +159,43 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-10 border-2 border-dashed border-outline/50 rounded-2xl">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-on-surface-variant/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
-                                    <h3 className="mt-2 text-sm font-medium text-on-surface">No memorials yet</h3>
-                                    <p className="mt-1 text-sm text-on-surface-variant">Click 'Create New' to start building a legacy.</p>
+                                <div className="text-left py-10 px-8 bg-surface-variant/30 border-2 border-dashed border-outline/30 rounded-2xl">
+                                    <div className="flex items-center space-x-3 mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.572L16.25 21.75l-.648-1.178a2.625 2.625 0 00-1.732-1.732L12 18.25l1.178-.648a2.625 2.625 0 001.732-1.732L15.75 15l.648 1.178a2.625 2.625 0 001.732 1.732L19.5 18.25l-1.178.648a2.625 2.625 0 00-1.732 1.732z" /></svg>
+                                        <h3 className="text-xl font-bold text-on-surface">Let's build your first digital legacy.</h3>
+                                    </div>
+                                    <p className="text-on-surface-variant mb-8">
+                                        Follow these simple steps to create a meaningful, interactive memorial. The first step is to click the 'Create New' button above.
+                                    </p>
+                                    <div className="space-y-6">
+                                        <div className="flex items-start space-x-4">
+                                            <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary-container text-on-primary-container rounded-full font-bold">1</div>
+                                            <div>
+                                                <h4 className="font-semibold text-on-surface">Create Your Memorial</h4>
+                                                <p className="text-sm text-on-surface-variant">
+                                                    Click the <strong>'Create New'</strong> button to begin. You'll add a name, life span, and a short bio. This is the foundation of the legacy.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start space-x-4">
+                                            <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary-container text-on-primary-container rounded-full font-bold">2</div>
+                                            <div>
+                                                <h4 className="font-semibold text-on-surface">Personalize the Experience</h4>
+                                                <p className="text-sm text-on-surface-variant">
+                                                    Once created, you'll enter the Creator Dashboard. Upload a profile photo, record a personal audio message, and add links to important websites.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-start space-x-4">
+                                            <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary-container text-on-primary-container rounded-full font-bold">3</div>
+                                            <div>
+                                                <h4 className="font-semibold text-on-surface">Add Interactive Responses</h4>
+                                                <p className="text-sm text-on-surface-variant">
+                                                    Bring the memorial to life. Create custom replies that visitors will receive when their messages contain keywords you've chosen, like "love" or "travel".
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             )
                         )}
