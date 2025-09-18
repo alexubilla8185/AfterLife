@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '../types';
-import { supabase } from '../services/supabaseClient';
+import { getSupabase } from '../services/supabaseClient';
 import type { Session, SignInWithPasswordCredentials } from '@supabase/supabase-js';
 
 interface UserContextType {
@@ -20,6 +20,7 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabase = getSupabase();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -32,7 +33,7 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     });
 
     return () => subscription?.unsubscribe();
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     // Fetches full user profile from the 'profiles' table when session is available
@@ -66,7 +67,7 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
     } else {
       setUser(null);
     }
-  }, [session]);
+  }, [session, supabase]);
 
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });

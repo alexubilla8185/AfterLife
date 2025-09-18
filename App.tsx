@@ -8,7 +8,7 @@ import { MemorialProfileProvider } from './hooks/useMemorialProfile';
 import LandingPage from './components/LandingPage';
 import ProfilePage from './components/ProfilePage';
 import { useUser } from './hooks/useUser';
-import { supabase } from './services/supabaseClient';
+import { getSupabase } from './services/supabaseClient';
 import AdminPage from './components/AdminPage';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import DataDeletion from './components/DataDeletion';
@@ -27,8 +27,11 @@ const sampleResponsesData = [ { keyword: 'miss you', response: 'The journey does
 const sampleSocialLinksData = [ { platform: 'Travel Blog', url: 'https://example.com' }, { platform: 'Photography', url: 'https://example.com/photos' }, { platform: 'Goodreads', url: 'https://goodreads.com/example' },];
 const sampleTributesData = [ { author: 'Her former student, Anya', message: 'Ms. Hayes taught me more than just history; she taught me how to see the world. Her stories from her travels made every lesson an adventure. I\'ll carry her wisdom with me always.'}, { author: 'Leo, her travel buddy', message: 'Julia, my friend, the trails are quieter without you. From the mountains of Peru to the markets of Marrakech, every step was a joy. Cheers to one last sunset. You are missed.'}, { author: 'Her sister, Clara', message: 'My sister lived a dozen lifetimes in one. She sent postcards from every corner of the earth, each one filled with wonder. I\'ll miss her calls from faraway places. Rest easy, dear sister.'},];
 
+interface AppProps {
+  isOffline: boolean;
+}
 
-const App: React.FC = () => {
+const App: React.FC<AppProps> = ({ isOffline }) => {
   const { user } = useUser();
   const [view, setView] = useState<View>('landing');
   const [activeMemorialId, setActiveMemorialId] = useState<string | null>(null);
@@ -47,6 +50,7 @@ const App: React.FC = () => {
   }
 
   useEffect(() => {
+    const supabase = getSupabase();
     const seedInitialData = async (userId: string) => {
         console.log("Seeding initial data for new user...");
         const { data: memorialData, error: memorialError } = await supabase
@@ -164,6 +168,12 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      {isOffline && (
+          <div className="bg-yellow-400 dark:bg-yellow-600 text-yellow-900 dark:text-yellow-100 text-center p-2 text-sm font-semibold sticky top-0 z-50">
+            Offline Mode: Backend features are disabled.
+          </div>
+        )}
+
       {tourContext === 'login' && <LoginTour onClose={handleCloseTour} />}
       
       {showHeader && (

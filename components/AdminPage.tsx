@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../services/supabaseClient';
+import { getSupabase } from '../services/supabaseClient';
 import { useUser } from '../hooks/useUser';
 import { CreatorProfile } from '../types';
 
@@ -22,7 +22,8 @@ const AdminPage: React.FC = () => {
                 setLoading(false);
                 return;
             }
-
+            
+            const supabase = getSupabase();
             setLoading(true);
             
             const [usersRes, memorialsRes] = await Promise.all([

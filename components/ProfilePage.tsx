@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../hooks/useUser';
-import { supabase } from '../services/supabaseClient';
+import { getSupabase } from '../services/supabaseClient';
 import { CreatorProfile } from '../types';
 
 interface ProfilePageProps {
@@ -16,6 +16,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate }) => {
         const fetchMemorials = async () => {
             if (!user) return;
             setLoading(true);
+            const supabase = getSupabase();
             const { data, error } = await supabase
                 .from('memorials')
                 .select('*')

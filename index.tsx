@@ -1,8 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { ThemeProvider } from './hooks/useTheme';
 import { UserProvider } from './hooks/useUser';
+import { initializeSupabase, isSupabaseOffline } from './services/supabaseClient';
+
+const AppInitializer: React.FC = () => {
+    const [initialized, setInitialized] = useState(false);
+    const [isOffline, setIsOffline] = useState(false);
+
+    useEffect(() => {
+        const init = async () => {
+            await initializeSupabase();
+            setIsOffline(isSupabaseOffline());
+            setInitialized(true);
+        };
+        init();
+    }, []);
+    
+    if (!initialized) {
+        return (
+             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                <p className="text-gray-500 dark:text-gray-400 text-lg">Initializing...</p>
+            </div>
+        );
+    }
+
+    return (
+        <ThemeProvider>
+            <UserProvider>
+                <App isOffline={isOffline} />
+            </UserProvider>
+        </ThemeProvider>
+    );
+};
+
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -12,11 +44,6 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <UserProvider>
-        {/* FIX: Removed redundant MemorialProfileProvider. This is now handled inside App.tsx to ensure the correct memorialId is available, resolving a missing prop error. */}
-        <App />
-      </UserProvider>
-    </ThemeProvider>
+    <AppInitializer />
   </React.StrictMode>
 );

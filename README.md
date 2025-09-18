@@ -37,18 +37,48 @@ AfterLife is an interactive memorial platform allowing users to create a persona
 
 ### Environment Variable Setup
 
-This project uses a secure architecture where secret keys are handled by backend Netlify Functions, while public keys are used by the frontend application. All variables are accessed in the code via `process.env`. Your build environment (e.g., Netlify) is responsible for making these available.
+This project uses a secure architecture where both public and secret keys are managed as environment variables in your deployment environment (e.g., Netlify). The frontend application does not directly access these keys from its own environment; instead, it fetches the necessary public configuration from a secure backend function at runtime.
 
-#### Frontend Public Keys
-These variables are required for the client-side application to connect to Supabase.
+Your Netlify (or other hosting provider) environment must have the following variables set:
 
--   `SUPABASE_DATABASE_URL`: Your Supabase project URL. The Netlify/Supabase integration creates this for you automatically.
--   `SUPABASE_ANON_KEY`: Your Supabase project's `anon` (public) key. The Netlify/Supabase integration creates this for you automatically.
+#### Backend Function Variables
 
-#### Backend Secret Key
-This variable is only accessible by the secure backend function and is kept secret.
+These variables are required by the backend Netlify Functions. They are never exposed to the client.
 
--   `API_KEY`: Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey). This is a secret and should never be exposed to the frontend.
+-   `API_KEY`: **(Secret)** Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey). Used by the `/get-gemini-response` function.
+-   `SUPABASE_DATABASE_URL`: **(Public, but server-managed)** Your Supabase project URL. Used by the `/config` function. The Netlify/Supabase integration can create this for you automatically.
+-   `SUPABASE_ANON_KEY`: **(Public, but server-managed)** Your Supabase project's `anon` (public) key. Used by the `/config` function. The Netlify/Supabase integration can create this for you automatically.
+
+The frontend application will securely fetch the Supabase URL and Anon Key from the `/config` endpoint upon loading. This ensures your keys are not hardcoded or exposed in the client-side build files.
+
+### Running Locally
+
+To run this project in a local development environment that correctly serves both the frontend application and the backend Netlify Functions, you need to use the Netlify CLI. This is the **recommended** approach.
+
+1.  **Install the Netlify CLI:** If you don't have it, install it globally.
+    ```bash
+    npm install netlify-cli -g
+    ```
+
+2.  **Run the project:** Navigate to the project's root directory and run:
+    ```bash
+    netlify dev
+    ```
+    This command will start the React development server and the Netlify Functions server, and it will proxy requests from your app to your functions, preventing errors. It will also automatically load the environment variables from your Netlify site settings (if linked) or from a local `.env` file.
+
+#### Alternative: Running without Netlify CLI
+
+If you encounter issues with `netlify dev` or prefer to run the frontend server directly (e.g., using `npm start` or `vite`), you can bypass the configuration function for local development by providing the Supabase keys directly to the frontend application.
+
+1.  Create a file named `.env` in the root of your project.
+2.  Add your public Supabase keys to this file, prefixed with `VITE_`:
+    ```
+    VITE_SUPABASE_URL=your_supabase_project_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+3.  Start your development server as you normally would.
+
+**Important:** This method **only** resolves the initial Supabase connection. Features that rely on other backend functions, such as the AI-powered interactive chat, will **not** work with this setup. For full functionality, using `netlify dev` is still required.
 
 ### Supabase Setup
 

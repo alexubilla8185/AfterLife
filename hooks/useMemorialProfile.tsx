@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import { CreatorProfile, ConditionalResponse, Tribute, SocialLink, MemorialData } from '../types';
-import { supabase } from '../services/supabaseClient';
+import { getSupabase } from '../services/supabaseClient';
 import { useUser } from './useUser';
 
 // Sample data to be seeded for the first user
@@ -52,6 +52,7 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
   const [memorial, setMemorial] = useState<MemorialData | null>(null);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
+  const supabase = getSupabase();
 
   const seedInitialData = async (userId: string) => {
     console.log("No memorial found for user. Seeding initial data...");
@@ -111,7 +112,7 @@ export const MemorialProfileProvider: React.FC<{children: ReactNode, memorialId:
     });
 
     setLoading(false);
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     if (memorialId) {

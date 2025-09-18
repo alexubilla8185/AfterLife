@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useMemorialProfile } from '../hooks/useMemorialProfile';
 import { ResponseType } from '../types';
 import Tour, { TourStep } from './Tour';
-import { supabase } from '../services/supabaseClient';
+import { getSupabase } from '../services/supabaseClient';
 
 const creatorTourSteps: TourStep[] = [
     {
@@ -39,6 +39,7 @@ const AudioMessageManager: React.FC = () => {
     const [isUploading, setIsUploading] = useState(false);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
+    const supabase = getSupabase();
 
     useEffect(() => {
         setAudioUrl(memorial?.profile.audio_message_url || null);
