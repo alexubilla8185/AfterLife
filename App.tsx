@@ -16,6 +16,7 @@ import HowItWorksPage from './components/HowItWorksPage';
 import Tooltip from './components/ui/Tooltip';
 import { useTheme } from './hooks/useTheme';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MadeByTekguyz } from './components/MadeByTekguyz';
 
 export type View = 'landing' | 'login' | 'creator' | 'visitor' | 'profile' | 'admin' | 'privacy' | 'data-deletion' | 'how-it-works' | 'demoVisitor';
 
@@ -275,6 +276,7 @@ const App: React.FC<AppProps> = ({ isOffline }) => {
             renderView()
         )}
       </main>
+      <MadeByTekguyz theme={theme} />
     </div>
   );
 };
