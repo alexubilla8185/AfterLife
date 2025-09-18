@@ -88,9 +88,9 @@ export const initializeSupabase = async (): Promise<void> => {
         // Standard initialization via Netlify Function.
         console.log("Attempting to initialize Supabase from config function...");
         const functionsUrl = '/.netlify/functions/config';
-        const response = await fetch(functionsUrl);
+    const response = await fetch(functionsUrl);
 
-        if (!response.ok) {
+    if (!response.ok) {
             // For local development (not using `netlify dev`), this fetch will fail.
             // We can detect this and provide a helpful warning instead of a disruptive error.
             if (import.meta.env?.DEV) {
@@ -108,7 +108,38 @@ export const initializeSupabase = async (): Promise<void> => {
             throw new Error(errorMessage);
         }
 
-        const { supabaseUrl: fetchedUrl, supabaseAnonKey: fetchedKey } = await response.json();
+        // Protect against HTML (e.g. index.html) or other non-JSON responses.
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+            if (import.meta.env?.DEV) {
+                console.warn("--- Supabase Initialization Info ---");
+                console.warn(`Config endpoint returned non-JSON content-type: ${contentType}`);
+                console.warn("This commonly happens when the dev server returns index.html for unknown routes.");
+                console.warn("Falling back to OFFLINE MODE. To connect locally, run 'netlify dev' or set VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY.");
+                console.warn("------------------------------------");
+                supabase = createOfflineClient();
+                isOffline = true;
+                isInitialized = true;
+                return;
+            }
+            throw new Error(`Config endpoint did not return JSON. Content-Type: ${contentType}`);
+        }
+
+        let configJson: any;
+        try {
+            configJson = await response.json();
+        } catch (parseError) {
+            if (import.meta.env?.DEV) {
+                console.warn("Unable to parse JSON from config function. Falling back to OFFLINE MODE.");
+                supabase = createOfflineClient();
+                isOffline = true;
+                isInitialized = true;
+                return;
+            }
+            throw parseError;
+        }
+
+        const { supabaseUrl: fetchedUrl, supabaseAnonKey: fetchedKey } = configJson;
 
         if (!fetchedUrl || !fetchedKey) {
             throw new Error('Supabase URL or Anon Key is missing in the server configuration.');
