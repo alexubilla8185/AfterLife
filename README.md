@@ -73,7 +73,7 @@ If you must run the frontend server directly (e.g., using `npm run dev`), you ca
 1.  Create a file named `.env` in the root of your project.
 2.  Add your public Supabase keys to this file, prefixed with `VITE_`:
     ```
-    VITE_SUPABASE_URL=your_supabase_project_url
+    VITE_SUPABASE_DATABASE_URL=your_supabase_project_url
     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
     ```
 3.  Start your development server (e.g., `npm run dev`). The app will start in "Offline Mode."

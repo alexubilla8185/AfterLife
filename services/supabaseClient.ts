@@ -75,7 +75,7 @@ export const initializeSupabase = async (): Promise<void> => {
     if (isInitialized) return;
 
     try {
-        const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
+        const supabaseUrl = import.meta.env?.VITE_SUPABASE_DATABASE_URL;
         const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
 
         if (supabaseUrl && supabaseAnonKey) {
@@ -96,7 +96,7 @@ export const initializeSupabase = async (): Promise<void> => {
             if (import.meta.env?.DEV) {
                  console.warn("--- Supabase Initialization Info ---");
                  console.warn("Could not fetch config. This is expected if not running with 'netlify dev'.");
-                 console.warn("Falling back to OFFLINE MODE. To connect locally, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+                 console.warn("Falling back to OFFLINE MODE. To connect locally, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_DATABASE_URL and VITE_SUPABASE_ANON_KEY.");
                  console.warn("------------------------------------");
                  supabase = createOfflineClient();
                  isOffline = true;
