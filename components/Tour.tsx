@@ -24,29 +24,38 @@ const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
   useLayoutEffect(() => {
     if (!isOpen || !step) return;
 
-    const targetElement = step.target ? document.querySelector(step.target) as HTMLElement : null;
-
-    // Reset styles for the next step calculation
     setStyle({ visibility: 'hidden', opacity: 0 });
     setHighlightStyle({ display: 'none' });
 
-    if (targetElement) {
-      const originalPosition = targetElement.style.position;
-      const originalZIndex = targetElement.style.zIndex;
-      targetElement.style.position = 'relative';
-      targetElement.style.zIndex = '1002';
-      
+    // Use a timeout to allow React to render the target element.
+    const timer = setTimeout(() => {
+      const targetElement = step.target ? document.querySelector(step.target) as HTMLElement : null;
+
+      // If target not found or it's a centered step, center the tooltip.
+      if (!targetElement || step.position === 'center') {
+        if (step.target && !targetElement) {
+          console.warn(`Tour target element "${step.target}" not found. Centering tooltip as a fallback.`);
+        }
+        setStyle({
+          top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+          visibility: 'visible', opacity: 1, transition: 'opacity 0.3s ease-in-out'
+        });
+        return;
+      }
+
+      // If target is found, scroll to it and position the tooltip.
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      const timer = setTimeout(() => {
-        if (!tooltipRef.current) return;
+
+      // Another timeout to wait for scrolling to finish before calculating position.
+      const positioningTimer = setTimeout(() => {
+        if (!tooltipRef.current || !document.body.contains(targetElement)) {
+          return; // Abort if tooltip is gone or element was unmounted.
+        }
         
         const elementRect = targetElement.getBoundingClientRect();
         setHighlightStyle({
-            top: elementRect.top - 8,
-            left: elementRect.left - 8,
-            width: elementRect.width + 16,
-            height: elementRect.height + 16,
+            top: elementRect.top - 8, left: elementRect.left - 8,
+            width: elementRect.width + 16, height: elementRect.height + 16,
             display: 'block'
         });
 
@@ -68,12 +77,13 @@ const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
                 top = elementRect.top + (elementRect.height / 2) - (tooltipHeight / 2);
                 left = elementRect.right + space;
                 break;
-            default: // bottom
+            default: // 'bottom'
                 top = elementRect.bottom + space;
                 left = elementRect.left + (elementRect.width / 2) - (tooltipWidth / 2);
                 break;
         }
 
+        // Keep tooltip within viewport bounds
         if (top < space) top = space;
         if (left < space) left = space;
         if (left + tooltipWidth > window.innerWidth) left = window.innerWidth - tooltipWidth - space;
@@ -82,24 +92,12 @@ const Tour: FC<TourProps> = ({ steps, isOpen, onClose }) => {
         setStyle({ top, left, visibility: 'visible', opacity: 1 });
       }, 300);
 
-      return () => {
-        clearTimeout(timer);
-        targetElement.style.position = originalPosition;
-        targetElement.style.zIndex = originalZIndex;
-      };
-    } else { // For centered steps
-      // Use a small delay to ensure the tooltip ref is available for measurement
-      const timer = setTimeout(() => {
-        setStyle({
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            visibility: 'visible',
-            opacity: 1
-        });
-      }, 50);
-      return () => clearTimeout(timer);
-    }
+      return () => clearTimeout(positioningTimer);
+
+    }, 100);
+
+    return () => clearTimeout(timer);
+    
   }, [currentStep, isOpen, step]);
 
   const handleNext = () => setCurrentStep(s => Math.min(s + 1, steps.length - 1));

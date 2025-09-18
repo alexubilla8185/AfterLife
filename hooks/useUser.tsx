@@ -74,6 +74,10 @@ export const UserProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         provider: 'google',
         options: {
             redirectTo: window.location.origin,
+            // FIX: The 'prompt' option for Supabase OAuth must be nested within 'queryParams'.
+            queryParams: {
+                prompt: 'select_account', // Helps resolve issues with multiple logged-in accounts
+            }
         },
     });
     if (error) console.error('Error logging in with Google:', error.message);
