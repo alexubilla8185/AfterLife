@@ -26,7 +26,7 @@ const Tooltip: React.FC<TooltipProps> = ({ children, content, className }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className={`absolute z-50 whitespace-nowrap bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-semibold text-on-primary bg-primary rounded-md shadow-lg ${className}`}
+            className={`absolute z-[100] whitespace-nowrap bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-semibold text-on-primary bg-primary rounded-md shadow-lg ${className}`}
             role="tooltip"
           >
             {content}

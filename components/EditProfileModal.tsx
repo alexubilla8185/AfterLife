@@ -105,7 +105,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity animate-fade-in">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-[1000] transition-opacity animate-fade-in">
             <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="edit-profile-title" className="bg-surface-container-high rounded-3xl p-6 w-full max-w-lg mx-auto border border-outline max-h-[90vh] flex flex-col">
                 <div className="flex-shrink-0">
                     <h2 id="edit-profile-title" className="text-2xl font-bold text-on-surface mb-6">Edit Profile</h2>

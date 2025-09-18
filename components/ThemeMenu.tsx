@@ -10,7 +10,7 @@ const ThemeMenu: React.FC<ThemeMenuProps> = ({ onClose }) => {
 
     return (
         <div 
-            className="absolute top-full right-0 mt-2 w-56 bg-surface-container-high rounded-2xl shadow-lg border border-outline p-4 z-50 animate-fade-in"
+            className="absolute top-full right-0 mt-2 w-56 bg-surface-container-high rounded-2xl shadow-lg border border-outline p-4 z-[100] animate-fade-in"
             onClick={(e) => e.stopPropagation()}
         >
             <div className="space-y-4">
