@@ -93,7 +93,7 @@ export const initializeSupabase = async (): Promise<void> => {
         if (!response.ok) {
             // For local development (not using `netlify dev`), this fetch will fail.
             // We can detect this and provide a helpful warning instead of a disruptive error.
-            if (import.meta.env.DEV) {
+            if (import.meta.env?.DEV) {
                  console.warn("--- Supabase Initialization Info ---");
                  console.warn("Could not fetch config. This is expected if not running with 'netlify dev'.");
                  console.warn("Falling back to OFFLINE MODE. To connect locally, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
