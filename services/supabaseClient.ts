@@ -75,11 +75,8 @@ export const initializeSupabase = async (): Promise<void> => {
     if (isInitialized) return;
 
     try {
-        // Unified environment variable check for various environments.
-        // `import.meta.env` is for Vite.
-        // `process.env` might be available in some testing environments.
-        const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL ?? (typeof process !== 'undefined' ? process.env.SUPABASE_DATABASE_URL : undefined);
-        const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY ?? (typeof process !== 'undefined' ? process.env.SUPABASE_ANON_KEY : undefined);
+        const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
+        const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
 
         if (supabaseUrl && supabaseAnonKey) {
             console.log("Initializing Supabase using direct environment variables.");
@@ -88,16 +85,26 @@ export const initializeSupabase = async (): Promise<void> => {
             return;
         }
     
-        // Standard initialization via Netlify Function for deployed environments.
+        // Standard initialization via Netlify Function.
         console.log("Attempting to initialize Supabase from config function...");
         const functionsUrl = '/.netlify/functions/config';
         const response = await fetch(functionsUrl);
 
         if (!response.ok) {
-            let errorMessage = `Failed to fetch Supabase configuration. Status: ${response.status}`;
-            if (response.status === 404) {
-                 errorMessage += `. If running locally, use 'netlify dev' or ensure environment variables are set.`;
+            // For local development (not using `netlify dev`), this fetch will fail.
+            // We can detect this and provide a helpful warning instead of a disruptive error.
+            if (import.meta.env.DEV) {
+                 console.warn("--- Supabase Initialization Info ---");
+                 console.warn("Could not fetch config. This is expected if not running with 'netlify dev'.");
+                 console.warn("Falling back to OFFLINE MODE. To connect locally, use 'netlify dev' or create a '.env' file with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+                 console.warn("------------------------------------");
+                 supabase = createOfflineClient();
+                 isOffline = true;
+                 isInitialized = true;
+                 return;
             }
+            // For production builds, a failed fetch is a real error.
+            let errorMessage = `Failed to fetch Supabase configuration. Status: ${response.status}`;
             throw new Error(errorMessage);
         }
 
@@ -114,7 +121,6 @@ export const initializeSupabase = async (): Promise<void> => {
         console.error("--- Supabase Initialization Failed ---");
         console.error(`Error: ${error.message}`);
         console.warn("Application is now running in OFFLINE MODE. All backend features will be disabled.");
-        console.warn("To connect, ensure your backend is running and environment variables are set correctly.");
         console.error("--------------------------------------");
         supabase = createOfflineClient();
         isOffline = true;
