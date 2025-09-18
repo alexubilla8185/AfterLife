@@ -133,6 +133,8 @@ To fix login errors (like a 502 error), you must correctly configure your OAuth 
 
 **B. Facebook Authentication**
 
+> **Note:** The Facebook login feature is currently undergoing improvements and is temporarily disabled in the user interface. The setup guide below is for when the feature is re-enabled.
+
 To enable Facebook login, you need to create a Facebook App and connect it to Supabase.
 
 **Step 1: Create a Facebook App**
