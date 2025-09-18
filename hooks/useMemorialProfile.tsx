@@ -3,7 +3,7 @@ import { CreatorProfile, ConditionalResponse, Tribute, SocialLink, MemorialData 
 import { getSupabase } from '../services/supabaseClient';
 import { useUser } from './useUser';
 
-// Sample data to be seeded for the first user
+// Sample data for the public demo memorial
 const sampleProfileData = {
     name: 'Julia Hayes',
     life_span: '1968 - 2023',
